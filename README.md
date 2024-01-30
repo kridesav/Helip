@@ -7,6 +7,12 @@ Helip
 # Description
 Helip is a mobile application that provides users with a comprehensive view of all sports facilities in Helsinki. The application is designed to facilitate users' exercise in the city by providing a convenient way to find and explore different sports facilities.
 
+# Links
+[Project table](https://github.com/users/kridesav/projects/1)
+[Backlog](https://github.com/users/kridesav/projects/1/views/2)  
+[Backend repo]()todo
+
+
 # Key Features
 - Comprehensive sports facility information: Helip shows users all sports facilities in Helsinki, including gyms, sports fields, swimming pools, and other similar places.
 - Detailed information: Users can get detailed information about each sports facility, such as opening hours, equipment, events, and other relevant information.
