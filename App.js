@@ -27,7 +27,6 @@ function ProfileScreen() {
 }
 
 
-//placeholder
 function MapScreen() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

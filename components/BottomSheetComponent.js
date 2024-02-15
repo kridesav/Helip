@@ -5,12 +5,12 @@ import { StyleSheet, View, Text } from 'react-native';
 import SearchBarComponent from './SearchBarComponent';
 
 const BottomSheetComponent = () => {
-  const snapPoints = useMemo(() => ['5%', '50%', '100%'], []);
+  const snapPoints = useMemo(() => ['5%', '15%'], []);
 
 	return (
     <BottomSheet index={1} snapPoints={snapPoints}>
       <View style={styles.contentContainer}>
-        <Text style={styles.containerHeadline}>Bottom Sheet</Text>
+        <SearchBarComponent />
       </View>
     </BottomSheet>
 	);
@@ -19,12 +19,8 @@ const BottomSheetComponent = () => {
 const styles = StyleSheet.create({
 	contentContainer: {
 		flex: 1,
-		alignItems: 'center'
-	},
-	containerHeadline: {
-		fontSize: 24,
-		fontWeight: '600',
-		padding: 20
+		alignItems: 'center',
+    width: '100%'
 	}
 });
 
