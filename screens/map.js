@@ -9,7 +9,6 @@ import {
 import MapView from 'react-native-maps';
 import React, { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
-import SearchBar from '../components/SearchBar';
 import LoadingIndicator from '../components/Loading'
 
 
@@ -58,7 +57,6 @@ export default function MapScreen() {
                         behavior={Platform.OS === 'ios' ? 'position' : 'height'}
                         keyboardVerticalOffset={Platform.OS === 'ios' ? 94 : 30}
                         style={styles.keyboardAvoidingView}>
-                        <SearchBar />
                     </KeyboardAvoidingView>
                 </View>
             </TouchableWithoutFeedback>

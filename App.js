@@ -4,13 +4,16 @@ import Maps from './screens/map';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import BottomSheetComponent from './components/BottomSheetComponent';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 //plaveholder
 function HomeScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <GestureHandlerRootView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Home!</Text>
-    </View>
+      <BottomSheetComponent />
+    </GestureHandlerRootView>
   );
 }
 
@@ -27,9 +30,10 @@ function ProfileScreen() {
 //placeholder
 function MapScreen() {
   return (
-    <View style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps/>
-    </View>
+      <BottomSheetComponent />
+    </GestureHandlerRootView>
   );
 }
 
