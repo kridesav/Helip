@@ -3,7 +3,6 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     Keyboard,
-    StatusBar
 } from 'react-native';
 import MapView from 'react-native-maps';
 import React, { useState, useEffect  } from 'react';
@@ -15,53 +14,53 @@ import { Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 
 
 export default function MapScreen() {
-    const [region, setRegion] = useState({
-      latitude: null,
-      longitude: null,
-      latitudeDelta: 0.005,
-      longitudeDelta: 0.005,
-    });
+
     const [isLoading, setIsLoading] = useState(true);
-  
+    const [region, setRegion] = useState({
+        latitude: null,
+        longitude: null,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+    });
+
     const places = useLipasFetch(region.latitude, region.longitude, 0.7);
-  
+
     useEffect(() => {
-      (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          console.error('Location permission not granted');
-          setIsLoading(false);
-          return;
-        }
-  
-        let locationWatcher = await Location.watchPositionAsync({
-            accuracy: Location.Accuracy.High,
-            timeInterval: 1000,
-            distanceInterval: 1,
-          }, (location) => {
-            setRegion({
-              ...region,
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            });
-          setIsLoading(false);
-          });
-    
-          return () => {
-            if (locationWatcher) {
-              locationWatcher.remove();
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                console.error('Location permission not granted');
+                setIsLoading(false);
+                return;
             }
-          };
+
+            let locationWatcher = await Location.watchPositionAsync({
+                accuracy: Location.Accuracy.High,
+                timeInterval: 1000,
+                distanceInterval: 1,
+            }, (location) => {
+                setRegion({
+                    ...region,
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                });
+                setIsLoading(false);
+            });
+
+            return () => {
+                if (locationWatcher) {
+                    locationWatcher.remove();
+                }
+            };
         })();
-      }, []);
-  
+    }, []);
+
     if (isLoading) {
         return <LoadingIndicator />;
     }
 
     return (
         <View style={styles.container}>
-            <StatusBar/>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.inner}>
                     {region && (
@@ -94,6 +93,8 @@ export default function MapScreen() {
                 </View>
             </TouchableWithoutFeedback>
         </View>
+
+
     );
 }
 
@@ -107,9 +108,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-around',
     },
+
     map: {
         flex: 1,
         width: "100%",
         height: "100%"
     },
+
 });

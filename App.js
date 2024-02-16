@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import Maps from './screens/map';
-import { StyleSheet, Text, View } from 'react-native';
+import Maps from './screens/map';import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomSheetComponent from './components/BottomSheetComponent';
