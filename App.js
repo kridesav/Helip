@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import Maps from './screens/map';
-import { StyleSheet, Text, View } from 'react-native';
+import Maps from './screens/map';import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MapScreen from './screens/map';
+import BottomSheetComponent from './components/BottomSheetComponent';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-//plaveholder
+//placeholder
 function HomeScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <GestureHandlerRootView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Home!</Text>
-    </View>
+      <BottomSheetComponent />
+    </GestureHandlerRootView>
   );
 }
 
@@ -24,6 +25,15 @@ function ProfileScreen() {
   );
 }
 
+
+function MapScreen() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Maps/>
+      <BottomSheetComponent />
+    </GestureHandlerRootView>
+  );
+}
 
 const Tab = createBottomTabNavigator();
 

@@ -3,9 +3,10 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     Keyboard,
+    StatusBar
 } from 'react-native';
-import MapView from 'react-native-maps';
-import React, { useState, useEffect, PROVIDER_GOOGLE} from 'react';
+import MapView  from 'react-native-maps';
+import React, { useState, useEffect, PROVIDER_GOOGLE } from 'react';
 import * as Location from 'expo-location';
 import LoadingIndicator from '../components/Loading'
 import mapStyle from '../mapStyle.json'
@@ -43,25 +44,18 @@ export default function MapScreen() {
         })();
     }, []);
 
-    const data = useLipasFetch(region && { latitude: region.latitude, longitude: region.longitude });
-
-    useEffect(() => {
-        if (data) {
-            setPlaces(data);
-        }
-    }, [data]);
 
     if (isLoading) {
         return <LoadingIndicator />;
     }
 
-
     return (
         <View style={styles.container}>
+            <StatusBar/>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.inner}>
                     {region && (
-                        <MapView                             
+                        <MapView
                             provider={PROVIDER_GOOGLE}
                             style={styles.map}
                             region={region}
@@ -70,8 +64,8 @@ export default function MapScreen() {
                             customStyle={mapStyle}
                             tracksViewChanges={false}
                             showsIndoors={false}
-                            
-                           >
+
+                        >
                             {places && places.map((item, index) => (
                                 <Marker
                                     key={index}
@@ -84,8 +78,8 @@ export default function MapScreen() {
                                 />))}
 
                         </MapView>
-
                     )}
+
                 </View>
             </TouchableWithoutFeedback>
         </View>
@@ -98,7 +92,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        backgroundColor: "tomato"
     },
 
     inner: {
