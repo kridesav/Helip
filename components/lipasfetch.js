@@ -1,39 +1,35 @@
 import { useEffect, useState } from 'react';
-
-const useLipasFetch = (coords) => {
+const useLipasFetch = (lat, lon, range = 0.7) => {
   const [places, setPlaces] = useState([]);
-
-  const range = 1;
 
   const fetchPlaces = async (url) => {
     const response = await fetch(url);
     const data = await response.json();
-    const ids = data.map(item => item.sportsPlaceId);
-    const placeDetails = await Promise.all(ids.map(id =>
-      fetch(`http://lipas.cc.jyu.fi/api/sports-places/${id}`)
-        .then(response => response.json())
-    ));
-    setPlaces(prevPlaces => [...prevPlaces, ...placeDetails]);
+    if (Array.isArray(data)) {
+      const ids = data.map(item => item.sportsPlaceId);
+      const placeDetails = await Promise.all(ids.map(id =>
+        fetch(`http://lipas.cc.jyu.fi/api/sports-places/${id}`)
+          .then(response => response.json())
+      ));
+      setPlaces(placeDetails);
 
-    // Check if there are more pages to fetch
-    const linkHeader = response.headers.get('Link');
-    if (linkHeader) {
-      const nextLink = linkHeader.split(', ').find(s => s.endsWith('rel="next"'));
-      if (nextLink) {
-        const nextUrl = nextLink.split(';')[0].slice(1, -1);
-        fetchPlaces(nextUrl);
+      const linkHeader = response.headers.get('Link');
+      if (linkHeader) {
+        const nextLink = linkHeader.split(', ').find(s => s.endsWith('rel="next"'));
+        if (nextLink) {
+          const nextUrl = nextLink.split(';')[0].slice(1, -1);
+          await fetchPlaces(nextUrl);
+        }
       }
+    } else {
+      console.error('Unexcpected data: ', data);
     }
   };
 
   useEffect(() => {
-    if (!coords || !coords.latitude || !coords.longitude) {
-      return;
-    }
-    
-    const url = `http://lipas.cc.jyu.fi/api/sports-places?closeToLon=${coords.longitude}&closeToLat=${coords.latitude}&closeToDistanceKm=${range}`
-    fetchPlaces(url);
-  }, [coords]);
+    if (lon !== null && lat !== null)
+    fetchPlaces(`http://lipas.cc.jyu.fi/api/sports-places?closeToLon=${lon}&closeToLat=${lat}&closeToDistanceKm=${range}`);
+  }, [lat, lon, range]);
 
   return places;
 };
