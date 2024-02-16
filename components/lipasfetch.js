@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 const useLipasFetch = (lat, lon, range = 0.7) => {
   const [places, setPlaces] = useState([]);
 
