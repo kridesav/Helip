@@ -51,6 +51,7 @@ export default function MapScreen() {
                                 longitude: item.location.coordinates.wgs84.lon,
                             }}
                             title={item.name}
+                            onPress={e => console.log(e.nativeEvent)}
                         />))}
                 </MapView>
             )}
