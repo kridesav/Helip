@@ -22,7 +22,7 @@ const SearchBarComponent = ({ /* locations */ }) => {
   return (
     <View style={{ width: '100%' }}>
       <BottomSheetTextInput style={styles.textInput} 
-       placeholder="Searchg..."
+       placeholder="Search..."
        onChangeText={(text) => setSearchText(text)}
        value={searchText}
        onEndEditing={handleSearch}/>
