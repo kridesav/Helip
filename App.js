@@ -1,20 +1,51 @@
+import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
+import Maps from './screens/map';
 import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import BottomSheetComponent from './components/BottomSheetComponent';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-export default function App() {
+//placeholder
+function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <GestureHandlerRootView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Home!</Text>
+      <BottomSheetComponent />
+    </GestureHandlerRootView>
+  );
+}
+
+//placeholder
+function ProfileScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Settings!</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+function MapScreen() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Maps/>
+      <BottomSheetComponent />
+    </GestureHandlerRootView>
+  );
+}
+
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator initialRouteName='Map'>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="Map" component={MapScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}

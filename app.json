@@ -17,10 +17,14 @@
     "ios": {
       "supportsTablet": true
     },
+    "infoPlist": {
+      "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show it on the map."
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "permissions": ["ACCESS_FINE_LOCATION"]
       }
     },
     "web": {
