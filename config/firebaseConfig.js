@@ -8,13 +8,12 @@ import Constants from "expo-constants";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB5_RBhQu_CaeuA5--KccGTBStZIL6bQ5k",
-  authDomain: "helip-fc23e.firebaseapp.com",
-  databaseURL: "https://helip-fc23e-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "helip-fc23e",
-  storageBucket: "helip-fc23e.appspot.com",
-  messagingSenderId: "211542901631",
-  appId: "1:211542901631:web:08fdafeddf510e18ed104a",
+  apiKey: Constants.expoConfig.extra.firebaseApiKey,
+  databaseURL: Constants.expoConfig.extra.firebaseDatabaseURL,
+  projectId: Constants.expoConfig.extra.firebaseProjectId,
+  storageBucket: Constants.expoConfig.extra.firebaseStorageBucket,
+  messagingSenderId: Constants.expoConfig.extra.firebaseMessagingSenderId,
+  appId: Constants.expoConfig.extra.firebaseAppId,
 };
 
 // Initialize Firebase
