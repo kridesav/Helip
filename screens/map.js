@@ -14,7 +14,7 @@ import useLipasFetch from '../components/lipasfetch';
 import { Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 
 
-export default function MapScreen() {
+export default function MapScreen({setSelectedMapItem, expandBottomSheet}) {
     const [region, setRegion] = useState({
       latitude: null,
       longitude: null,
@@ -85,7 +85,11 @@ export default function MapScreen() {
                                         longitude: item.location.coordinates.wgs84.lon,
                                     }}
                                     title={item.name}
-                                    onPress={e => console.log(e.nativeEvent)}
+                                    onPress={function(e){
+                                      setSelectedMapItem(item)
+                                      expandBottomSheet()
+                                      }
+                                    }
                                 />))}
 
                         </MapView>
