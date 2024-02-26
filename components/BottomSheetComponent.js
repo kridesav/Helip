@@ -18,8 +18,8 @@ const BottomSheetComponent = ({places, filteredLocations, setFilteredLocations, 
             <Text>{selectedMapItem.location.address}</Text>
             <Button onPress={function(){
               setSelectedMapItem(null)
-              collapseBottomSheet()
-            }} title='Create event'></Button>
+              /* collapseBottomSheet() */
+            }} title='Back'></Button>
           </View>
           :
           <BottomSheetScrollView>
