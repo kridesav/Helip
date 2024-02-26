@@ -14,7 +14,7 @@ import useLipasFetch from '../components/lipasfetch';
 import { Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 
 
-export default function MapScreen({setSelectedMapItem, expandBottomSheet}) {
+export default function MapScreen({setSelectedMapItem, expandBottomSheet, setPlaces}) {
     const [region, setRegion] = useState({
       latitude: null,
       longitude: null,
@@ -25,6 +25,10 @@ export default function MapScreen({setSelectedMapItem, expandBottomSheet}) {
   
     const places = useLipasFetch(region.latitude, region.longitude, 0.7);
   
+    useEffect(() => {
+      setPlaces(places)
+    }, [places])
+
     useEffect(() => {
       (async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
