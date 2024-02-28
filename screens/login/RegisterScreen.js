@@ -3,7 +3,9 @@ import { StyleSheet, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input, Button } from "react-native-elements";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../config/firebaseConfig";
+import { auth, firestore} from "../../config/firebaseConfig";
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+
 
 const RegisterScreen = ({ navigation }) => {
   const [value, setValue] = React.useState({
@@ -12,7 +14,7 @@ const RegisterScreen = ({ navigation }) => {
     error: "",
   });
 
-  function signUp() {
+  async function signUp() {
     if (value.email === "" || value.password === "") {
       setValue({
         ...value,
@@ -22,16 +24,32 @@ const RegisterScreen = ({ navigation }) => {
     }
 
     setValue({ ...value, error: "" });
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, value.email, value.password);
+      console.log("User registered: ", userCredential.user);
 
-    createUserWithEmailAndPassword(auth, value.email, value.password)
-      .then((userCredential) => {
-        console.log("User registered: ", userCredential.user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setValue({ ...value, error: errorMessage });
-      });
+      const userData = {
+        email: value.email,
+        displayName: value.displayName || '',  //Displayname
+        firstName: '',
+        lastName: '',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        email: '',
+        profilePictureUrl: '',
+        eventsCreated: [],
+        eventsParticipating: [],
+
+      };
+
+      // Create a document in 'users' collection with the auth user's UID as the document ID
+      await setDoc(doc(firestore, "users", userCredential.user.uid), userData);
+      console.log('User document created in Firestore.');
+      console.log("User registered: ", userCredential.user);
+    } catch (error) {
+      console.error("Error in signUp:", error);
+      setValue({ ...value, error: error.message });
+    }
   }
 
   return (
