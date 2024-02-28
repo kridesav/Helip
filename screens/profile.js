@@ -3,6 +3,9 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function ProfileScreen({ navigation }) {
 
+    const navigateToGroups = () => {
+        navigation.navigate('Groups'); // Ensure 'Groups' is defined in your navigation stack
+    };
 
     return (
         <View style={styles.container}>
@@ -13,8 +16,10 @@ export default function ProfileScreen({ navigation }) {
             </View>
             <View style={styles.statsContainer}>
                 <View style={styles.stat}>
-                    <Text style={styles.statNumber}>15</Text>
-                    <Text style={styles.statName}>Groups</Text>
+                    <TouchableOpacity onPress={navigateToGroups} style={styles.stat}>
+                        <Text style={styles.statNumber}> 15 </Text>
+                        <Text style={styles.statName}>Groups</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.stat}>
                     <Text style={styles.statNumber}>13</Text>
@@ -76,27 +81,17 @@ const styles = StyleSheet.create({
     },
     stat: {
         alignItems: 'center',
-    },
-    statName: {
-        fontSize: 14,
-        color: 'black',
+        flex: 1, // Ensure each stat block takes up equal space
     },
     statNumber: {
         fontSize: 24,
-        color: 'white',
-        backgroundColor: '#4B9ED8',
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        borderRadius: 50,
-        overflow: 'hidden',
-        textAlign: 'center',
-        width: 50,
-        height: 50,
-        lineHeight: 30, // Adjust this if your text is not vertically centered
-        // Additional styles for layout purposes, if needed:
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 10,
+        color: '#4B9ED8', // Adjusted the color to be visible on white background
+        fontWeight: 'bold', // Optional: if you want the number to be bold
+        marginBottom: 5, // Creates space between the number and text
+    },
+    statName: {
+        fontSize: 14,
+        color: 'grey', // Changed the color for better visibility/readability
     },
     buttonContainer: {
         flexDirection: 'row',
