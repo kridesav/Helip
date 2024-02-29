@@ -26,8 +26,7 @@ const RegisterScreen = ({ navigation }) => {
     setValue({ ...value, error: "" });
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, value.email, value.password);
-      console.log("User registered: ", userCredential.user);
-
+     
       const userData = {
         email: value.email,
         displayName: value.displayName || '',  //Displayname
@@ -35,7 +34,6 @@ const RegisterScreen = ({ navigation }) => {
         lastName: '',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        email: '',
         profilePictureUrl: '',
         eventsCreated: [],
         eventsParticipating: [],

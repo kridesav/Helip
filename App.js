@@ -10,6 +10,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AuthStack from "./screens/login/authStack";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "./config/firebaseConfig";
+import { createStackNavigator } from "@react-navigation/stack";
+import AddEventScreen from "./screens/events/AddEventScreen";
+
+const Stack = createStackNavigator();
 
 //placeholder
 function HomeScreen() {
@@ -41,19 +45,19 @@ function ProfileScreen() {
 }
 
 
-function MapScreen({places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem, collapseBottomSheet, expandBottomSheet}) {
+function MapScreen({ places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem, collapseBottomSheet, expandBottomSheet }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps setPlaces={setPlaces}
         setSelectedMapItem={setSelectedMapItem}
-        expandBottomSheet={expandBottomSheet}/>
+        expandBottomSheet={expandBottomSheet} />
       <BottomSheetComponent places={places}
         filteredLocations={filteredLocations}
         setFilteredLocations={setFilteredLocations}
         collapseBottomSheet={collapseBottomSheet}
         bottomSheetRef={bottomSheetRef}
         setSelectedMapItem={setSelectedMapItem}
-        selectedMapItem={selectedMapItem}/>
+        selectedMapItem={selectedMapItem} />
     </GestureHandlerRootView>
   );
 }
@@ -63,13 +67,13 @@ const Tab = createBottomTabNavigator();
 export default function App() {
 
   const [user, setUser] = useState("");
-  const [ selectedMapItem, setSelectedMapItem ] = React.useState(null)
-  const [ filteredLocations, setFilteredLocations ] = React.useState([])
-  const [ places, setPlaces ] = React.useState([])
+  const [selectedMapItem, setSelectedMapItem] = React.useState(null)
+  const [filteredLocations, setFilteredLocations] = React.useState([])
+  const [places, setPlaces] = React.useState([])
 
   React.useEffect(() => {
     setFilteredLocations(places)
-  },[places])
+  }, [places])
 
   //BottomSheet manip
   const bottomSheetRef = React.useRef(null);
@@ -84,17 +88,22 @@ export default function App() {
     });
   }, []);
 
-  console.log(user);
-
   return user ? (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName="Map">
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-        <Tab.Screen name="Map">
-        {(props) => <MapScreen {...props} places={places} setPlaces={setPlaces} filteredLocations={filteredLocations} setFilteredLocations={setFilteredLocations} expandBottomSheet={expandBottomSheet} collapseBottomSheet={collapseBottomSheet} bottomSheetRef={bottomSheetRef} setSelectedMapItem={setSelectedMapItem} selectedMapItem={selectedMapItem} />}
-        </Tab.Screen>
-      </Tab.Navigator>
+      <Stack.Navigator>
+        <Stack.Screen name="Main" options={{ headerShown: false }}>
+          {() => (
+            <Tab.Navigator initialRouteName="Map">
+              <Tab.Screen name="Home" component={HomeScreen} />
+              <Tab.Screen name="Profile" component={ProfileScreen} />
+              <Tab.Screen name="Map">
+                {(props) => <MapScreen {...props} places={places} setPlaces={setPlaces} filteredLocations={filteredLocations} setFilteredLocations={setFilteredLocations} expandBottomSheet={expandBottomSheet} collapseBottomSheet={collapseBottomSheet} bottomSheetRef={bottomSheetRef} setSelectedMapItem={setSelectedMapItem} selectedMapItem={selectedMapItem} />}
+              </Tab.Screen>
+            </Tab.Navigator>
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="AddEventScreen" component={AddEventScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   ) : (
     <AuthStack />
