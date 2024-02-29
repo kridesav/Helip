@@ -41,10 +41,12 @@ function ProfileScreen() {
 }
 
 
-function MapScreen({ places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem, collapseBottomSheet, expandBottomSheet }) {
+function MapScreen({ token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem, collapseBottomSheet, expandBottomSheet }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Maps setPlaces={setPlaces}
+      <Maps
+        token={token} 
+        setPlaces={setPlaces}
         setSelectedMapItem={setSelectedMapItem}
         expandBottomSheet={expandBottomSheet} />
       <BottomSheetComponent places={places}

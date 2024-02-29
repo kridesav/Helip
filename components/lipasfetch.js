@@ -4,7 +4,7 @@ const useLipasFetch = (token) => {
 
   const fetchPlaces = async (lat, lon) => {
     if (lat !== null && lon !== null) {
-      const url = `https://helip-631bdf12c542.herokuapp.com/api/places`;
+      const url = `https://helip-631bdf12c542.herokuapp.com/api/places/nearby?latitude=${lat}&longitude=${lon}`;
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`,

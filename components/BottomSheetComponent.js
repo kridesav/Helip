@@ -13,9 +13,9 @@ const BottomSheetComponent = ({places, filteredLocations, setFilteredLocations, 
           <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
           {selectedMapItem ? 
           <View>
-            <Text>{selectedMapItem.name}</Text>
-            <Text>{selectedMapItem.www}</Text>
-            <Text>{selectedMapItem.location.address}</Text>
+            <Text>{selectedMapItem.properties.nimi_fi}</Text>
+            <Text>{selectedMapItem.properties.www}</Text>
+            <Text>{selectedMapItem.properties.katuosoite}</Text>
             <Button onPress={function(){
               setSelectedMapItem(null)
               /* collapseBottomSheet() */
@@ -24,8 +24,8 @@ const BottomSheetComponent = ({places, filteredLocations, setFilteredLocations, 
           :
           <BottomSheetScrollView>
             {filteredLocations.map((item) => 
-            <View key={item.location.locationId} style={{padding: 20, marginVertical: 8, marginHorizontal: 16,}}>
-              <Text>{item.name}</Text>
+            <View key={item.properties.id} style={{padding: 20, marginVertical: 8, marginHorizontal: 16,}}>
+              <Text>{item.properties.nimi_fi}</Text>
             </View>)}
           </BottomSheetScrollView>
           }
