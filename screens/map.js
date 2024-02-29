@@ -15,7 +15,7 @@ import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { debounce } from 'lodash';
 
 
-export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPlaces }) {
+export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPlaces, token }) {
   const [region, setRegion] = useState({
     latitude: null,
     longitude: null,
@@ -23,7 +23,7 @@ export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPl
     longitudeDelta: 0.005,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const { places, fetchPlaces } = useLipasFetch();
+  const { places, fetchPlaces } = useLipasFetch(token);
 
   useEffect(() => {
     setPlaces(places)

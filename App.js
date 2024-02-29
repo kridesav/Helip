@@ -41,19 +41,19 @@ function ProfileScreen() {
 }
 
 
-function MapScreen({places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem, collapseBottomSheet, expandBottomSheet}) {
+function MapScreen({ places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem, collapseBottomSheet, expandBottomSheet }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps setPlaces={setPlaces}
         setSelectedMapItem={setSelectedMapItem}
-        expandBottomSheet={expandBottomSheet}/>
+        expandBottomSheet={expandBottomSheet} />
       <BottomSheetComponent places={places}
         filteredLocations={filteredLocations}
         setFilteredLocations={setFilteredLocations}
         collapseBottomSheet={collapseBottomSheet}
         bottomSheetRef={bottomSheetRef}
         setSelectedMapItem={setSelectedMapItem}
-        selectedMapItem={selectedMapItem}/>
+        selectedMapItem={selectedMapItem} />
     </GestureHandlerRootView>
   );
 }
@@ -63,13 +63,14 @@ const Tab = createBottomTabNavigator();
 export default function App() {
 
   const [user, setUser] = useState("");
-  const [ selectedMapItem, setSelectedMapItem ] = React.useState(null)
-  const [ filteredLocations, setFilteredLocations ] = React.useState([])
-  const [ places, setPlaces ] = React.useState([])
+  const [selectedMapItem, setSelectedMapItem] = React.useState(null)
+  const [filteredLocations, setFilteredLocations] = React.useState([])
+  const [places, setPlaces] = React.useState([])
+  const [token, setToken] = useState(null);
 
   React.useEffect(() => {
     setFilteredLocations(places)
-  },[places])
+  }, [places])
 
   //BottomSheet manip
   const bottomSheetRef = React.useRef(null);
@@ -77,11 +78,19 @@ export default function App() {
   const collapseBottomSheet = () => bottomSheetRef.current?.collapse();
 
   const expandBottomSheet = () => bottomSheetRef.current?.expand();
+
   useEffect(() => {
-    const unsubscribeFromAuthStatusChanged = onAuthStateChanged(auth, (user) => {
-      user ? setUser(user) : setUser(null);
-      return unsubscribeFromAuthStatusChanged;
+    const unsubscribeFromAuthStatusChanged = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        setToken(token);
+        setUser(user);
+      } else {
+        setUser(null);
+      }
     });
+
+    return unsubscribeFromAuthStatusChanged;
   }, []);
 
   console.log(user);
@@ -92,7 +101,7 @@ export default function App() {
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
         <Tab.Screen name="Map">
-        {(props) => <MapScreen {...props} places={places} setPlaces={setPlaces} filteredLocations={filteredLocations} setFilteredLocations={setFilteredLocations} expandBottomSheet={expandBottomSheet} collapseBottomSheet={collapseBottomSheet} bottomSheetRef={bottomSheetRef} setSelectedMapItem={setSelectedMapItem} selectedMapItem={selectedMapItem} />}
+          {(props) => <MapScreen {...props} token={token} places={places} setPlaces={setPlaces} filteredLocations={filteredLocations} setFilteredLocations={setFilteredLocations} expandBottomSheet={expandBottomSheet} collapseBottomSheet={collapseBottomSheet} bottomSheetRef={bottomSheetRef} setSelectedMapItem={setSelectedMapItem} selectedMapItem={selectedMapItem} />}
         </Tab.Screen>
       </Tab.Navigator>
     </NavigationContainer>
