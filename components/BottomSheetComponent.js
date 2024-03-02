@@ -15,7 +15,7 @@ const BottomSheetComponent = ({ places, filteredLocations, setFilteredLocations,
   };
 
   return (
-    <BottomSheet index={1} snapPoints={snapPoints} ref={bottomSheetRef}>
+    <BottomSheet index={1} snapPoints={snapPoints} ref={bottomSheetRef} keyboardBehavior='interactive' android_keyboardInputMode='adjustResize' keyboardBlurBehavior="restore">
       <View style={styles.contentContainer}>
         <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
         {selectedMapItem ?
@@ -34,8 +34,8 @@ const BottomSheetComponent = ({ places, filteredLocations, setFilteredLocations,
           :
           <BottomSheetScrollView>
             {filteredLocations.map((item) =>
-              <View key={item.properties.id} style={{ padding: 20, marginVertical: 8, marginHorizontal: 16, }}>
-                <Text>{item.properties.nimi_fi}</Text>
+              <View key={item.properties.id} style={{ padding: 20, marginVertical: 8, marginHorizontal: 16, borderWidth: 1, borderRadius: 10 }}>
+                <Button onPress={() => setSelectedMapItem(item)}>{item.properties.nimi_fi}</Button>
               </View>) || []}
           </BottomSheetScrollView>
         }

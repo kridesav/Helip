@@ -6,6 +6,7 @@ const SearchBarComponent = ({setFilteredLocations, places}) => {
   const [searchText, setSearchText] = useState('');
 
   const handleSearch = () => {
+    console.log("changed")
     const filteredLocationslocations = places.filter(function (location) {
       if (location.properties.nimi_fi.toLowerCase().includes(searchText.toLocaleLowerCase()) || location.properties.nimi_fi.toLowerCase().includes(searchText.toLocaleLowerCase())) {
         return true
@@ -20,9 +21,11 @@ const SearchBarComponent = ({setFilteredLocations, places}) => {
     <View style={{ width: '100%' }}>
       <BottomSheetTextInput style={styles.textInput} 
        placeholder="Search..."
-       onChangeText={(text) => setSearchText(text)}
-       value={searchText}
-       onEndEditing={handleSearch}/>
+       onChangeText={function(text){
+        setSearchText(text)
+        handleSearch(text)
+      }}
+       value={searchText}/>
     </View>
   );
 };

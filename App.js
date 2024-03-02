@@ -95,9 +95,7 @@ export default function App() {
 
   //BottomSheet manip
   const bottomSheetRef = React.useRef(null);
-
   const collapseBottomSheet = () => bottomSheetRef.current?.collapse();
-
   const expandBottomSheet = () => bottomSheetRef.current?.expand();
 
   useEffect(() => {
