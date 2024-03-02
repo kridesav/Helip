@@ -1,38 +1,32 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, ScrollView, Alert } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Input } from "react-native-elements";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { TextInput } from "react-native-gesture-handler";
+import { TextInput } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
 import useAddEvent from '../../hooks/useAddEvent'
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Button } from "react-native"
+import { Button } from "react-native-paper"
+import { validateInput } from '../../utils/validateInput';
+import { formatTime } from '../../utils/formatTime';
+import { formatDate } from '../../utils/formatDate';
+import { useTheme } from 'react-native-paper';
+
 
 const AddEventScreen = () => {
     const navigation = useNavigation();
+    const { colors } = useTheme();
     const route = useRoute();
     const [value, setValue] = React.useState({
         title: "",
         description: "",
-        participantLimit: 1,
+        participantLimit: "",
     });
-    const [date, setDate] = useState(new Date())
-    const [StartTime, setStartTime] = useState(new Date())
-    const [EndTime, setEndTime] = useState(new Date())
+    const [date, setDate] = useState(new Date());
+    const [StartTime, setStartTime] = useState(new Date());
+    const [EndTime, setEndTime] = useState(new Date());
+    const [errors, setErrors] = useState({});
 
-    const formatTime = (date) => {
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
-      };
-
-      const formatDate = (date) => {
-        const day = date.getDate().toString().padStart(2, '0'); 
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear().toString();
-        return `${day}-${month}-${year}`;
-    };
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setDate(currentDate);
@@ -53,15 +47,29 @@ const AddEventScreen = () => {
     const { currentUser } = useAuth();
     const userId = currentUser?.uid;
 
+
     const handleFormSubmit = () => {
-        Alert.alert(
-            "Confirm",
-            "Are you sure you want to add this event?",
-            [
-                { text: "Cancel", style: "cancel" },
-                { text: "Yes", onPress: () => addEventToFirestore() }
-            ]
-        );
+        if (validateInput(value, setErrors)) {
+            console.log('Input data:', value);
+
+
+            Alert.alert(
+                "Confirm",
+                "Are you sure you want to add this event? Remember to check the date and time.",
+                [
+                    { text: "Cancel", style: "cancel" },
+                    {
+                        text: "Yes", onPress: () => {
+                            addEventToFirestore();
+                            setValue({ title: '', description: '', participantLimit: 1 });
+                            setErrors({});
+                        }
+                    }
+                ]
+            );
+        } else {
+            console.log('Input validation failed');
+        }
     };
 
     const addEventToFirestore = async () => {
@@ -71,11 +79,11 @@ const AddEventScreen = () => {
             date: formatDate(date),
             StartTime: formatTime(StartTime),
             EndTime: formatTime(EndTime),
-            locationName: selectedMapItem.name,
-            coordinates: selectedMapItem.location.coordinates,
+            locationName: selectedMapItem.properties.nimi_fi,
+            locationId: selectedMapItem.properties.id,
+            coordinates: selectedMapItem.geometry.coordinates,
             participantLimit: value.participantLimit,
-            locationId: selectedMapItem.sportsPlaceId,
-           
+            participants: 0,
         };
 
         const success = await addEvent(eventData, userId);
@@ -89,69 +97,115 @@ const AddEventScreen = () => {
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1 }}
+
+            style={{ flex: 1, backgroundColor: colors.background }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
-            <View style={styles.selected}>
-                <Text>{selectedMapItem.name}</Text>
-                <Text>{selectedMapItem.location.address}</Text>
+            <View style={{ backgroundColor: colors.primary }}>
+                <Text style={{ color: colors.text }}>{selectedMapItem.properties.nimi_fi}</Text>
+                <View style={{ flexGrow: 1 }}>
+                    <Text style={{ color: colors.text }}>{selectedMapItem.properties.katuosoite}, </Text>
+                    <Text style={{ color: colors.text }}>{selectedMapItem.properties.postitoimi}</Text>
+                </View>
             </View>
+          
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                <Text style={styles.selected} >Add event</Text>
+
                 <View style={styles.container}>
 
 
                     <View style={styles.DateContainer}>
-                        <Text>When:</Text>
+                        <Text><Icon name="archive-clock" size={20} style={styles.iconStyle}
+                            color={colors.primary} /></Text>
                         <DateTimePicker
                             style={styles.date}
                             value={date}
                             mode="date"
                             display="default"
                             onChange={onChangeDate}
+                            minimumDate={new Date()}
+
                         />
-                           <DateTimePicker mode="time" is24Hour={true} value={StartTime} onChange={onChangeStartTime} />
-                           <DateTimePicker mode="time" is24Hour={true} value={EndTime} onChange={onChangeEndTime} />
+                        <DateTimePicker mode="time" is24Hour={true} value={StartTime} onChange={onChangeStartTime} />
+                        <DateTimePicker mode="time" is24Hour={true} value={EndTime} onChange={onChangeEndTime} />
                     </View>
-                 
+
                     <View style={styles.controls}>
-                        <Input
-                            placeholder="Title"
-                            containerStyle={styles.control}
-                            value={value.title}
-                            onChangeText={(text) => setValue({ ...value, title: text })}
-                            leftIcon={<Icon name="font" size={16} />}
-                        />
+                        <View style={styles.textInputContainer}>
+                            <Icon name="format-title" size={20} style={styles.iconStyle}
+                                color={colors.primary} />
+                            <TextInput
+                                style={styles.textInput}
+                                mode="outlined"
+                                placeholder="Event title"
+                                containerStyle={styles.control}
+                                value={value.title}
+                                onChangeText={(text) => {
+                                    setValue({ ...value, title: text });
+                                    if (errors.title) {
+                                        setErrors({ ...errors, title: null });
+                                    }
+                                }}
+
+                            />
+
+                        </View>
+                        {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
                         <View style={styles.textareaContainer}>
-                            <Icon name="info" size={16} style={styles.iconStyle} />
+                            <Icon name="information" size={20}
+                                color={colors.primary} style={styles.iconStyle} />
                             <TextInput
                                 style={styles.desc}
                                 placeholder="Description"
-                                placeholderTextColor="#888"
                                 editable
                                 multiline
                                 numberOfLines={10}
                                 maxLength={400}
                                 value={value.description}
-                                onChangeText={(text) => setValue({ ...value, description: text })}
-                            />
-                        </View>
-                        <Input
-                            placeholder="Max participants"
-                            containerStyle={styles.control}
-                            keyboardType='numeric'
-                            value={value.participantLimit.toString()}
-                            onChangeText={(text) => setValue({
-                                ...value,
-                                participantLimit: text ? parseInt(text, 10) : 0
-                            })}
-                            leftIcon={<Icon name="users" size={16} />}
-                            maxLength={20}
-                        />
 
-                        <Button title="Add" buttonStyle={styles.control} onPress={handleFormSubmit} />
-                        <Button title="Cancel" buttonStyle={styles.control} onPress={() => navigation.goBack()} />
+                                onChangeText={(text) => {
+                                    setValue({ ...value, description: text });
+
+                                    if (errors.description) {
+                                        setErrors({ ...errors, description: null });
+                                    }
+                                }}
+                            />
+
+
+                        </View>
+                        {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
+                        <View style={styles.textInputContainer}>
+                            <Icon name="account-multiple-plus" size={20}
+                                color={colors.primary} style={styles.iconStyle} />
+                            <TextInput
+                                style={styles.textInput}
+                                mode="outlined"
+
+                                placeholder="Max participants"
+                                containerStyle={styles.control}
+                                keyboardType='numeric'
+                                value={value.participantLimit.toString()}
+                                onChangeText={(text) => {
+                                    setValue({
+                                        ...value,
+                                        participantLimit: text ? parseInt(text, 10) : 0
+                                    })
+                                    if (errors.participantLimit) {
+                                        setErrors({ ...errors, participantLimit: null });
+                                    }
+                                }}
+
+                                maxLength={20}
+                            />
+
+                        </View>
+                        {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
+                        <View style={styles.buttons}>
+                            <Button icon="check-circle" mode="elevated" title="Add" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
+                            <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
+                        </View>
                     </View>
 
                 </View>
@@ -163,46 +217,71 @@ const AddEventScreen = () => {
 
 const styles = StyleSheet.create({
     DateContainer: {
-
         flexDirection: 'row',
         alignItems: 'center',
+
+        padding: 10,
+
     },
+    date: {
+
+    },
+
     container: {
         height: 650,
-        backgroundColor: "#fff",
+
         alignItems: "center",
         justifyContent: "center",
     },
     selected: {
         padding: 10,
         fontSize: 20,
-        backgroundColor: "orange",
+       
 
     },
     textareaContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 1,
-        borderRadius: 5,
+
         padding: 10,
-        marginTop: 10,
+        marginTop: 20,
+
+    },
+
+    textInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+
+        padding: 10,
+        marginTop: 20,
+
+
+    },
+    textInput: {
+
+        width: '90%',
     },
 
     controls: {
         width: "80%",
+
     },
     control: {
         marginTop: 20,
 
+
+
     },
     iconStyle: {
         marginRight: 10,
+
     },
     desc: {
         flex: 1,
         textAlignVertical: 'top',
         height: 100,
         fontSize: 18,
+
 
     },
     inputStyle: {
@@ -212,6 +291,15 @@ const styles = StyleSheet.create({
     leftIconContainerStyle: {
         paddingLeft: 15,
     },
+
+    errorText: {
+        color: 'red',
+        fontSize: 16,
+        padding: 2,
+        marginTop: 5
+
+    },
+
 });
 
 export default AddEventScreen;

@@ -15,7 +15,7 @@ import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { debounce } from 'lodash';
 
 
-export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPlaces }) {
+export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPlaces, token }) {
   const [region, setRegion] = useState({
     latitude: null,
     longitude: null,
@@ -23,7 +23,7 @@ export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPl
     longitudeDelta: 0.005,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const { places, fetchPlaces } = useLipasFetch();
+  const { places, fetchPlaces } = useLipasFetch(token);
 
   useEffect(() => {
     setPlaces(places)
@@ -40,8 +40,7 @@ export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPl
 
       let locationWatcher = await Location.watchPositionAsync({
         accuracy: Location.Accuracy.High,
-        timeInterval: 1000,
-        distanceInterval: 1,
+        distanceInterval: 5,
       }, debounce((location) => {
         setRegion({
           ...region,
@@ -52,7 +51,7 @@ export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPl
         if (location.coords.latitude !== null && location.coords.longitude !== null) {
           fetchPlaces(location.coords.latitude, location.coords.longitude);
         }
-      }, 1000)
+      }, 10000)
       );
 
       return () => {
@@ -89,10 +88,10 @@ export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPl
                   pinColor='green'
                   key={index}
                   coordinate={{
-                    latitude: item.location.coordinates.wgs84.lat,
-                    longitude: item.location.coordinates.wgs84.lon,
+                    latitude: item.geometry.coordinates[1],
+                    longitude: item.geometry.coordinates[0],
                   }}
-                  title={item.name}
+                  title={item.properties.nimi_fi}
                   onPress={function (e) {
                     setSelectedMapItem(item)
                     expandBottomSheet()

@@ -1,6 +1,7 @@
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useMemo } from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
 import { useNavigation } from '@react-navigation/native';
 
@@ -18,23 +19,23 @@ const BottomSheetComponent = ({ places, filteredLocations, setFilteredLocations,
       <View style={styles.contentContainer}>
         <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
         {selectedMapItem ?
-          <View>
-            <Text>{selectedMapItem.name}</Text>
-            <Text>{selectedMapItem.www}</Text>
-            <Text>{selectedMapItem.location.address}</Text>
+          <View style={styles.dataContainer}>
+            <Text>{selectedMapItem.properties.nimi_fi}</Text>
+            <Text>{selectedMapItem.properties.www}</Text>
+            <Text>{selectedMapItem.properties.katuosoite}</Text>
             <View style={styles.buttonContainer}>
-              <Button title="Add Event" onPress={handleAddEventPress} />
+              <Button icon="plus-circle" mode="elevated" style={styles.control} title="Add Event" onPress={handleAddEventPress}>Add Event</Button>
               <Button onPress={function () {
                 setSelectedMapItem(null)
                 /* collapseBottomSheet() */
-              }} title='Back'></Button>
+              }} icon="arrow-left-circle" mode="elevated" style={styles.control} title="Back">Back</Button>
             </View>
           </View>
           :
           <BottomSheetScrollView>
             {filteredLocations.map((item) =>
-              <View key={item.location.locationId} style={{ padding: 20, marginVertical: 8, marginHorizontal: 16, }}>
-                <Text>{item.name}</Text>
+              <View key={item.properties.id} style={{ padding: 20, marginVertical: 8, marginHorizontal: 16, }}>
+                <Text>{item.properties.nimi_fi}</Text>
               </View>) || []}
           </BottomSheetScrollView>
         }
@@ -46,13 +47,24 @@ const BottomSheetComponent = ({ places, filteredLocations, setFilteredLocations,
 
 const styles = StyleSheet.create({
   buttonContainer: {
-   padding: 10,
-   marginTop: 10,
+    padding: 10,
+    marginTop: 10,
+  },
+  dataContainer: {
+    padding: 10,
+    marginTop: 10,
   },
   contentContainer: {
     flex: 1,
     alignItems: 'center',
-  }
+    
+  },
+  control: {
+    marginTop: 20,
+    
+
+
+},
 });
 
 export default BottomSheetComponent;

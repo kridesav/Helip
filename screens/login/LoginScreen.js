@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input, Button } from "react-native-elements";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, getIdToken } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { auth } from "../../config/firebaseConfig";
 
@@ -29,7 +29,11 @@ const LoginScreen = () => {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, value.email, value.password);
+      const userCredential = await signInWithEmailAndPassword(auth, value.email, value.password);
+      const user = userCredential.user;
+      const token = await getIdToken(user);
+      console.log("User's token: ", token);
+      
     } catch (error) {
       setValue({
         ...value,

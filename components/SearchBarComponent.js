@@ -7,7 +7,7 @@ const SearchBarComponent = ({setFilteredLocations, places}) => {
 
   const handleSearch = () => {
     const filteredLocationslocations = places.filter(function (location) {
-      if (location.name.toLowerCase().includes(searchText.toLocaleLowerCase()) || location.type.name.toLowerCase().includes(searchText.toLocaleLowerCase())) {
+      if (location.properties.nimi_fi.toLowerCase().includes(searchText.toLocaleLowerCase()) || location.properties.nimi_fi.toLowerCase().includes(searchText.toLocaleLowerCase())) {
         return true
       } else {
         return false
