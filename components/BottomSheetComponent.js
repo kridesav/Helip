@@ -4,6 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
 import { useNavigation } from '@react-navigation/native';
+import { Button as NativeButton }  from 'react-native';
 
 const BottomSheetComponent = ({ places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, setSelectedMapItem, collapseBottomSheet }) => {
 
@@ -35,7 +36,7 @@ const BottomSheetComponent = ({ places, filteredLocations, setFilteredLocations,
           <BottomSheetScrollView>
             {filteredLocations.map((item) =>
               <View key={item.properties.id} style={{ padding: 20, marginVertical: 8, marginHorizontal: 16, borderWidth: 1, borderRadius: 10 }}>
-                <Button onPress={() => setSelectedMapItem(item)}>{item.properties.nimi_fi}</Button>
+                <NativeButton style={{ backgroundColor: 'white' ,color: 'black'}} onPress={() => setSelectedMapItem(item)} title={item.properties.nimi_fi}></NativeButton>
               </View>) || []}
           </BottomSheetScrollView>
         }
