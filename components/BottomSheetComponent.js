@@ -1,19 +1,27 @@
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { useMemo } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { useMemo, useState } from 'react';
+import { StyleSheet, View, Text, Pressable,TouchableOpacity, SafeAreaView } from 'react-native';
 import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
 import { useNavigation } from '@react-navigation/native';
-import { Button as NativeButton }  from 'react-native';
 
-const BottomSheetComponent = ({ places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, setSelectedMapItem, collapseBottomSheet }) => {
+const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, setSelectedMapItem, collapseBottomSheet }) => {
 
   const snapPoints = useMemo(() => ['3.5%', '15%', '50%', '90%'], []);
+  const [ pageNumber, setPageNumber ] = useState(0)
 
   const navigation = useNavigation();
   const handleAddEventPress = () => {
     navigation.navigate('AddEventScreen', { selectedMapItem });
   };
+
+  const NativeButton = (props) => {
+    return (
+      <Pressable style={styles.button} onPress={props.onPress}>
+        <Text style={styles.text}>{props.title}</Text>
+      </Pressable>
+    );
+  }
 
   return (
     <BottomSheet index={1} snapPoints={snapPoints} ref={bottomSheetRef} keyboardBehavior='interactive' android_keyboardInputMode='adjustResize' keyboardBlurBehavior="restore">
@@ -34,12 +42,14 @@ const BottomSheetComponent = ({ places, filteredLocations, setFilteredLocations,
           </View>
           :
           <BottomSheetScrollView>
-            {filteredLocations.map((item) =>
-              <View key={item.properties.id} style={{ padding: 20, marginVertical: 8, marginHorizontal: 16, borderWidth: 1, borderRadius: 10 }}>
-                <NativeButton style={{ backgroundColor: 'white' ,color: 'black'}} onPress={() => setSelectedMapItem(item)} title={item.properties.nimi_fi}></NativeButton>
-              </View>) || []}
+            {
+              filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) =>
+              <View key={item.properties.id}>
+                <NativeButton  onPress={() => handleListItemPress(item)} title={item.properties.nimi_fi}></NativeButton>
+              </View>) || []
+            }
           </BottomSheetScrollView>
-        }
+      }
       </View>
     </BottomSheet>
 
@@ -62,10 +72,24 @@ const styles = StyleSheet.create({
   },
   control: {
     marginTop: 20,
-    
-
-
-},
+  }, 
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: 'white',
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'black',
+  },
 });
 
 export default BottomSheetComponent;

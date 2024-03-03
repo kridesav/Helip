@@ -60,18 +60,19 @@ function ProfileScreen() {
 }
 
 
-function MapScreen({ token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem, collapseBottomSheet, expandBottomSheet }) {
+function MapScreen({handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps
         token={token}
         setPlaces={setPlaces}
-        setSelectedMapItem={setSelectedMapItem}
-        expandBottomSheet={expandBottomSheet} />
-      <BottomSheetComponent places={places}
+        handleMarkerPress={handleMarkerPress}
+        mapRef={mapRef} />
+      <BottomSheetComponent 
+        handleListItemPress={handleListItemPress}
+        places={places}
         filteredLocations={filteredLocations}
         setFilteredLocations={setFilteredLocations}
-        collapseBottomSheet={collapseBottomSheet}
         bottomSheetRef={bottomSheetRef}
         setSelectedMapItem={setSelectedMapItem}
         selectedMapItem={selectedMapItem} />
@@ -89,14 +90,25 @@ export default function App() {
   const [places, setPlaces] = React.useState([])
   const [token, setToken] = useState(null);
 
-  React.useEffect(() => {
-    setFilteredLocations(places)
-  }, [places])
+  const mapRef = React.useRef(null);
 
   //BottomSheet manip
   const bottomSheetRef = React.useRef(null);
   const collapseBottomSheet = () => bottomSheetRef.current?.collapse();
   const expandBottomSheet = () => bottomSheetRef.current?.expand();
+
+  const handleMarkerPress = (item) => {
+    setSelectedMapItem(item)
+    expandBottomSheet()
+  }
+
+  const handleListItemPress = (item) => {
+    setSelectedMapItem(item)
+    mapRef.current.animateToRegion({
+      latitude: item.geometry.coordinates[1],
+      longitude: item.geometry.coordinates[0]
+    }, 1000)
+  }
 
   useEffect(() => {
     const unsubscribeFromAuthStatusChanged = onAuthStateChanged(auth, async (user) => {
@@ -147,7 +159,18 @@ export default function App() {
                     <MaterialCommunityIcons name="map" color={color} size={26} />
                   ),
                 }} >
-                  {(props) => <MapScreen {...props} token={token} places={places} setPlaces={setPlaces} filteredLocations={filteredLocations} setFilteredLocations={setFilteredLocations} expandBottomSheet={expandBottomSheet} collapseBottomSheet={collapseBottomSheet} bottomSheetRef={bottomSheetRef} setSelectedMapItem={setSelectedMapItem} selectedMapItem={selectedMapItem} />}
+                  {(props) => <MapScreen {...props} 
+                  token={token}
+                  places={places} 
+                  setPlaces={setPlaces} 
+                  filteredLocations={filteredLocations} 
+                  setFilteredLocations={setFilteredLocations} 
+                  bottomSheetRef={bottomSheetRef} 
+                  setSelectedMapItem={setSelectedMapItem} 
+                  selectedMapItem={selectedMapItem}
+                  handleMarkerPress={handleMarkerPress}
+                  mapRef={mapRef}
+                  handleListItemPress={handleListItemPress}/>}
                 </Tab.Screen>
               </Tab.Navigator>
             )}
