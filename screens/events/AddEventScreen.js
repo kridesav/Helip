@@ -8,8 +8,8 @@ import useAddEvent from '../../hooks/useAddEvent'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Button } from "react-native-paper"
 import { validateInput } from '../../utils/validateInput';
-import { formatTime } from '../../utils/formatTime';
-import { formatDate } from '../../utils/formatDate';
+import  formatTime  from '../../utils/formatTime';
+import  formatDate  from '../../utils/formatDate';
 import { useTheme } from 'react-native-paper';
 
 
