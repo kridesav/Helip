@@ -14,6 +14,7 @@ import AddEventScreen from "./screens/events/AddEventScreen";
 import { MD3DarkTheme, PaperProvider } from 'react-native-paper';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme } from 'react-native-paper';
+import { useFetchCurrentUserProfile } from "./hooks/useFetchCurrentUserProfile";
 
 const Stack = createStackNavigator();
 
@@ -32,8 +33,9 @@ const theme = {
 
 //placeholder
 function HomeScreen() {
+  const { colors } = useTheme();
   return (
-    <View>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary}}>
       <Text>Home!</Text>
     </View>
   );
@@ -41,6 +43,8 @@ function HomeScreen() {
 
 //placeholder
 function ProfileScreen() {
+
+  const { colors } = useTheme();
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -51,9 +55,15 @@ function ProfileScreen() {
       });
   };
 
+  const { profile } = useFetchCurrentUserProfile();
+
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Settings!</Text>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary}}>
+      <Text >Settings!</Text>
+      <Text style={{ marginTop: 10}}>Profile Data:</Text>
+      <Text style={{ marginTop:5}}>Email: {profile?.email ?? 'No email'}</Text>
+      <Text style={{ marginTop: 5}}>Name: {profile?.firstName ?? 'No first name'} {profile?.lastName ?? 'No last name'}</Text>
       <Button title="Logout" onPress={handleLogout} />
     </View>
   );
@@ -118,15 +128,15 @@ export default function App() {
     <PaperProvider theme={theme}>
       <NavigationContainer >
         <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: colors.tertiary,
-          },
-          headerTintColor: '#fff', 
-          headerTitleStyle: {
-            fontWeight: 'bold', 
-          },
-        }}>
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: colors.tertiary,
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}>
           <Stack.Screen name="Main" options={{ headerShown: false }}>
             {() => (
               <Tab.Navigator initialRouteName="Map">
