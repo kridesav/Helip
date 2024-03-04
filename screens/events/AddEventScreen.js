@@ -127,8 +127,8 @@ const AddEventScreen = () => {
                             minimumDate={new Date()}
 
                         />
-                        <DateTimePicker mode="time" is24Hour={true} value={StartTime} onChange={onChangeStartTime} />
-                        <DateTimePicker mode="time" is24Hour={true} value={EndTime} onChange={onChangeEndTime} />
+                        <DateTimePicker mode="time" is24Hour={true} value={StartTime} onChange={onChangeStartTime} display="default" />
+                        <DateTimePicker mode="time" is24Hour={true} value={EndTime} onChange={onChangeEndTime} display="default"  />
                     </View>
 
                     <View style={styles.controls}>
