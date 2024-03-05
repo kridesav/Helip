@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { TextInput } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
 import useAddEvent from '../../hooks/useAddEvent'
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '../../components/DateTimePicker';
 import { Button } from "react-native-paper"
 import { validateInput } from '../../utils/validateInput';
 import  formatTime  from '../../utils/formatTime';
@@ -22,25 +22,13 @@ const AddEventScreen = () => {
         description: "",
         participantLimit: "",
     });
+    const [errors, setErrors] = useState({});
     const [date, setDate] = useState(new Date());
     const [StartTime, setStartTime] = useState(new Date());
     const [EndTime, setEndTime] = useState(new Date());
-    const [errors, setErrors] = useState({});
 
-    const onChangeDate = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        setDate(currentDate);
-    };
-
-    const onChangeStartTime = (event, selectedTime) => {
-        const currentTime = selectedTime || time;
-        setStartTime(currentTime);
-        setEndTime(currentTime);
-    };
-    const onChangeEndTime = (event, selectedTime) => {
-        const currentTime = selectedTime || time;
-        setEndTime(currentTime);
-    };
+    
+    
 
     const addEvent = useAddEvent();
     const { selectedMapItem } = route.params;
@@ -102,6 +90,7 @@ const AddEventScreen = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
+           
             <View style={{ backgroundColor: colors.primary }}>
                 <Text style={{ color: colors.text }}>{selectedMapItem.properties.nimi_fi}</Text>
                 <View style={{ flexGrow: 1 }}>
@@ -114,22 +103,11 @@ const AddEventScreen = () => {
 
                 <View style={styles.container}>
 
-
-                    <View style={styles.DateContainer}>
-                        <Text><Icon name="archive-clock" size={20} style={styles.iconStyle}
-                            color={colors.primary} /></Text>
-                        <DateTimePicker
-                            style={styles.date}
-                            value={date}
-                            mode="date"
-                            display="default"
-                            onChange={onChangeDate}
-                            minimumDate={new Date()}
-
-                        />
-                        <DateTimePicker mode="time" is24Hour={true} value={StartTime} onChange={onChangeStartTime} display="default" />
-                        <DateTimePicker mode="time" is24Hour={true} value={EndTime} onChange={onChangeEndTime} display="default"  />
-                    </View>
+                <DateTimePicker setDate={setDate}
+                setStartTime={setStartTime}
+                setEndTime={setEndTime} 
+                date={date}StartTime={StartTime} 
+                EndTime={EndTime}/>
 
                     <View style={styles.controls}>
                         <View style={styles.textInputContainer}>
