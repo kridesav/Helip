@@ -35,7 +35,7 @@ const theme = {
 function HomeScreen() {
   const { colors } = useTheme();
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary}}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary }}>
       <Text>Home!</Text>
     </View>
   );
@@ -59,29 +59,30 @@ function ProfileScreen() {
 
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary}}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary }}>
       <Text >Settings!</Text>
-      <Text style={{ marginTop: 10}}>Profile Data:</Text>
-      <Text style={{ marginTop:5}}>Email: {profile?.email ?? 'No email'}</Text>
-      <Text style={{ marginTop: 5}}>Name: {profile?.firstName ?? 'No first name'} {profile?.lastName ?? 'No last name'}</Text>
+      <Text style={{ marginTop: 10 }}>Profile Data:</Text>
+      <Text style={{ marginTop: 5 }}>Email: {profile?.email ?? 'No email'}</Text>
+      <Text style={{ marginTop: 5 }}>Name: {profile?.firstName ?? 'No first name'} {profile?.lastName ?? 'No last name'}</Text>
       <Button title="Logout" onPress={handleLogout} />
     </View>
   );
 }
 
 
-function MapScreen({ token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem, collapseBottomSheet, expandBottomSheet }) {
+function MapScreen({ handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps
         token={token}
         setPlaces={setPlaces}
-        setSelectedMapItem={setSelectedMapItem}
-        expandBottomSheet={expandBottomSheet} />
-      <BottomSheetComponent places={places}
+        handleMarkerPress={handleMarkerPress}
+        mapRef={mapRef} />
+      <BottomSheetComponent
+        handleListItemPress={handleListItemPress}
+        places={places}
         filteredLocations={filteredLocations}
         setFilteredLocations={setFilteredLocations}
-        collapseBottomSheet={collapseBottomSheet}
         bottomSheetRef={bottomSheetRef}
         setSelectedMapItem={setSelectedMapItem}
         selectedMapItem={selectedMapItem} />
@@ -99,16 +100,25 @@ export default function App() {
   const [places, setPlaces] = React.useState([])
   const [token, setToken] = useState(null);
 
-  React.useEffect(() => {
-    setFilteredLocations(places)
-  }, [places])
+  const mapRef = React.useRef(null);
 
   //BottomSheet manip
   const bottomSheetRef = React.useRef(null);
-
   const collapseBottomSheet = () => bottomSheetRef.current?.collapse();
-
   const expandBottomSheet = () => bottomSheetRef.current?.expand();
+
+  const handleMarkerPress = (item) => {
+    setSelectedMapItem(item)
+    expandBottomSheet()
+  }
+
+  const handleListItemPress = (item) => {
+    setSelectedMapItem(item)
+    mapRef.current.animateToRegion({
+      latitude: item.geometry.coordinates[1],
+      longitude: item.geometry.coordinates[0]
+    }, 1000)
+  }
 
   useEffect(() => {
     const unsubscribeFromAuthStatusChanged = onAuthStateChanged(auth, async (user) => {
@@ -130,7 +140,7 @@ export default function App() {
         <Stack.Navigator
           screenOptions={{
             headerStyle: {
-              backgroundColor: colors.tertiary,
+              backgroundColor: colors.primary,
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
@@ -159,16 +169,27 @@ export default function App() {
                     <MaterialCommunityIcons name="map" color={color} size={26} />
                   ),
                 }} >
-                  {(props) => <MapScreen {...props} token={token} places={places} setPlaces={setPlaces} filteredLocations={filteredLocations} setFilteredLocations={setFilteredLocations} expandBottomSheet={expandBottomSheet} collapseBottomSheet={collapseBottomSheet} bottomSheetRef={bottomSheetRef} setSelectedMapItem={setSelectedMapItem} selectedMapItem={selectedMapItem} />}
+                  {(props) => <MapScreen {...props}
+                    token={token}
+                    places={places}
+                    setPlaces={setPlaces}
+                    filteredLocations={filteredLocations}
+                    setFilteredLocations={setFilteredLocations}
+                    bottomSheetRef={bottomSheetRef}
+                    setSelectedMapItem={setSelectedMapItem}
+                    selectedMapItem={selectedMapItem}
+                    handleMarkerPress={handleMarkerPress}
+                    mapRef={mapRef}
+                    handleListItemPress={handleListItemPress} />}
                 </Tab.Screen>
               </Tab.Navigator>
             )}
           </Stack.Screen>
-          <Stack.Screen name="AddEventScreen" component={AddEventScreen} />
+          <Stack.Screen name="AddEventScreen" component={AddEventScreen} options={{ title: 'Add Event' }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
   ) : (
-    <AuthStack />
+      <AuthStack />
   );
 }

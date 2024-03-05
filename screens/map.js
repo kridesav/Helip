@@ -15,7 +15,7 @@ import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { debounce } from 'lodash';
 
 
-export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPlaces, token }) {
+export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token }) {
   const [region, setRegion] = useState({
     latitude: null,
     longitude: null,
@@ -73,6 +73,7 @@ export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPl
         <View style={styles.inner}>
           {region && (
             <MapView
+              ref={mapRef}
               provider={PROVIDER_GOOGLE}
               style={styles.map}
               initialRegion={region}
@@ -81,7 +82,7 @@ export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPl
               customMapStyle={mapStyle}
               tracksViewChanges={false}
               showsIndoors={false}
-
+              scrollEnabled={true}
             >
               {places && places.map((item, index) => (
                 <Marker
@@ -92,11 +93,7 @@ export default function MapScreen({ setSelectedMapItem, expandBottomSheet, setPl
                     longitude: item.geometry.coordinates[0],
                   }}
                   title={item.properties.nimi_fi}
-                  onPress={function (e) {
-                    setSelectedMapItem(item)
-                    expandBottomSheet()
-                  }
-                  }
+                  onPress={() => handleMarkerPress(item)}
                 />))}
 
             </MapView>

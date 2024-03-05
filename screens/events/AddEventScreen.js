@@ -85,13 +85,12 @@ const AddEventScreen = () => {
 
     return (
         <KeyboardAvoidingView
-
             style={{ flex: 1, backgroundColor: colors.background }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
            
-            <View style={{ backgroundColor: colors.primary }}>
+            <View style={{ backgroundColor: colors.primary, padding:10}}>
                 <Text style={{ color: colors.text }}>{selectedMapItem.properties.nimi_fi}</Text>
                 <View style={{ flexGrow: 1 }}>
                     <Text style={{ color: colors.text }}>{selectedMapItem.properties.katuosoite}, </Text>
@@ -220,7 +219,6 @@ const styles = StyleSheet.create({
     textareaContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-
         padding: 10,
         marginTop: 20,
 
@@ -229,14 +227,12 @@ const styles = StyleSheet.create({
     textInputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-
         padding: 10,
         marginTop: 20,
 
 
     },
     textInput: {
-
         width: '90%',
     },
 
