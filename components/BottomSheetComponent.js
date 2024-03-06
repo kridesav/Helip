@@ -1,21 +1,20 @@
+import React from 'react';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useMemo, useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
-import { useNavigation } from '@react-navigation/native';
-import { useFetchEventsByLocationId } from '../hooks/useFetchEventsByLocationId';
-
+import { useNavigation, useFocusEffect} from '@react-navigation/native';
+import { useFetchEventsByLocationId } from '../hooks/events/useFetchEventsByLocationId';
+import { useTheme } from 'react-native-paper';
+import theme from '../theme'
 
 const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, setSelectedMapItem, collapseBottomSheet }) => {
 
   const snapPoints = useMemo(() => ['3.5%', '15%', '50%', '90%'], []);
-  const [ pageNumber, setPageNumber ] = useState(0)
-
+  const [pageNumber, setPageNumber] = useState(0)
+  const { colors } = useTheme();
   const navigation = useNavigation();
-  const handleAddEventPress = () => {
-    navigation.navigate('AddEventScreen', { selectedMapItem });
-  };
 
   //Hakee locationId:n mukaan eventit
   const [locationId, setLocationId] = useState(null);
@@ -26,8 +25,17 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
       setLocationId(null);
     }
   }, [selectedMapItem]);
+  
+  const { events, fetchEvents} = useFetchEventsByLocationId(locationId);
 
-  const { events } = useFetchEventsByLocationId(locationId);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (locationId) {
+        fetchEvents();
+      }
+    }, [locationId, fetchEvents])
+  );
 
   const NativeButton = (props) => {
     return (
@@ -47,7 +55,7 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
             <Text>{selectedMapItem.properties.www}</Text>
             <Text>{selectedMapItem.properties.katuosoite}</Text>
             <View style={styles.buttonContainer}>
-              <Button icon="plus-circle" mode="elevated" style={styles.control} title="Add Event" onPress={handleAddEventPress}>Add Event</Button>
+              <Button icon="plus-circle" mode="elevated" style={styles.control} title="Add Event" onPress={() => navigation.navigate('AddEventScreen', { selectedMapItem })}>Add Event</Button>
               <Button onPress={function () {
                 setSelectedMapItem(null)
                 /* collapseBottomSheet() */
@@ -56,10 +64,13 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
             <View style={styles.dataContainer} >
               {events.length > 0 ? (
                 events.map(event => (
-                  <View key={event.id}>
-                    <Text>{event.title}</Text>
-                    <Text>{event.date}</Text>
+                  <View key={event.id} style={{ marginBottom: 10 }}>
+                    <Button onPress={() => navigation.navigate('EventScreen', { event })} title={event.title} mode="elevated" backgroundColor={theme.colors.elevation.level1} textColor={theme.colors.secondary}>
+                      <Text>{event.title} - ( </Text>
+                      <Text>{event.date} )</Text>
+                    </Button>
                   </View>
+
                 ))
               ) : (
                 <Text>No events for this location.</Text>
@@ -71,12 +82,12 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
           <BottomSheetScrollView>
             {
               filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) =>
-              <View key={item.properties.id}>
-                <NativeButton  onPress={() => handleListItemPress(item)} title={item.properties.nimi_fi}></NativeButton>
-              </View>) || []
+                <View key={item.properties.id}>
+                  <NativeButton onPress={() => handleListItemPress(item)} title={item.properties.nimi_fi}></NativeButton>
+                </View>) || []
             }
           </BottomSheetScrollView>
-      }
+        }
       </View>
     </BottomSheet>
 
@@ -91,6 +102,7 @@ const styles = StyleSheet.create({
   dataContainer: {
     padding: 10,
     marginTop: 10,
+
   },
   contentContainer: {
     flex: 1,
@@ -100,7 +112,7 @@ const styles = StyleSheet.create({
   control: {
     marginTop: 20,
 
-  }, 
+  },
   button: {
     alignItems: 'center',
     justifyContent: 'center',

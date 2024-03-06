@@ -1,53 +1,59 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, ScrollView, Alert } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect} from '@react-navigation/native';
 import { TextInput } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
-import useAddEvent from '../../hooks/events/useAddEvent'
 import DateTimePicker from '../../components/DateTimePicker';
 import { Button } from "react-native-paper"
 import { validateInput } from '../../utils/validateInput';
-import  formatTime  from '../../utils/formatTime';
-import  formatDate  from '../../utils/formatDate';
+import formatTime from '../../utils/formatTime';
+import formatDate from '../../utils/formatDate';
 import { useTheme } from 'react-native-paper';
+import useEditEvent from "../../hooks/events/useEditEvent";
+import { parseTime, parseDate } from '../../utils/parse'
 
 
-const AddEventScreen = () => {
-    const navigation = useNavigation();
+const EditEventScreen = () => {
     const { colors } = useTheme();
+    const navigation = useNavigation();
     const route = useRoute();
-    const [value, setValue] = React.useState({
-        title: "",
-        description: "",
-        participantLimit: "",
-    });
-    const [errors, setErrors] = useState({});
-    const [date, setDate] = useState(new Date());
-    const [StartTime, setStartTime] = useState(new Date());
-    const [EndTime, setEndTime] = useState(new Date());
+    const { event } = route.params;
 
-    const addEvent = useAddEvent();
-    const { selectedMapItem } = route.params;
+    const [value, setValue] = React.useState({
+        title: event.title,
+        description: event.description,
+        participantLimit: event.participantLimit,
+    });
+
+    const [errors, setErrors] = useState({});
+
+    const initialDate = parseDate(event.date);
+    const initialStartTime = parseTime(event.StartTime, initialDate);
+    const initialEndTime = parseTime(event.EndTime, initialDate);
+
+    const [date, setDate] = useState(initialDate);
+    const [StartTime, setStartTime] = useState(initialStartTime);
+    const [EndTime, setEndTime] = useState(initialEndTime);
+
+    const EditEvent = useEditEvent();
     const { currentUser } = useAuth();
     const userId = currentUser?.uid;
-
 
     const handleFormSubmit = () => {
         if (validateInput(value, setErrors)) {
             console.log('Input data:', value);
 
-
             Alert.alert(
                 "Confirm",
-                "Are you sure you want to add this event? Remember to check the date and time.",
+                "Are you sure you want to modify this event?",
                 [
                     { text: "Cancel", style: "cancel" },
                     {
                         text: "Yes", onPress: () => {
-                            addEventToFirestore();
-                            setValue({ title: '', description: '', participantLimit: 1 });
+                            EditEventInFirestore();
                             setErrors({});
+
                         }
                     }
                 ]
@@ -57,28 +63,31 @@ const AddEventScreen = () => {
         }
     };
 
-    const addEventToFirestore = async () => {
+    const EditEventInFirestore = async () => {
         const eventData = {
             title: value.title,
             description: value.description || '',
             date: formatDate(date),
             StartTime: formatTime(StartTime),
             EndTime: formatTime(EndTime),
-            locationName: selectedMapItem.properties.nimi_fi,
-            locationAddress: selectedMapItem.properties.katuosoite,
-            location: selectedMapItem.properties.postitoimi,
-            locationId: selectedMapItem.properties.id,
-            coordinates: selectedMapItem.geometry.coordinates,
             participantLimit: value.participantLimit,
-            participants: 0,
+            id: event.id
+
         };
 
-        const success = await addEvent(eventData, userId);
+        try {
+            const success = await EditEvent(eventData, userId);
 
-        if (success) {
-            navigation.goBack();
-        } else {
-            console.log("Failed to add the event");
+            if (success) {
+                console.log("Event successfully modified!");
+                navigation.goBack();
+            } else {
+                console.log("Failed to modify the event");
+            }
+        } catch (error) {
+            console.error("Failed to modify the event:", error);
+            setErrors({ form: "Failed to modify the event. Please try again." });
+          
         }
     };
 
@@ -88,24 +97,23 @@ const AddEventScreen = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
-           
-            <View style={{ backgroundColor: colors.primary, padding:10}}>
-                <Text style={{ color: colors.text }}>{selectedMapItem.properties.nimi_fi}</Text>
+
+            <View style={{ backgroundColor: colors.primary, padding: 10 }}>
+                <Text style={{ color: colors.text }}>{event.locationName}</Text>
                 <View style={{ flexGrow: 1 }}>
-                    <Text style={{ color: colors.text }}>{selectedMapItem.properties.katuosoite}, </Text>
-                    <Text style={{ color: colors.text }}>{selectedMapItem.properties.postitoimi}</Text>
+                    <Text style={{ color: colors.text }}>{event.katuosoite}{event.location} </Text>
                 </View>
             </View>
-          
+
             <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
                 <View style={styles.container}>
 
-                <DateTimePicker setDate={setDate}
-                setStartTime={setStartTime}
-                setEndTime={setEndTime} 
-                date={date}StartTime={StartTime} 
-                EndTime={EndTime}/>
+                    <DateTimePicker setDate={setDate}
+                        setStartTime={setStartTime}
+                        setEndTime={setEndTime}
+                        date={date} StartTime={StartTime}
+                        EndTime={EndTime} />
 
                     <View style={styles.controls}>
                         <View style={styles.textInputContainer}>
@@ -179,7 +187,7 @@ const AddEventScreen = () => {
                         </View>
                         {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
                         <View style={styles.buttons}>
-                            <Button icon="check-circle" mode="elevated" title="Add" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
+                            <Button icon="check-circle" mode="elevated" title="Modify" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
                             <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
                         </View>
                     </View>
@@ -212,7 +220,7 @@ const styles = StyleSheet.create({
     selected: {
         padding: 10,
         fontSize: 20,
-       
+
 
     },
     textareaContainer: {
@@ -275,4 +283,5 @@ const styles = StyleSheet.create({
 
 });
 
-export default AddEventScreen;
+
+export default EditEventScreen;

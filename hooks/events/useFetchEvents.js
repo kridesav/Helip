@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { firestore } from '../config/firebaseConfig'
+import { firestore } from '../../config/firebaseConfig'
 import { collection, getDocs } from 'firebase/firestore';
 
 export const useFetchEvents = () => {

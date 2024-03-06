@@ -21,6 +21,7 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
     const onChangeStartTime = (event, selectedTime) => {
         const currentTime = selectedTime || StartTime;
         setStartTime(currentTime);
+        setEndTime(currentTime);
         if (Platform.OS === 'android') {
             setShowStartTimePicker(false);
         }

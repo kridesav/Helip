@@ -10,26 +10,16 @@ import AuthStack from "./screens/login/authStack";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "./config/firebaseConfig";
 import { createStackNavigator } from "@react-navigation/stack";
-import AddEventScreen from "./screens/events/AddEventScreen";
-import { MD3DarkTheme, PaperProvider } from 'react-native-paper';
+import AddEventScreen from "./screens/events/AddEventScreen"
+import EventScreen from "./screens/events/EventScreen";
+import EditEventScreen from "./screens/events/EditEventScreen";
+import { PaperProvider } from 'react-native-paper';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme } from 'react-native-paper';
 import { useFetchCurrentUserProfile } from "./hooks/useFetchCurrentUserProfile";
+import theme from './theme'
 
 const Stack = createStackNavigator();
-
-
-//react-native-paper teema
-const theme = {
-  ...MD3DarkTheme,
-  roundness: 2,
-  colors: {
-    ...MD3DarkTheme.colors,
-    primary: 'orange',
-    secondary: '#f1c40f',
-    tertiary: '#a1b2c3',
-  },
-};
 
 //placeholder
 function HomeScreen() {
@@ -186,6 +176,8 @@ export default function App() {
             )}
           </Stack.Screen>
           <Stack.Screen name="AddEventScreen" component={AddEventScreen} options={{ title: 'Add Event' }}/>
+          <Stack.Screen name="EventScreen" component={EventScreen} options={{ title: 'Event' }}/>
+          <Stack.Screen name="EditEventScreen" component={EditEventScreen} options={{ title: 'Edit Event' }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

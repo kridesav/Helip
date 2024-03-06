@@ -1,4 +1,4 @@
-import { firestore } from '../config/firebaseConfig';
+import { firestore } from '../../config/firebaseConfig';
 import { doc, setDoc, serverTimestamp, collection, updateDoc, arrayUnion} from 'firebase/firestore';
 import { Alert } from 'react-native';
 
