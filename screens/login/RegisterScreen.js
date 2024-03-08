@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { TextInput, Button, Text, useTheme } from "react-native-paper";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, firestore } from "../../config/firebaseConfig";
@@ -45,25 +45,29 @@ const RegisterScreen = ({ navigation }) => {
 
   return (
     <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
-      <View style={styles.overlay}>
-        <View style={styles.innerContainer}>
-          <TouchableOpacity style={styles.backButtonContainer} onPress={() => navigation.goBack()}>
-            <Button icon="arrow-left">Back</Button>
-          </TouchableOpacity>
-          <Text variant="headlineLarge" style={styles.title}>
-            Sign Up!
-          </Text>
-          <TextInput label="Email" value={email} onChangeText={setEmail} mode="outlined" style={styles.input} />
-          <TextInput label="Password" value={password} onChangeText={setPassword} mode="outlined" secureTextEntry style={styles.input} />
-          <TextInput label="Display Name" value={displayName} onChangeText={setDisplayName} mode="outlined" style={styles.input} />
-          <TextInput label="First Name" value={firstName} onChangeText={setFirstName} mode="outlined" style={styles.input} />
-          <TextInput label="Last Name" value={lastName} onChangeText={setLastName} mode="outlined" style={styles.input} />
-          <Button mode="contained" onPress={signUp} style={styles.button}>
-            Sign up
-          </Button>
-          {error ? <Text style={styles.error}>{error}</Text> : null}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.flex}>
+        <View style={styles.overlay}>
+          <ScrollView contentContainerStyle={styles.flexGrow}>
+            <View style={styles.registerContainer}>
+              <TouchableOpacity style={styles.backButtonContainer} onPress={() => navigation.goBack()}>
+                <Button icon="arrow-left">Back</Button>
+              </TouchableOpacity>
+              <Text variant="headlineLarge" style={styles.title}>
+                Sign Up!
+              </Text>
+              <TextInput label="Email" value={email} onChangeText={setEmail} mode="outlined" style={styles.input} />
+              <TextInput label="Password" value={password} onChangeText={setPassword} mode="outlined" secureTextEntry style={styles.input} />
+              <TextInput label="Display Name" value={displayName} onChangeText={setDisplayName} mode="outlined" style={styles.input} />
+              <TextInput label="First Name" value={firstName} onChangeText={setFirstName} mode="outlined" style={styles.input} />
+              <TextInput label="Last Name" value={lastName} onChangeText={setLastName} mode="outlined" style={styles.input} />
+              <Button mode="contained" onPress={signUp} style={styles.button}>
+                Sign up
+              </Button>
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+            </View>
+          </ScrollView>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 };
@@ -73,6 +77,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
+  },
+  flex: {
+    flex: 1,
+  },
+  flexGrow: {
+    flexGrow: 1,
+    justifyContent: "center",
   },
   overlay: {
     flex: 1,
@@ -87,11 +98,10 @@ const styles = StyleSheet.create({
     left: 10,
     zIndex: 10,
   },
-  innerContainer: {
+  registerContainer: {
     backgroundColor: "white",
     borderRadius: 25,
     padding: 20,
-    justifyContent: "center",
   },
   title: {
     marginBottom: 20,
