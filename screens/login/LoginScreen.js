@@ -1,7 +1,6 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Input, Button } from "react-native-elements";
+import React, { useState } from "react";
+import { View, StyleSheet, TouchableOpacity, ImageBackground } from "react-native";
+import { TextInput, Button, Text } from "react-native-paper";
 import { signInWithEmailAndPassword, getIdToken } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { auth } from "../../config/firebaseConfig";
@@ -13,120 +12,95 @@ const dummyCredentials = {
 
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const [value, setValue] = React.useState({
-    email: "",
-    password: "",
-    error: "",
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   async function signIn() {
-    if (value.email === "" || value.password === "") {
-      setValue({
-        ...value,
-        error: "Email and password are mandatory.",
-      });
+    if (email === "" || password === "") {
+      setError("Email and password are mandatory.");
       return;
     }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, value.email, value.password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const token = await getIdToken(user);
       console.log("User's token: ", token);
-      
     } catch (error) {
-      setValue({
-        ...value,
-        error: error.message,
-      });
-
+      setError(error.message);
       console.log("Error signing in: ", error.message);
     }
   }
 
   function fillDummyData() {
-    setValue({
-      ...value,
-      email: dummyCredentials.email,
-      password: dummyCredentials.password,
-      error: "",
-    });
+    setEmail(dummyCredentials.email);
+    setPassword(dummyCredentials.password);
+    setError("");
   }
 
   return (
-    <View style={styles.container}>
-      <Text>Signin screen!</Text>
-
-      {!!value.error && (
-        <View style={styles.error}>
-          <Text>{value.error}</Text>
+    <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+      <View style={styles.overlay}>
+        <View style={styles.signinContainer}>
+          <Text variant="headlineLarge" style={styles.title}>
+            Welcome!
+          </Text>
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+          <TextInput label="Email" value={email} onChangeText={setEmail} mode="outlined" style={styles.input} autoCapitalize="none" />
+          <TextInput label="Password" value={password} onChangeText={setPassword} mode="outlined" secureTextEntry style={styles.input} />
+          <Button mode="contained" onPress={signIn} style={styles.button}>
+            Sign in
+          </Button>
+          <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
+            <Text style={styles.registerText}>Don't have an account? Sign up.</Text>
+          </TouchableOpacity>
+          <Button mode="text" onPress={fillDummyData} style={styles.button}>
+            Fill with Dummy Data
+          </Button>
         </View>
-      )}
-
-      <View style={styles.controls}>
-        <Input
-          placeholder="Email"
-          containerStyle={styles.control}
-          inputStyle={styles.inputStyle}
-          leftIconContainerStyle={styles.leftIconContainerStyle}
-          value={value.email}
-          onChangeText={(text) => setValue({ ...value, email: text })}
-          leftIcon={<Icon name="envelope" size={20} />}
-        />
-
-        <Input
-          placeholder="Password"
-          containerStyle={styles.control}
-          inputStyle={styles.inputStyle}
-          leftIconContainerStyle={styles.leftIconContainerStyle}
-          value={value.password}
-          onChangeText={(text) => setValue({ ...value, password: text })}
-          secureTextEntry={true}
-          leftIcon={<Icon name="key" size={20} />}
-        />
-
-        <Button title="Sign in" buttonStyle={styles.control} onPress={signIn} />
-        <TouchableOpacity onPress={() => navigation.navigate("RegisterScreen")}>
-          <Text style={styles.registerText}>Don't have an account? Sign up.</Text>
-        </TouchableOpacity>
-        <Button title="Fill with Dummy Data" buttonStyle={styles.control} onPress={fillDummyData} />
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
-    paddingTop: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
+    width: "100%",
+    height: "100%",
+  },
+  overlay: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.2)",
+  },
+  signinContainer: {
+    backgroundColor: "white",
+    borderRadius: 25,
+    padding: 20,
     justifyContent: "center",
   },
-  controls: {
-    width: "80%",
+  input: {
+    marginBottom: 10,
   },
-  control: {
-    marginTop: 20,
-    height: 50,
+  button: {
+    marginTop: 10,
   },
-  inputStyle: {
-    fontSize: 18,
-    paddingLeft: 10,
-  },
-  leftIconContainerStyle: {
-    paddingLeft: 15,
+  title: {
+    marginBottom: 20,
+    textAlign: "center",
   },
   error: {
-    marginTop: 10,
-    padding: 10,
-    color: "#fff",
-    backgroundColor: "#D54826FF",
+    marginBottom: 10,
+    color: "red",
+    textAlign: "center",
   },
   registerText: {
     textAlign: "center",
-    color: "blue",
     marginTop: 15,
+    color: "blue",
   },
 });
 
