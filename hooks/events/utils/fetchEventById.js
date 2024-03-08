@@ -1,6 +1,6 @@
 
-import { firestore } from '../../config/firebaseConfig';
-import { doc, getDoc, } from 'firebase/firestore';
+import { firestore } from '../../../config/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 
 export const fetchEventById = async (eventId) => {
   if (!eventId) return null;

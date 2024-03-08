@@ -1,20 +1,22 @@
 import React from 'react';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { useMemo, useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { useMemo, useState, useEffect, useContext } from 'react';
+import { StyleSheet, View, Text, Pressable, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
-import { useNavigation, useFocusEffect} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useFetchEventsByLocationId } from '../hooks/events/useFetchEventsByLocationId';
 import { useTheme } from 'react-native-paper';
 import theme from '../theme'
+import { EventContext } from '../context/EventProvider'
 
 const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, setSelectedMapItem, collapseBottomSheet }) => {
-
+  const eventIds = useContext(EventContext);
   const snapPoints = useMemo(() => ['3.5%', '15%', '50%', '90%'], []);
   const [pageNumber, setPageNumber] = useState(0)
   const { colors } = useTheme();
   const navigation = useNavigation();
+
 
   //Hakee locationId:n mukaan eventit
   const [locationId, setLocationId] = useState(null);
@@ -25,17 +27,8 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
       setLocationId(null);
     }
   }, [selectedMapItem]);
-  
-  const { events, fetchEvents} = useFetchEventsByLocationId(locationId);
 
-
-  useFocusEffect(
-    React.useCallback(() => {
-      if (locationId) {
-        fetchEvents();
-      }
-    }, [locationId, fetchEvents])
-  );
+  const { events } = useFetchEventsByLocationId(locationId);
 
   const NativeButton = (props) => {
     return (
@@ -61,23 +54,25 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
                 /* collapseBottomSheet() */
               }} icon="arrow-left-circle" mode="elevated" style={styles.control} title="Back">Back</Button>
             </View>
-            <View style={styles.dataContainer} >
-              {events.length > 0 ? (
-                events.map(event => (
-                  <View key={event.id} style={{ marginBottom: 10 }}>
-                    <Button onPress={() => navigation.navigate('EventScreen', { event })} title={event.title} mode="elevated" backgroundColor={theme.colors.elevation.level1} textColor={theme.colors.secondary}>
-                      <Text>{event.title} - ( </Text>
-                      <Text>{event.date} )</Text>
-                    </Button>
-                  </View>
+            <BottomSheetScrollView>
+              <View style={styles.dataContainer} >
+                {events.length > 0 ? (
+                  events.map(event => (
+                    <View key={event.id} style={{ marginBottom: 10 }}>
+                      <TouchableOpacity onPress={() => navigation.navigate('EventScreen', { event })} style={[styles.button, event.isFull ? styles.fullButton : {}]}>
+                        <Text style={styles.buttonText}>{event.title} - ({event.date})</Text>
+                        {event.isFull && <Text style={styles.fullText}>Event Full</Text>}
+                      </TouchableOpacity>
+                    </View>
 
-                ))
-              ) : (
-                <Text>No events for this location.</Text>
-              )}
-            </View>
+                  ))
+                ) : (
+                  <Text>No events for this location.</Text>
+                )}
+              </View>
+            </BottomSheetScrollView>
+
           </View>
-
           :
           <BottomSheetScrollView>
             {
@@ -124,6 +119,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'black',
+  },
+  fullText: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',

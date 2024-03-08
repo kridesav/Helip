@@ -10,7 +10,7 @@ import { validateInput } from '../../utils/validateInput';
 import formatTime from '../../utils/formatTime';
 import formatDate from '../../utils/formatDate';
 import { useTheme } from 'react-native-paper';
-import useEditEvent from "../../hooks/events/useEditEvent";
+import useEditEvent from "../../hooks/events/utils/editEvent";
 import { parseTime, parseDate } from '../../utils/parse'
 
 
@@ -72,7 +72,6 @@ const EditEventScreen = () => {
             EndTime: formatTime(EndTime),
             participantLimit: value.participantLimit,
             id: event.id
-
         };
 
         try {

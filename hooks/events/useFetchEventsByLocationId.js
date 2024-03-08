@@ -1,34 +1,35 @@
 import { useState, useEffect } from 'react';
 import { firestore } from '../../config/firebaseConfig';
-import { query, collection, where, getDocs } from 'firebase/firestore';
+import { query, collection, where, onSnapshot } from 'firebase/firestore';
 
 export const useFetchEventsByLocationId = (locationId) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchEvents = async () => {
+  useEffect(() => {
     if (!locationId) {
-      setEvents([]);
       setLoading(false);
       return;
     }
 
-    try {
-      setLoading(true);
-      const q = query(collection(firestore, "events"), where("locationId", "==", locationId));
-      const querySnapshot = await getDocs(q);
-      const eventsArray = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setLoading(true);
+    const q = query(collection(firestore, "events"), where("locationId", "==", locationId));
+    const unsubscribe = onSnapshot(q, querySnapshot => {
+      const eventsArray = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        isFull: doc.data().participantLimit <= (doc.data().participants?.length || 0)
+      }));
       setEvents(eventsArray);
-    } catch (error) {
-      console.error("Error fetching events by locationId:", error);
-    } finally {
+      console.log(eventsArray);
       setLoading(false);
-    }
-  };
+    }, error => {
+      console.error("Error fetching events by locationId:", error);
+      setLoading(false);
+    });
 
-  useEffect(() => {
-    fetchEvents();
+    return () => unsubscribe();
   }, [locationId]);
 
-  return { events, loading, fetchEvents };
+  return { events, loading };
 };

@@ -5,10 +5,14 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Button, PaperProvider } from "react-native-paper"
 import { useTheme } from 'react-native-paper';
 import { useIsEventCreator } from '../../hooks/events/useIsEventCreator';
+import { useIfUserJoined } from "../../hooks/useIfUserJoined";
+import CancelJoinEvent from '../../hooks/events/utils/cancelJoinEvent'
 import theme from '../../theme';
-
+import useAuth from '../../hooks/useAuth';
 import { useFocusEffect } from '@react-navigation/native';
-import {fetchEventById} from '../../hooks/events/useFetchEventById'
+import { fetchEventById } from '../../hooks/events/utils/fetchEventById'
+import joinEvent from '../../hooks/events/utils/joinEvent'
+import useEventDetails from "../../hooks/events/useEventDetails";
 
 
 const EventScreen = () => {
@@ -18,33 +22,100 @@ const EventScreen = () => {
     const route = useRoute();
     const { event: initialEvent } = route.params;
     const [event, setEvent] = useState(initialEvent);
-
+    const { currentUser } = useAuth();
+    const userId = currentUser?.uid;
 
     const isCreator = useIsEventCreator(event.createdBy);
+    const isUser = useIfUserJoined(event.usersParticipating)
+    const { isEventFull } = useEventDetails(initialEvent.id);
 
     const handleJoinPress = () => {
-        console.log("navigate")
+
+        Alert.alert(
+            "Confirm",
+            "Are you sure you want to join this event?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Yes", onPress: () => {
+                        JoinToEventFirestore();
+                    }
+                }
+            ]
+        );
+    };
+
+
+    const handleCancelJoinPress = () => {
+
+        Alert.alert(
+            "Confirm",
+            "Are you sure you want to cancel the join in this event?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Yes", onPress: () => {
+                        CancelJoinToEventFirestore();
+                    }
+                }
+            ]
+        );
+    };
+
+
+    const JoinToEventFirestore = async () => {
+        if (!userId) {
+            Alert.alert("Error", "You must be logged in to join an event.");
+            return;
+        }
+
+        const success = await joinEvent(event.id, userId);
+        if (success) {
+            console.log("You joined event successfully", [
+                { text: "OK", onPress: () => fetchLatestEventDetails() }
+            ]);
+        } else {
+            console.error("Failed to join event or update UI.");
+        }
+    };
+
+    const CancelJoinToEventFirestore = async () => {
+        if (!userId) {
+            Alert.alert("Error", "You must be logged in to join an event.");
+            return;
+        }
+
+        const success = await CancelJoinEvent(event.id, userId);
+
+        if (success) {
+            Alert.alert("Success", "You canceled your participation in the event", [
+                { text: "OK", onPress: () => fetchLatestEventDetails() }
+            ]);
+        } else {
+            Alert.alert("Error", "Failed to cancel participation to the event");
+        }
+    };
+
+    const fetchLatestEventDetails = async () => {
+        if (!initialEvent || !initialEvent.id) {
+            console.log("Initial event or event ID is undefined.");
+            return;
+        }
+
+        const latestEventData = await fetchEventById(initialEvent.id);
+        if (latestEventData) {
+            setEvent(latestEventData);
+        } else {
+            console.log("Failed to fetch latest event data or event does not exist.");
+        }
     };
 
     useFocusEffect(
         React.useCallback(() => {
-            if (!initialEvent || !initialEvent.id) {
-                console.log("Initial event or event ID is undefined.");
-                return;
-            }
-
-            const fetchLatestEventDetails = async () => {
-                const latestEventData = await fetchEventById(initialEvent.id);
-                if (latestEventData) {
-                    setEvent(latestEventData);
-                } else {
-                    console.log("Failed to fetch latest event data or event does not exist.");
-                }
-            };
-
             fetchLatestEventDetails();
-        }, [initialEvent])
+        }, [initialEvent.id])
     );
+
 
     return (
         <PaperProvider theme={theme}>
@@ -66,7 +137,6 @@ const EventScreen = () => {
                     <Icon name="clock-end" size={20} />
                     <Text style={styles.detailText}>{event.EndTime}</Text>
                 </View>
-
                 <View style={styles.detailContainer}>
                     <Icon name="information" size={20} />
                     <Text style={styles.detailText}>{event.description}</Text>
@@ -77,12 +147,45 @@ const EventScreen = () => {
                 </View>
                 <View style={styles.buttons}>
                     {isCreator ? (
-                        <Button icon="check-circle" mode="elevated" title="Edit" style={styles.control} onPress={() => navigation.navigate('EditEventScreen', { event })}>Edit</Button>
+                        <Button
+                            icon="check-circle"
+                            mode="elevated"
+                            title="Edit"
+                            style={styles.control}
+                            onPress={() => navigation.navigate('EditEventScreen', { event })}
+                        >
+                            Edit
+                        </Button>
+                    ) : isUser ? (
+                        <>
+                            <Button
+                                icon="cancel"
+                                mode="elevated"
+                                title="Cancel Join"
+                                style={styles.control}
+                                onPress={handleCancelJoinPress}
+                            >
+                                Cancel Join
+                            </Button>
+                            {isEventFull && <Text style={styles.fullEventText}>Event Full</Text>}
+                        </>
+                    ) : isEventFull ? (
+                        <Text style={styles.fullEventText}>Event Full</Text>
+
+
                     ) : (
-                        <Button title="Join" icon="check-circle" mode="elevated" style={styles.control} onPress={handleJoinPress}>Join</Button>
+                        <Button
+                            title="Join"
+                            icon="check-circle"
+                            mode="elevated"
+                            style={styles.control}
+                            onPress={handleJoinPress}
+                        >
+                            Join
+                        </Button>
                     )}
-                    <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}>Cancel</Button>
                 </View>
+
 
             </ScrollView >
         </PaperProvider>
@@ -104,6 +207,13 @@ const styles = StyleSheet.create({
     },
     detailText: {
         marginLeft: 10,
+    },
+    fullEventText: {
+        textAlign: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+        padding: 10,
+        fontSize: 20,
     },
     control: {
         marginTop: 20,
