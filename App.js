@@ -10,30 +10,22 @@ import AuthStack from "./screens/login/authStack";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "./config/firebaseConfig";
 import { createStackNavigator } from "@react-navigation/stack";
-import AddEventScreen from "./screens/events/AddEventScreen";
-import { MD3DarkTheme, PaperProvider } from 'react-native-paper';
+import AddEventScreen from "./screens/events/AddEventScreen"
+import EventScreen from "./screens/events/EventScreen";
+import EditEventScreen from "./screens/events/EditEventScreen";
+import { PaperProvider } from 'react-native-paper';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme } from 'react-native-paper';
+import { useFetchCurrentUserProfile } from "./hooks/useFetchCurrentUserProfile";
+import theme from './theme'
 
 const Stack = createStackNavigator();
 
-
-//react-native-paper teema
-const theme = {
-  ...MD3DarkTheme,
-  roundness: 2,
-  colors: {
-    ...MD3DarkTheme.colors,
-    primary: 'orange',
-    secondary: '#f1c40f',
-    tertiary: '#a1b2c3',
-  },
-};
-
 //placeholder
 function HomeScreen() {
+  const { colors } = useTheme();
   return (
-    <View>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary }}>
       <Text>Home!</Text>
     </View>
   );
@@ -41,6 +33,8 @@ function HomeScreen() {
 
 //placeholder
 function ProfileScreen() {
+
+  const { colors } = useTheme();
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -51,9 +45,15 @@ function ProfileScreen() {
       });
   };
 
+  const { profile } = useFetchCurrentUserProfile();
+
+
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Settings!</Text>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary }}>
+      <Text >Settings!</Text>
+      <Text style={{ marginTop: 10 }}>Profile Data:</Text>
+      <Text style={{ marginTop: 5 }}>Email: {profile?.email ?? 'No email'}</Text>
+      <Text style={{ marginTop: 5 }}>Name: {profile?.firstName ?? 'No first name'} {profile?.lastName ?? 'No last name'}</Text>
       <Button title="Logout" onPress={handleLogout} />
     </View>
   );
@@ -68,7 +68,7 @@ function MapScreen({handleListItemPress, mapRef, handleMarkerPress, token, place
         setPlaces={setPlaces}
         handleMarkerPress={handleMarkerPress}
         mapRef={mapRef} />
-      <BottomSheetComponent 
+      <BottomSheetComponent
         handleListItemPress={handleListItemPress}
         places={places}
         filteredLocations={filteredLocations}
@@ -134,15 +134,15 @@ export default function App() {
     <PaperProvider theme={theme}>
       <NavigationContainer >
         <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: colors.tertiary,
-          },
-          headerTintColor: '#fff', 
-          headerTitleStyle: {
-            fontWeight: 'bold', 
-          },
-        }}>
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}>
           <Stack.Screen name="Main" options={{ headerShown: false }}>
             {() => (
               <Tab.Navigator initialRouteName="Map">
@@ -181,11 +181,13 @@ export default function App() {
               </Tab.Navigator>
             )}
           </Stack.Screen>
-          <Stack.Screen name="AddEventScreen" component={AddEventScreen} />
+          <Stack.Screen name="AddEventScreen" component={AddEventScreen} options={{ title: 'Add Event' }}/>
+          <Stack.Screen name="EventScreen" component={EventScreen} options={{ title: 'Event' }}/>
+          <Stack.Screen name="EditEventScreen" component={EditEventScreen} options={{ title: 'Edit Event' }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
   ) : (
-    <AuthStack />
+      <AuthStack />
   );
 }
