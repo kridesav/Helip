@@ -25,7 +25,8 @@ const Stack = createStackNavigator();
 //placeholder
 function HomeScreen() {
   const { colors } = useTheme();
-  
+  const eventIds = useContext(EventContext);
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary }}>
       <View >
@@ -34,7 +35,6 @@ function HomeScreen() {
             <View key={event.id} style={{ marginBottom: 10 }}>
               <TouchableOpacity>
                 <Text>{event.title} - ({event.date})</Text>
-                {event.isFull && <Text style={styles.fullText}>Event Full</Text>}
               </TouchableOpacity>
             </View>
 

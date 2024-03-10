@@ -10,6 +10,7 @@ export const useIfUserJoined = (usersParticipating) => {
         
         if (user && usersParticipating) {
             setIsUser(usersParticipating.includes(user.uid));
+       
         } else {
             setIsUser(false);
         }
