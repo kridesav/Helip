@@ -5,9 +5,9 @@ import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
 import { useNavigation } from '@react-navigation/native';
 
-const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, setSelectedMapItem, collapseBottomSheet }) => {
+const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, handleMapItemDeselect }) => {
 
-  const snapPoints = useMemo(() => ['3.5%', '15%', '50%', '90%'], []);
+  const snapPoints = useMemo(() => ['3.5%', '15%', '40%', '80%'], []);
   const [ pageNumber, setPageNumber ] = useState(0)
 
   const navigation = useNavigation();
@@ -26,7 +26,6 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
   return (
     <BottomSheet index={1} snapPoints={snapPoints} ref={bottomSheetRef} keyboardBehavior='interactive' android_keyboardInputMode='adjustResize' keyboardBlurBehavior="restore">
       <View style={styles.contentContainer}>
-        <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
         {selectedMapItem ?
           <View style={styles.dataContainer}>
             <Text>{selectedMapItem.properties.nimi_fi}</Text>
@@ -34,21 +33,21 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
             <Text>{selectedMapItem.properties.katuosoite}</Text>
             <View style={styles.buttonContainer}>
               <Button icon="plus-circle" mode="elevated" style={styles.control} title="Add Event" onPress={handleAddEventPress}>Add Event</Button>
-              <Button onPress={function () {
-                setSelectedMapItem(null)
-                /* collapseBottomSheet() */
-              }} icon="arrow-left-circle" mode="elevated" style={styles.control} title="Back">Back</Button>
+              <Button onPress={() => handleMapItemDeselect()} icon="arrow-left-circle" mode="elevated" style={styles.control} title="Back">Back</Button>
             </View>
           </View>
           :
-          <BottomSheetScrollView>
-            {
-              filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) =>
-              <View key={item.properties.id}>
-                <NativeButton  onPress={() => handleListItemPress(item)} title={item.properties.nimi_fi}></NativeButton>
-              </View>) || []
-            }
-          </BottomSheetScrollView>
+          <>
+          <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
+            <BottomSheetScrollView>
+              {
+                filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) =>
+                <View key={item.properties.id}>
+                  <NativeButton  onPress={() => handleListItemPress(item)} title={item.properties.nimi_fi}></NativeButton>
+                </View>) || []
+              }
+            </BottomSheetScrollView>
+          </>
       }
       </View>
     </BottomSheet>

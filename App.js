@@ -60,7 +60,7 @@ function ProfileScreen() {
 }
 
 
-function MapScreen({handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, setSelectedMapItem, selectedMapItem }) {
+function MapScreen({handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps
@@ -74,7 +74,7 @@ function MapScreen({handleListItemPress, mapRef, handleMarkerPress, token, place
         filteredLocations={filteredLocations}
         setFilteredLocations={setFilteredLocations}
         bottomSheetRef={bottomSheetRef}
-        setSelectedMapItem={setSelectedMapItem}
+        handleMapItemDeselect={handleMapItemDeselect}
         selectedMapItem={selectedMapItem} />
     </GestureHandlerRootView>
   );
@@ -94,12 +94,12 @@ export default function App() {
 
   //BottomSheet manip
   const bottomSheetRef = React.useRef(null);
-  const collapseBottomSheet = () => bottomSheetRef.current?.collapse();
   const expandBottomSheet = () => bottomSheetRef.current?.expand();
-
+  const snapToMiddle = () => bottomSheetRef.current?.snapToIndex(2);
+  
   const handleMarkerPress = (item) => {
     setSelectedMapItem(item)
-    expandBottomSheet()
+    snapToMiddle()
   }
 
   const handleListItemPress = (item) => {
@@ -108,6 +108,12 @@ export default function App() {
       latitude: item.geometry.coordinates[1],
       longitude: item.geometry.coordinates[0]
     }, 1000)
+    snapToMiddle()
+  }
+
+  const handleMapItemDeselect = () => {
+    setSelectedMapItem(null)
+    snapToMiddle()
   }
 
   useEffect(() => {
@@ -166,8 +172,8 @@ export default function App() {
                   filteredLocations={filteredLocations} 
                   setFilteredLocations={setFilteredLocations} 
                   bottomSheetRef={bottomSheetRef} 
-                  setSelectedMapItem={setSelectedMapItem} 
-                  selectedMapItem={selectedMapItem}
+                  selectedMapItem={selectedMapItem} 
+                  handleMapItemDeselect={handleMapItemDeselect}
                   handleMarkerPress={handleMarkerPress}
                   mapRef={mapRef}
                   handleListItemPress={handleListItemPress}/>}
