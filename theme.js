@@ -9,6 +9,7 @@ const theme = {
     primary: 'orange',
     secondary: '#f1c40f',
     tertiary: '#a1b2c3',
+    danger: '#FFC5CB'
   },
 };
 

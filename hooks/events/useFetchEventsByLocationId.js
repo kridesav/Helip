@@ -18,7 +18,7 @@ export const useFetchEventsByLocationId = (locationId) => {
       const eventsArray = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
-        isFull: doc.data().participantLimit <= (doc.data().participants?.length || 0)
+        isFull: doc.data().participants >= doc.data().participantLimit
       }));
       setEvents(eventsArray);
       console.log(eventsArray);

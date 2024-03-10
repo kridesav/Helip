@@ -25,7 +25,7 @@ const Stack = createStackNavigator();
 //placeholder
 function HomeScreen() {
   const { colors } = useTheme();
-  const eventIds = useContext(EventContext);
+  
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary }}>
       <View >

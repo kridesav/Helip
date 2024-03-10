@@ -8,10 +8,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useFetchEventsByLocationId } from '../hooks/events/useFetchEventsByLocationId';
 import { useTheme } from 'react-native-paper';
 import theme from '../theme'
-import { EventContext } from '../context/EventProvider'
 
 const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, setSelectedMapItem, collapseBottomSheet }) => {
-  const eventIds = useContext(EventContext);
+ 
   const snapPoints = useMemo(() => ['3.5%', '15%', '50%', '90%'], []);
   const [pageNumber, setPageNumber] = useState(0)
   const { colors } = useTheme();
@@ -29,6 +28,18 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
   }, [selectedMapItem]);
 
   const { events } = useFetchEventsByLocationId(locationId);
+
+
+  
+const dynamicStyles = {
+  fullButton: {
+    backgroundColor: colors.danger,
+  },
+  fullButtonText: {
+    color: colors.tertiary,
+  },
+};
+
 
   const NativeButton = (props) => {
     return (
@@ -59,7 +70,7 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
                 {events.length > 0 ? (
                   events.map(event => (
                     <View key={event.id} style={{ marginBottom: 10 }}>
-                      <TouchableOpacity onPress={() => navigation.navigate('EventScreen', { event })} style={[styles.button, event.isFull ? styles.fullButton : {}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate('EventScreen', { event, isFull: event.participants >= event.participantLimit  })} style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}>
                         <Text style={styles.buttonText}>{event.title} - ({event.date})</Text>
                         {event.isFull && <Text style={styles.fullText}>Event Full</Text>}
                       </TouchableOpacity>
@@ -97,6 +108,7 @@ const styles = StyleSheet.create({
   dataContainer: {
     padding: 10,
     marginTop: 10,
+    marginBottom: 15,
 
   },
   contentContainer: {
@@ -132,6 +144,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.25,
     color: 'black',
   },
+
 });
 
 export default BottomSheetComponent;
