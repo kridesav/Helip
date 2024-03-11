@@ -26,7 +26,7 @@ const LoginScreen = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const token = await getIdToken(user);
-      console.log("User's token: ", token);
+      // console.log("User's token: ", token); (for debugging purposes)
     } catch (error) {
       setError(error.message);
       console.log("Error signing in: ", error.message);

@@ -13,6 +13,24 @@ import mapStyle from '../mapStyle.json'
 import useLipasFetch from '../components/lipasfetch';
 import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { debounce } from 'lodash';
+import footballIcon from '../assets/football.png';
+import gymIcon from '../assets/gym.png';
+import swimmingIcon from '../assets/swimming-pool.png';
+import defaultIcon from '../assets/default.png';
+import golfIcon from '../assets/golf.png';
+import iceSkatingIcon from '../assets/iceskating.png';
+import basketballIcon from '../assets/basketball.png';
+import runningIcon from '../assets/running.png';
+import tennisIcon from '../assets/tennis.png';
+import hockeyIcon from '../assets/hockey.png';
+import boxingIcon from '../assets/boxing.png';
+import volleyballIcon from '../assets/volleyball.png';
+import infoIcon from '../assets/info.png';
+import skateIcon from '../assets/skate.png';
+import danceIcon from '../assets/dance.png';
+import baseballIcon from '../assets/baseball.png';
+import motorsportsIcon from '../assets/motorsports.png';
+import petsIcon from '../assets/pets.png';
 
 
 export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token }) {
@@ -66,6 +84,47 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token 
     return <LoadingIndicator />;
   }
 
+  function getSportIcon(type) {
+    switch (true) {
+      case type === 'Pallokenttä' || type === 'Jalkapallohalli' || type === 'Jalkapallostadion':
+        return footballIcon;
+      case type === 'Kuntosali' || type === 'Ulkokuntoilupaikka' || type === 'Liikuntapuisto' || type === 'Liikuntahalli' || type === 'Liikuntasali' || type === 'Kuntokeskus' || type === 'Voimailusali' || type === 'Lähiliikuntapaikka' || type === 'Naisten kuntokeskus':
+        return gymIcon;
+      case type === 'Uimahalli' || type === 'Uimaranta' || type === 'Uimapaikka' || type === 'Talviuintipaikka' || type === 'Uima-allas' || type === 'Maauimala':
+        return swimmingIcon;
+      case type === 'Ratagolf' || type === 'Golfkenttä' || type === 'Golfin harjoitusalue' || type === 'Golfin harjoitushalli' || type === 'Frisbeegolfrata':
+          return golfIcon;
+      case type === 'Koripallokenttä':
+        return basketballIcon;
+      case type === 'Luistelukenttä' || type === 'Luistelureitti' || type === 'Pikaluistelurata':
+        return iceSkatingIcon;
+      case type === 'Juoksurata' || type === 'Yleisurheilukenttä' || type === 'Yleisurheilun harjoitusalue' || type === 'Juoksusuora' || type === 'Yksittäinen yleisurheilun suorituspaikka' || type === 'Monitoimihalli/areena':
+        return runningIcon;
+      case type === 'Tenniskenttä' || type === 'Tenniskenttäalue' || type === 'Tennishalli' || type === 'Tenniskeskus' || type === 'Tenniskentät' || type === 'Padelhalli' || type === 'Padelkenttäalue' || type === 'Pöytätennistila' || type === 'Squash-halli' || type === 'Sulkapallohalli':
+        return tennisIcon;
+      case type === 'Kaukalo' || type === 'Jääkiekkokaukalo' || type === 'Harjoitusjäähalli' || type === 'Tekojääkenttä':
+        return hockeyIcon;
+      case type === 'Kamppailulajien sali':
+        return boxingIcon;
+      case type === 'Lentopallokenttä' || type === 'Beachvolleykenttä':
+        return volleyballIcon;
+      case type === 'Opastuspiste':
+        return infoIcon;
+      case type === 'Skeitti-/rullaluistelupaikka':
+        return skateIcon;
+      case type === 'Tanssisali' || type === 'Tanssitila':
+        return danceIcon;
+      case type === 'Pesäpallokenttä':
+        return baseballIcon;
+      case type === 'Moottorirata' || type === 'Karting-rata' || type === 'Moottoripyöräilyalue':
+        return motorsportsIcon;
+      case type === 'Koiraurheilualue' || type === 'Koirapuisto' || type === 'Koirien uintipaikka' || type === 'Koiraurheiluhalli':
+        return petsIcon;
+      default:
+        return defaultIcon;
+    }
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar />
@@ -86,7 +145,6 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token 
             >
               {places && places.map((item, index) => (
                 <Marker
-                  pinColor='green'
                   key={index}
                   coordinate={{
                     latitude: item.geometry.coordinates[1],
@@ -94,6 +152,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token 
                   }}
                   title={item.properties.nimi_fi}
                   onPress={() => handleMarkerPress(item)}
+                  image={getSportIcon(item.properties.tyyppi_nim)}
                 />))}
 
             </MapView>
