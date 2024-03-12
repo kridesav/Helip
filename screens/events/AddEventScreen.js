@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { TextInput } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
-import useAddEvent from '../../hooks/events/useAddEvent'
+import useAddEvent from '../../hooks/events/utils/addEvent'
 import DateTimePicker from '../../components/DateTimePicker';
 import { Button } from "react-native-paper"
 import { validateInput } from '../../utils/validateInput';
@@ -71,6 +71,7 @@ const AddEventScreen = () => {
             coordinates: selectedMapItem.geometry.coordinates,
             participantLimit: value.participantLimit,
             participants: 0,
+            usersParticipating: [],
         };
 
         const success = await addEvent(eventData, userId);

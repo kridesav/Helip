@@ -1,116 +1,123 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Input, Button } from "react-native-elements";
+import React, { useState } from "react";
+import { View, StyleSheet, ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { TextInput, Button, Text, useTheme } from "react-native-paper";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, firestore} from "../../config/firebaseConfig";
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-
+import { auth, firestore } from "../../config/firebaseConfig";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 const RegisterScreen = ({ navigation }) => {
-  const [value, setValue] = React.useState({
-    email: "",
-    password: "",
-    error: "",
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [error, setError] = useState("");
 
   async function signUp() {
-    if (value.email === "" || value.password === "") {
-      setValue({
-        ...value,
-        error: "Email and password are mandatory.",
-      });
+    if (email === "" || password === "" || displayName === "" || firstName === "" || lastName === "") {
+      setError("All fields are mandatory.");
       return;
     }
 
-    setValue({ ...value, error: "" });
+    setError("");
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, value.email, value.password);
-     
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const userData = {
-        email: value.email,
-        displayName: value.displayName || '',  //Displayname
-        firstName: '',
-        lastName: '',
+        email,
+        displayName,
+        firstName,
+        lastName,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        profilePictureUrl: '',
+        profilePictureUrl: "",
         eventsCreated: [],
         eventsParticipating: [],
-
       };
 
-      // Create a document in 'users' collection with the auth user's UID as the document ID
       await setDoc(doc(firestore, "users", userCredential.user.uid), userData);
-      console.log('User document created in Firestore.');
+      console.log("User document created in Firestore.");
       console.log("User registered: ", userCredential.user);
     } catch (error) {
       console.error("Error in signUp:", error);
-      setValue({ ...value, error: error.message });
+      setError(error.message);
     }
   }
 
   return (
-    <View style={styles.container}>
-      <Text>Signup screen!</Text>
-
-      {!!value.error && (
-        <View style={styles.error}>
-          <Text>{value.error}</Text>
+    <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.flex}>
+        <View style={styles.overlay}>
+          <ScrollView contentContainerStyle={styles.flexGrow}>
+            <View style={styles.registerContainer}>
+              <TouchableOpacity style={styles.backButtonContainer} onPress={() => navigation.goBack()}>
+                <Button icon="arrow-left">Back</Button>
+              </TouchableOpacity>
+              <Text variant="headlineLarge" style={styles.title}>
+                Sign Up!
+              </Text>
+              <TextInput label="Email" value={email} onChangeText={setEmail} mode="outlined" style={styles.input} />
+              <TextInput label="Password" value={password} onChangeText={setPassword} mode="outlined" secureTextEntry style={styles.input} />
+              <TextInput label="Display Name" value={displayName} onChangeText={setDisplayName} mode="outlined" style={styles.input} />
+              <TextInput label="First Name" value={firstName} onChangeText={setFirstName} mode="outlined" style={styles.input} />
+              <TextInput label="Last Name" value={lastName} onChangeText={setLastName} mode="outlined" style={styles.input} />
+              <Button mode="contained" onPress={signUp} style={styles.button}>
+                Sign up
+              </Button>
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+            </View>
+          </ScrollView>
         </View>
-      )}
-
-      <View style={styles.controls}>
-        <Input
-          placeholder="Email"
-          containerStyle={styles.control}
-          value={value.email}
-          onChangeText={(text) => setValue({ ...value, email: text })}
-          leftIcon={<Icon name="envelope" size={16} />}
-        />
-
-        <Input
-          placeholder="Password"
-          containerStyle={styles.control}
-          value={value.password}
-          onChangeText={(text) => setValue({ ...value, password: text })}
-          secureTextEntry={true}
-          leftIcon={<Icon name="key" size={16} />}
-        />
-
-        <Button title="Sign up" buttonStyle={styles.control} onPress={signUp} />
-      </View>
-    </View>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
-    paddingTop: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
+    width: "100%",
+    height: "100%",
+  },
+  flex: {
+    flex: 1,
+  },
+  flexGrow: {
+    flexGrow: 1,
     justifyContent: "center",
   },
-  controls: {
-    width: "80%",
+  overlay: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.3)",
   },
-  control: {
-    marginTop: 20,
-    height: 50,
+  backButtonContainer: {
+    alignSelf: "flex-start",
+    position: "absolute",
+    top: 20,
+    left: 10,
+    zIndex: 10,
   },
-  inputStyle: {
-    fontSize: 18,
-    paddingLeft: 10,
+  registerContainer: {
+    backgroundColor: "white",
+    borderRadius: 25,
+    padding: 20,
   },
-  leftIconContainerStyle: {
-    paddingLeft: 15,
+  title: {
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  input: {
+    marginBottom: 10,
+    backgroundColor: "rgba(255,255,255,0.9)",
+  },
+  button: {
+    marginTop: 10,
   },
   error: {
+    color: "red",
+    textAlign: "center",
     marginTop: 10,
-    padding: 10,
-    color: "#fff",
-    backgroundColor: "#D54826FF",
   },
 });
 

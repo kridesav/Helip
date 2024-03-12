@@ -1,9 +1,9 @@
-import { firestore } from '../../config/firebaseConfig';
+import { firestore } from '../../../config/firebaseConfig';
 import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { Alert } from 'react-native';
 
-export default useModifyEvent = () => {
-  const modifyEvent = async (eventData, userId) => {
+export default useEditEvent = () => {
+  const editEvent = async (eventData, userId) => {
     const eventRef = doc(firestore, "events", eventData.id);
 
     const { id, ...updateData } = eventData;
@@ -26,5 +26,5 @@ export default useModifyEvent = () => {
     }
   };
 
-  return modifyEvent;
+  return editEvent;
 };
