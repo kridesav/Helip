@@ -189,7 +189,7 @@ export default function App() {
                       filteredLocations={filteredLocations}
                       setFilteredLocations={setFilteredLocations}
                       bottomSheetRef={bottomSheetRef}
-                      setSelectedMapItem={setSelectedMapItem}
+                      handleMapItemDeselect={handleMapItemDeselect}
                       selectedMapItem={selectedMapItem}
                       handleMarkerPress={handleMarkerPress}
                       mapRef={mapRef}
