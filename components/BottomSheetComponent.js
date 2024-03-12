@@ -12,7 +12,7 @@ import theme from '../theme'
 const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, handleMapItemDeselect }) => {
 
   const snapPoints = useMemo(() => ['3.5%', '15%', '40%', '80%'], []);
-  const [pageNumber, setPageNumber] = useState(0)
+  const [ pageNumber, setPageNumber ] = useState(0);
   const { colors } = useTheme();
   const navigation = useNavigation();
 
