@@ -60,10 +60,11 @@ function ProfileScreen() {
 }
 
 
-function MapScreen({handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
+function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps
+        collapseBottomSheet={collapseBottomSheet}
         token={token}
         setPlaces={setPlaces}
         handleMarkerPress={handleMarkerPress}
@@ -96,6 +97,7 @@ export default function App() {
   const bottomSheetRef = React.useRef(null);
   const expandBottomSheet = () => bottomSheetRef.current?.expand();
   const snapToMiddle = () => bottomSheetRef.current?.snapToIndex(2);
+  const collapseBottomSheet = () => bottomSheetRef.current?.snapToIndex(1);
   
   const handleMarkerPress = (item) => {
     setSelectedMapItem(item)
@@ -176,6 +178,7 @@ export default function App() {
                   handleMapItemDeselect={handleMapItemDeselect}
                   handleMarkerPress={handleMarkerPress}
                   mapRef={mapRef}
+                  collapseBottomSheet={collapseBottomSheet}
                   handleListItemPress={handleListItemPress}/>}
                 </Tab.Screen>
               </Tab.Navigator>
