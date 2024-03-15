@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, ScrollView, Alert } from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { TextInput } from "react-native-paper";
+import { TextInput, Button, Text } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
 import DateTimePicker from '../../components/DateTimePicker';
-import { Button } from "react-native-paper"
 import { validateInput } from '../../utils/validateInput';
 import formatTime from '../../utils/formatTime';
 import formatDate from '../../utils/formatDate';
@@ -80,12 +79,12 @@ const EditEventScreen = () => {
                 }
             ]
         );
-       
+
 
     }
 
     const DeleteEventInFirestore = async () => {
-       
+
         try {
             const success = await deleteEvent(event.id, userId);
 
@@ -98,7 +97,7 @@ const EditEventScreen = () => {
         } catch (error) {
             console.error("Failed to delete the event:", error);
             setErrors({ form: "Failed to delete the event. Please try again." });
-          
+
         }
 
     };
@@ -126,11 +125,12 @@ const EditEventScreen = () => {
         } catch (error) {
             console.error("Failed to modify the event:", error);
             setErrors({ form: "Failed to modify the event. Please try again." });
-          
+
         }
     };
 
     return (
+
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: colors.background }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -144,139 +144,136 @@ const EditEventScreen = () => {
                 </View>
             </View>
 
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView contentContainerStyle={styles.flexGrow}>
+                <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+                    <View style={styles.overlay}>
+                        <View style={styles.container}>
 
-                <View style={styles.container}>
+                            <DateTimePicker setDate={setDate}
+                                setStartTime={setStartTime}
+                                setEndTime={setEndTime}
+                                date={date} StartTime={StartTime}
+                                EndTime={EndTime} />
 
-                    <DateTimePicker setDate={setDate}
-                        setStartTime={setStartTime}
-                        setEndTime={setEndTime}
-                        date={date} StartTime={StartTime}
-                        EndTime={EndTime} />
+                            <View style={styles.controls}>
+                                <View style={styles.textInputContainer}>
+                                    <Icon name="format-title" size={20} style={styles.iconStyle}
+                                        color={colors.primary} />
+                                    <TextInput
+                                        style={styles.textInput}
+                                        mode="outlined"
+                                        placeholder="Event title"
+                                        containerStyle={styles.control}
+                                        value={value.title}
+                                        onChangeText={(text) => {
+                                            setValue({ ...value, title: text });
+                                            if (errors.title) {
+                                                setErrors({ ...errors, title: null });
+                                            }
+                                        }}
 
-                    <View style={styles.controls}>
-                        <View style={styles.textInputContainer}>
-                            <Icon name="format-title" size={20} style={styles.iconStyle}
-                                color={colors.primary} />
-                            <TextInput
-                                style={styles.textInput}
-                                mode="outlined"
-                                placeholder="Event title"
-                                containerStyle={styles.control}
-                                value={value.title}
-                                onChangeText={(text) => {
-                                    setValue({ ...value, title: text });
-                                    if (errors.title) {
-                                        setErrors({ ...errors, title: null });
-                                    }
-                                }}
+                                    />
 
-                            />
+                                </View>
+                                {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
+                                <View style={styles.textareaContainer}>
+                                    <Icon name="information" size={20}
+                                        color={colors.primary} style={styles.iconStyle} />
+                                    <TextInput
+                                        style={styles.desc}
+                                        placeholder="Description"
+                                        editable
+                                        multiline
+                                        numberOfLines={10}
+                                        maxLength={400}
+                                        value={value.description}
 
-                        </View>
-                        {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
-                        <View style={styles.textareaContainer}>
-                            <Icon name="information" size={20}
-                                color={colors.primary} style={styles.iconStyle} />
-                            <TextInput
-                                style={styles.desc}
-                                placeholder="Description"
-                                editable
-                                multiline
-                                numberOfLines={10}
-                                maxLength={400}
-                                value={value.description}
+                                        onChangeText={(text) => {
+                                            setValue({ ...value, description: text });
 
-                                onChangeText={(text) => {
-                                    setValue({ ...value, description: text });
-
-                                    if (errors.description) {
-                                        setErrors({ ...errors, description: null });
-                                    }
-                                }}
-                            />
+                                            if (errors.description) {
+                                                setErrors({ ...errors, description: null });
+                                            }
+                                        }}
+                                    />
 
 
-                        </View>
-                        {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
-                        <View style={styles.textInputContainer}>
-                            <Icon name="account-multiple-plus" size={20}
-                                color={colors.primary} style={styles.iconStyle} />
-                            <TextInput
-                                style={styles.textInput}
-                                mode="outlined"
+                                </View>
+                                {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
+                                <View style={styles.textInputContainer}>
+                                    <Icon name="account-multiple-plus" size={20}
+                                        color={colors.primary} style={styles.iconStyle} />
+                                    <TextInput
+                                        style={styles.textInput}
+                                        mode="outlined"
 
-                                placeholder="Max participants"
-                                containerStyle={styles.control}
-                                keyboardType='numeric'
-                                value={value.participantLimit.toString()}
-                                onChangeText={(text) => {
-                                    setValue({
-                                        ...value,
-                                        participantLimit: text ? parseInt(text, 10) : 0
-                                    })
-                                    if (errors.participantLimit) {
-                                        setErrors({ ...errors, participantLimit: null });
-                                    }
-                                }}
+                                        placeholder="Max participants"
+                                        containerStyle={styles.control}
+                                        keyboardType='numeric'
+                                        value={value.participantLimit.toString()}
+                                        onChangeText={(text) => {
+                                            setValue({
+                                                ...value,
+                                                participantLimit: text ? parseInt(text, 10) : 0
+                                            })
+                                            if (errors.participantLimit) {
+                                                setErrors({ ...errors, participantLimit: null });
+                                            }
+                                        }}
 
-                                maxLength={20}
-                            />
+                                        maxLength={20}
+                                    />
 
-                        </View>
-                        {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
-                        <View style={styles.buttons}>
-                            <Button icon="check-circle" mode="elevated" title="Modify" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
-                            <Button icon="delete" mode="elevated" title="Delete" style={styles.control} onPress={handleDelete} >Delete</Button>
-                            <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
+                                </View>
+                                {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
+                                <View style={styles.buttons}>
+                                    <Button icon="check-circle" mode="elevated" title="Modify" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
+                                    <Button icon="delete" mode="elevated" title="Delete" style={styles.control} onPress={handleDelete} >Delete</Button>
+                                    <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
+                                </View>
+                            </View>
+
                         </View>
                     </View>
-
-                </View>
+                </ImageBackground>
             </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView >
 
     );
 };
 
 const styles = StyleSheet.create({
-    DateContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-
-        padding: 10,
-
+    backgroundImage: {
+        flex: 1,
+        width: "100%",
+        height: "100%",
     },
-    date: {
-
+    overlay: {
+        flex: 1,
+        padding: 20,
+        justifyContent: "center",
+        backgroundColor: "rgba(0,0,0,0.9)",
     },
-
     container: {
-        height: 650,
-
         alignItems: "center",
         justifyContent: "center",
     },
-    selected: {
-        padding: 10,
-        fontSize: 20,
 
-
-    },
     textareaContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
+        paddingBottom: 10,
         marginTop: 20,
+        width: '98%',
 
     },
 
     textInputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
+        paddingBottom: 10,
         marginTop: 20,
-
+      
 
     },
     textInput: {
@@ -284,17 +281,15 @@ const styles = StyleSheet.create({
     },
 
     controls: {
-        width: "80%",
-
+        width: "100%",
+      
     },
     control: {
         marginTop: 20,
 
-
-
     },
     iconStyle: {
-        marginRight: 10,
+        marginRight: 5,
 
     },
     desc: {
@@ -303,14 +298,13 @@ const styles = StyleSheet.create({
         height: 100,
         fontSize: 18,
 
-
     },
     inputStyle: {
         fontSize: 18,
-        paddingLeft: 10,
+    
     },
     leftIconContainerStyle: {
-        paddingLeft: 15,
+        
     },
 
     errorText: {

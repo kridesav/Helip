@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, ScrollView, Alert } from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { TextInput } from "react-native-paper";
+import { TextInput, Button, Text } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
 import addEvent from '../../hooks/events/utils/addEvent'
 import DateTimePicker from '../../components/DateTimePicker';
-import { Button } from "react-native-paper"
 import { validateInput } from '../../utils/validateInput';
-import  formatTime  from '../../utils/formatTime';
-import  formatDate  from '../../utils/formatDate';
+import formatTime from '../../utils/formatTime';
+import formatDate from '../../utils/formatDate';
 import { useTheme } from 'react-native-paper';
+
 
 
 const AddEventScreen = () => {
@@ -84,108 +84,113 @@ const AddEventScreen = () => {
     };
 
     return (
+
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: colors.background }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
-           
-            <View style={{ backgroundColor: colors.primary, padding:10}}>
+
+            <View style={{ backgroundColor: colors.primary, padding: 10 }}>
                 <Text style={{ color: colors.text }}>{selectedMapItem.properties.nimi_fi}</Text>
                 <View style={{ flexGrow: 1 }}>
                     <Text style={{ color: colors.text }}>{selectedMapItem.properties.katuosoite}, </Text>
                     <Text style={{ color: colors.text }}>{selectedMapItem.properties.postitoimi}</Text>
                 </View>
             </View>
-          
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
-                <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.flexGrow}>
+                <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+                    <View style={styles.overlay}>
+                        <View style={styles.container}>
 
-                <DateTimePicker setDate={setDate}
-                setStartTime={setStartTime}
-                setEndTime={setEndTime} 
-                date={date}StartTime={StartTime} 
-                EndTime={EndTime}/>
+                            <DateTimePicker setDate={setDate}
+                                setStartTime={setStartTime}
+                                setEndTime={setEndTime}
+                                date={date} StartTime={StartTime}
+                                EndTime={EndTime} />
 
-                    <View style={styles.controls}>
-                        <View style={styles.textInputContainer}>
-                            <Icon name="format-title" size={20} style={styles.iconStyle}
-                                color={colors.primary} />
-                            <TextInput
-                                style={styles.textInput}
-                                mode="outlined"
-                                placeholder="Event title"
-                                containerStyle={styles.control}
-                                value={value.title}
-                                onChangeText={(text) => {
-                                    setValue({ ...value, title: text });
-                                    if (errors.title) {
-                                        setErrors({ ...errors, title: null });
-                                    }
-                                }}
+                            <View style={styles.controls}>
+                                <View style={styles.textInputContainer}>
+                                    <Icon name="format-title" size={20} style={styles.iconStyle}
+                                        color={colors.primary} />
+                                    <TextInput
+                                        style={styles.textInput}
+                                        mode="outlined"
+                                        placeholder="Event title"
+                                        containerStyle={styles.control}
+                                        value={value.title}
+                                        onChangeText={(text) => {
+                                            setValue({ ...value, title: text });
+                                            if (errors.title) {
+                                                setErrors({ ...errors, title: null });
+                                            }
+                                        }}
 
-                            />
+                                    />
 
-                        </View>
-                        {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
-                        <View style={styles.textareaContainer}>
-                            <Icon name="information" size={20}
-                                color={colors.primary} style={styles.iconStyle} />
-                            <TextInput
-                                style={styles.desc}
-                                placeholder="Description"
-                                editable
-                                multiline
-                                numberOfLines={10}
-                                maxLength={400}
-                                value={value.description}
-
-                                onChangeText={(text) => {
-                                    setValue({ ...value, description: text });
-
-                                    if (errors.description) {
-                                        setErrors({ ...errors, description: null });
-                                    }
-                                }}
-                            />
+                                </View>
+                                {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
+                                <View style={styles.textareaContainer}>
+                                    <Icon name="information" size={20}
+                                        color={colors.primary} style={styles.iconStyle} />
+                                    <TextInput
+                                        style={styles.desc}
+                                        placeholder="Description"
+                                        editable
+                                        multiline
+                                        numberOfLines={10}
+                                        maxLength={400}
+                                        value={value.description}
 
 
-                        </View>
-                        {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
-                        <View style={styles.textInputContainer}>
-                            <Icon name="account-multiple-plus" size={20}
-                                color={colors.primary} style={styles.iconStyle} />
-                            <TextInput
-                                style={styles.textInput}
-                                mode="outlined"
+                                        onChangeText={(text) => {
+                                            setValue({ ...value, description: text });
 
-                                placeholder="Max participants"
-                                containerStyle={styles.control}
-                                keyboardType='numeric'
-                                value={value.participantLimit.toString()}
-                                onChangeText={(text) => {
-                                    setValue({
-                                        ...value,
-                                        participantLimit: text ? parseInt(text, 10) : 0
-                                    })
-                                    if (errors.participantLimit) {
-                                        setErrors({ ...errors, participantLimit: null });
-                                    }
-                                }}
+                                            if (errors.description) {
+                                                setErrors({ ...errors, description: null });
+                                            }
+                                        }}
+                                    />
 
-                                maxLength={20}
-                            />
 
-                        </View>
-                        {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
-                        <View style={styles.buttons}>
-                            <Button icon="check-circle" mode="elevated" title="Add" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
-                            <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
+                                </View>
+                                {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
+                                <View style={styles.textInputContainer}>
+                                    <Icon name="account-multiple-plus" size={20}
+                                        color={colors.primary} style={styles.iconStyle} />
+                                    <TextInput
+                                        style={styles.textInput}
+                                        mode="outlined"
+
+                                        placeholder="Max participants"
+                                        containerStyle={styles.control}
+                                        keyboardType='numeric'
+                                        value={value.participantLimit.toString()}
+                                        onChangeText={(text) => {
+                                            setValue({
+                                                ...value,
+                                                participantLimit: text ? parseInt(text, 10) : 0
+                                            })
+                                            if (errors.participantLimit) {
+                                                setErrors({ ...errors, participantLimit: null });
+                                            }
+                                        }}
+
+                                        maxLength={20}
+                                    />
+
+                                </View>
+                                {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
+                                <View style={styles.buttons}>
+                                    <Button icon="check-circle" mode="elevated" title="Add" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
+                                    <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
+                                </View>
+                            </View>
+
                         </View>
                     </View>
-
-                </View>
+                </ImageBackground>
             </ScrollView>
         </KeyboardAvoidingView>
 
@@ -193,43 +198,37 @@ const AddEventScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    DateContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-
-        padding: 10,
-
+    backgroundImage: {
+        flex: 1,
+        width: "100%",
+        height: "100%",
     },
-    date: {
-
+    overlay: {
+        flex: 1,
+        padding: 20,
+        justifyContent: "center",
+        backgroundColor: "rgba(0,0,0,0.9)",
     },
-
     container: {
-        height: 650,
-
         alignItems: "center",
         justifyContent: "center",
     },
-    selected: {
-        padding: 10,
-        fontSize: 20,
-       
 
-    },
     textareaContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
+        paddingBottom: 10,
         marginTop: 20,
+        width: '98%',
 
     },
 
     textInputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
+        paddingBottom: 10,
         marginTop: 20,
-
+      
 
     },
     textInput: {
@@ -237,17 +236,15 @@ const styles = StyleSheet.create({
     },
 
     controls: {
-        width: "80%",
-
+        width: "100%",
+      
     },
     control: {
         marginTop: 20,
 
-
-
     },
     iconStyle: {
-        marginRight: 10,
+        marginRight: 5,
 
     },
     desc: {
@@ -255,15 +252,13 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
         height: 100,
         fontSize: 18,
-
-
     },
     inputStyle: {
         fontSize: 18,
-        paddingLeft: 10,
+    
     },
     leftIconContainerStyle: {
-        paddingLeft: 15,
+        
     },
 
     errorText: {

@@ -13,6 +13,11 @@ export default deleteEvent = async (eventId, userId) => {
       eventsParticipating: arrayRemove(eventId)
     });
     console.log("Event successfully removed and user unlinked!");
+    Alert.alert(
+      "Event removed",
+      "Event was successfully removed",
+      [{ text: "OK" }]
+    )
     return true;
   } catch (error) {
     console.error("Error removing event or unlinking it to user: ", error);

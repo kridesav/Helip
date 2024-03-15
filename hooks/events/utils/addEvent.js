@@ -17,6 +17,11 @@ export default addEvent = () => {
         eventsCreated: arrayUnion(eventRef.id)
       });
       console.log("Event successfully added and linked to user!");
+      Alert.alert(
+        "Event created",
+        "Event was successfully created",
+        [{ text: "OK" }]
+      )
       return true;
     } catch (error) {
       console.error("Error adding event or linking it to user: ", error);
