@@ -1,7 +1,7 @@
 import * as React from "react";
-import { useState, useEffect, useContext} from "react";
+import { useState, useEffect, useContext } from "react";
 import Maps from "./screens/map";
-import { Text, View, Button, TouchableOpacity } from "react-native";
+import { Text, View, Button, TouchableOpacity, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import BottomSheetComponent from "./components/BottomSheetComponent";
@@ -18,13 +18,29 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { useTheme } from 'react-native-paper';
 import { useFetchCurrentUserProfile } from "./hooks/useFetchCurrentUserProfile";
 import { EventProvider, EventContext } from './context/EventProvider'
+import { useNavigation } from '@react-navigation/native';
 import theme from './theme'
 
 const Stack = createStackNavigator();
 
+
+
 //placeholder
 function HomeScreen() {
   const { colors } = useTheme();
+  const navigation = useNavigation();
+
+  const dynamicStyles = {
+    fullButton: {
+      backgroundColor: colors.danger,
+    },
+    fullButtonText: {
+      color: colors.tertiary,
+    },
+  };
+
+
+
   const eventIds = useContext(EventContext);
 
   return (
@@ -34,7 +50,7 @@ function HomeScreen() {
           eventIds.map(event => (
             <View key={event.id} style={{ marginBottom: 10 }}>
               <TouchableOpacity>
-                <Text>{event.title} - ({event.date})</Text>
+                <Text onPress={() => navigation.navigate('EventScreen', { event, isFull: event.participants >= event.participantLimit })} style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}>{event.title} - ({event.date})</Text>
               </TouchableOpacity>
             </View>
 
@@ -76,7 +92,7 @@ function ProfileScreen() {
 }
 
 
-function MapScreen({handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
+function MapScreen({ handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps
@@ -112,7 +128,7 @@ export default function App() {
   const bottomSheetRef = React.useRef(null);
   const expandBottomSheet = () => bottomSheetRef.current?.expand();
   const snapToMiddle = () => bottomSheetRef.current?.snapToIndex(2);
-  
+
   const handleMarkerPress = (item) => {
     setSelectedMapItem(item)
     snapToMiddle()
@@ -209,3 +225,17 @@ export default function App() {
     <AuthStack />
   );
 }
+
+const styles = StyleSheet.create({
+
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: 'white',
+  },
+});

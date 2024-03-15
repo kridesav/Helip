@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, ScrollView, Alert } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { useNavigation, useRoute, useFocusEffect} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { TextInput } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
 import DateTimePicker from '../../components/DateTimePicker';
@@ -10,7 +10,8 @@ import { validateInput } from '../../utils/validateInput';
 import formatTime from '../../utils/formatTime';
 import formatDate from '../../utils/formatDate';
 import { useTheme } from 'react-native-paper';
-import useEditEvent from "../../hooks/events/utils/editEvent";
+import editEvent from "../../hooks/events/utils/editEvent";
+import deleteEvent from "../../hooks/events/utils/deleteEvent";
 import { parseTime, parseDate } from '../../utils/parse'
 
 
@@ -36,7 +37,7 @@ const EditEventScreen = () => {
     const [StartTime, setStartTime] = useState(initialStartTime);
     const [EndTime, setEndTime] = useState(initialEndTime);
 
-    const EditEvent = useEditEvent();
+    const EditEvent = editEvent();
     const { currentUser } = useAuth();
     const userId = currentUser?.uid;
 
@@ -61,6 +62,45 @@ const EditEventScreen = () => {
         } else {
             console.log('Input validation failed');
         }
+    };
+
+    const handleDelete = () => {
+
+        Alert.alert(
+            "Confirm Delete",
+            "Are you sure you want to delete this event?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Yes", onPress: () => {
+                        DeleteEventInFirestore();
+                        setErrors({});
+
+                    }
+                }
+            ]
+        );
+       
+
+    }
+
+    const DeleteEventInFirestore = async () => {
+       
+        try {
+            const success = await deleteEvent(event.id, userId);
+
+            if (success) {
+                console.log("Event successfully deleted!");
+                navigation.navigate('Map');
+            } else {
+                console.log("Failed to delete the event");
+            }
+        } catch (error) {
+            console.error("Failed to delete the event:", error);
+            setErrors({ form: "Failed to delete the event. Please try again." });
+          
+        }
+
     };
 
     const EditEventInFirestore = async () => {
@@ -187,6 +227,7 @@ const EditEventScreen = () => {
                         {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
                         <View style={styles.buttons}>
                             <Button icon="check-circle" mode="elevated" title="Modify" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
+                            <Button icon="delete" mode="elevated" title="Delete" style={styles.control} onPress={handleDelete} >Delete</Button>
                             <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
                         </View>
                     </View>

@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { TextInput } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
-import useAddEvent from '../../hooks/events/utils/addEvent'
+import addEvent from '../../hooks/events/utils/addEvent'
 import DateTimePicker from '../../components/DateTimePicker';
 import { Button } from "react-native-paper"
 import { validateInput } from '../../utils/validateInput';
@@ -27,7 +27,7 @@ const AddEventScreen = () => {
     const [StartTime, setStartTime] = useState(new Date());
     const [EndTime, setEndTime] = useState(new Date());
 
-    const addEvent = useAddEvent();
+    const AddEvent = addEvent();
     const { selectedMapItem } = route.params;
     const { currentUser } = useAuth();
     const userId = currentUser?.uid;
@@ -74,7 +74,7 @@ const AddEventScreen = () => {
             usersParticipating: [],
         };
 
-        const success = await addEvent(eventData, userId);
+        const success = await AddEvent(eventData, userId);
 
         if (success) {
             navigation.goBack();
