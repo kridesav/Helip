@@ -111,11 +111,10 @@ const EventScreen = () => {
                     { text: "OK", onPress: () => fetchLatestEventDetails() }
                 ]);
             } else {
-                Alert.alert("Error", "Failed to join event or update UI.");
+                Alert.alert("Error", "Failed to cancel your participation in event or update UI.");
             }
         } catch (error) {
-            console.error("Error during event join operation:", error);
-            Alert.alert("Error", "An error occurred while trying to join the event.");
+            console.error("Error during event join opeshile trying to join the event.");
         } finally {
             setIsCanceling(false);
         }
