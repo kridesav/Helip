@@ -127,7 +127,6 @@ export default function App() {
 
   //BottomSheet manip
   const bottomSheetRef = React.useRef(null);
-  const expandBottomSheet = () => bottomSheetRef.current?.expand();
   const snapToMiddle = () => bottomSheetRef.current?.snapToIndex(2);
   const collapseBottomSheet = () => bottomSheetRef.current?.snapToIndex(1);
   
