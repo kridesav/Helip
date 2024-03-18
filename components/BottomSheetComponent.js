@@ -7,12 +7,14 @@ import SearchBarComponent from './SearchBarComponent';
 import { useNavigation } from '@react-navigation/native';
 import { useFetchEventsByLocationId } from '../hooks/events/useFetchEventsByLocationId';
 import { useTheme } from 'react-native-paper';
+import { Button as IconButton } from 'react-native-elements';
 import theme from '../theme'
 
 const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, handleMapItemDeselect }) => {
 
   const snapPoints = useMemo(() => ['3.5%', '15%', '40%', '80%'], []);
   const [ pageNumber, setPageNumber ] = useState(0);
+  const [ settingMode, setSettingsMode ] = useState(false);
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -31,14 +33,14 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
 
 
   
-const dynamicStyles = {
-  fullButton: {
-    backgroundColor: colors.danger,
-  },
-  fullButtonText: {
-    color: colors.tertiary,
-  },
-};
+  const dynamicStyles = {
+    fullButton: {
+      backgroundColor: colors.danger,
+    },
+    fullButtonText: {
+      color: colors.tertiary,
+    },
+  };
 
 
   const NativeButton = (props) => {
@@ -81,8 +83,12 @@ const dynamicStyles = {
 
           </View>
           :
+          !settingMode?
           <>
-          <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
+          <View style={{ width: '100%', flexDirection: 'row' }}>
+            <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
+            <IconButton onPress={() => setSettingsMode(true)} containerStyle={{paddingTop:5}} icon={{name: "settings"}} type="clear"></IconButton>
+          </View>
             <BottomSheetScrollView>
               {
                 filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) =>
@@ -92,6 +98,11 @@ const dynamicStyles = {
               }
             </BottomSheetScrollView>
           </>
+          : 
+          <View>
+            <Text>Settings</Text>
+            <NativeButton onPress ={() => setSettingsMode(false)} title={"back"}></NativeButton>
+          </View>
       }
       </View>
     </BottomSheet>

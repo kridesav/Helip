@@ -22,7 +22,7 @@ const SearchBarComponent = ({setFilteredLocations, places}) => {
   };
 
   return (
-    <View style={{ width: '100%' }}>
+    <View style={{ width: '85%' }}>
       <BottomSheetTextInput style={styles.textInput} 
        placeholder="Search..."
        onChangeText={function(text){
