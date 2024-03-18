@@ -1,9 +1,9 @@
-import { firestore } from '../../config/firebaseConfig';
+import { firestore } from '../../../config/firebaseConfig';
 import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { Alert } from 'react-native';
 
-export default useModifyEvent = () => {
-  const modifyEvent = async (eventData, userId) => {
+export default editEvent = () => {
+  const editEvent = async (eventData, userId) => {
     const eventRef = doc(firestore, "events", eventData.id);
 
     const { id, ...updateData } = eventData;
@@ -14,6 +14,11 @@ export default useModifyEvent = () => {
 
       await updateDoc(eventRef, eventWithUser);
       console.log("Event successfully modified!");
+      Alert.alert(
+        "Event modified",
+        "Event was successfully modified",
+        [{ text: "OK" }]
+      )
       return true;
     } catch (error) {
       console.error("Error modifying event: ", error);
@@ -26,5 +31,5 @@ export default useModifyEvent = () => {
     }
   };
 
-  return modifyEvent;
+  return editEvent;
 };

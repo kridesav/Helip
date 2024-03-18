@@ -1,10 +1,10 @@
 import React from 'react';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { useMemo, useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { useMemo, useState, useEffect, useContext } from 'react';
+import { StyleSheet, View, Text, Pressable, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
-import { useNavigation, useFocusEffect} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useFetchEventsByLocationId } from '../hooks/events/useFetchEventsByLocationId';
 import { useTheme } from 'react-native-paper';
 import theme from '../theme'
@@ -16,6 +16,7 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
   const { colors } = useTheme();
   const navigation = useNavigation();
 
+
   //Hakee locationId:n mukaan eventit
   const [locationId, setLocationId] = useState(null);
   useEffect(() => {
@@ -25,17 +26,20 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
       setLocationId(null);
     }
   }, [selectedMapItem]);
+
+  const { events } = useFetchEventsByLocationId(locationId);
+
+
   
-  const { events, fetchEvents} = useFetchEventsByLocationId(locationId);
+const dynamicStyles = {
+  fullButton: {
+    backgroundColor: colors.danger,
+  },
+  fullButtonText: {
+    color: colors.tertiary,
+  },
+};
 
-
-  useFocusEffect(
-    React.useCallback(() => {
-      if (locationId) {
-        fetchEvents();
-      }
-    }, [locationId, fetchEvents])
-  );
 
   const NativeButton = (props) => {
     return (
@@ -57,23 +61,25 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
               <Button icon="plus-circle" mode="elevated" style={styles.control} title="Add Event" onPress={() => navigation.navigate('AddEventScreen', { selectedMapItem })}>Add Event</Button>
               <Button onPress={() => handleMapItemDeselect()} icon="arrow-left-circle" mode="elevated" style={styles.control} title="Back">Back</Button>
             </View>
-            <View style={styles.dataContainer} >
-              {events.length > 0 ? (
-                events.map(event => (
-                  <View key={event.id} style={{ marginBottom: 10 }}>
-                    <Button onPress={() => navigation.navigate('EventScreen', { event })} title={event.title} mode="elevated" backgroundColor={theme.colors.elevation.level1} textColor={theme.colors.secondary}>
-                      <Text>{event.title} - ( </Text>
-                      <Text>{event.date} )</Text>
-                    </Button>
-                  </View>
+            <BottomSheetScrollView>
+              <View style={styles.dataContainer} >
+                {events.length > 0 ? (
+                  events.map(event => (
+                    <View key={event.id} style={{ marginBottom: 10 }}>
+                      <TouchableOpacity onPress={() => navigation.navigate('EventScreen', { event, isFull: event.participants >= event.participantLimit  })} style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}>
+                        <Text style={styles.buttonText}>{event.title} - ({event.date})</Text>
+                        {event.isFull && <Text style={styles.fullText}>Event Full</Text>}
+                      </TouchableOpacity>
+                    </View>
 
-                ))
-              ) : (
-                <Text>No events for this location.</Text>
-              )}
-            </View>
+                  ))
+                ) : (
+                  <Text>No events for this location.</Text>
+                )}
+              </View>
+            </BottomSheetScrollView>
+
           </View>
-
           :
           <>
           <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
@@ -101,6 +107,7 @@ const styles = StyleSheet.create({
   dataContainer: {
     padding: 10,
     marginTop: 10,
+    marginBottom: 15,
 
   },
   contentContainer: {
@@ -129,6 +136,14 @@ const styles = StyleSheet.create({
     letterSpacing: 0.25,
     color: 'black',
   },
+  fullText: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'black',
+  },
+
 });
 
 export default BottomSheetComponent;

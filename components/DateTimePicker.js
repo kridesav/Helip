@@ -77,8 +77,8 @@ const styles = StyleSheet.create({
 
     },
     iconStyle: {
-        marginLeft: 10,
-
+        marginLeft: 5,
+    
     },
 
 });

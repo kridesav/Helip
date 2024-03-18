@@ -1,9 +1,9 @@
-import { firestore } from '../../config/firebaseConfig';
+import { firestore } from '../../../config/firebaseConfig';
 import { doc, setDoc, serverTimestamp, collection, updateDoc, arrayUnion} from 'firebase/firestore';
 import { Alert } from 'react-native';
 
-export default useAddEvent = () => {
-  const addEvent = async (eventData, userId) => {
+export default addEvent = () => {
+    const addEvent = async (eventData, userId) => {
     const eventRef = doc(collection(firestore, "events"));
   
     const eventWithUser = { ...eventData, createdBy: userId, createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
@@ -17,6 +17,11 @@ export default useAddEvent = () => {
         eventsCreated: arrayUnion(eventRef.id)
       });
       console.log("Event successfully added and linked to user!");
+      Alert.alert(
+        "Event created",
+        "Event was successfully created",
+        [{ text: "OK" }]
+      )
       return true;
     } catch (error) {
       console.error("Error adding event or linking it to user: ", error);

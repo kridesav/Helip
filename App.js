@@ -1,7 +1,7 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Maps from "./screens/map";
-import { Text, View, Button } from "react-native";
+import { Text, View, Button, TouchableOpacity, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import BottomSheetComponent from "./components/BottomSheetComponent";
@@ -17,16 +17,48 @@ import { PaperProvider } from 'react-native-paper';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme } from 'react-native-paper';
 import { useFetchCurrentUserProfile } from "./hooks/useFetchCurrentUserProfile";
+import { EventProvider, EventContext } from './context/EventProvider'
+import { useNavigation } from '@react-navigation/native';
 import theme from './theme'
 
 const Stack = createStackNavigator();
 
+
+
 //placeholder
 function HomeScreen() {
   const { colors } = useTheme();
+  const navigation = useNavigation();
+
+  const dynamicStyles = {
+    fullButton: {
+      backgroundColor: colors.danger,
+    },
+    fullButtonText: {
+      color: colors.tertiary,
+    },
+  };
+
+
+
+  const eventIds = useContext(EventContext);
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary }}>
-      <Text>Home!</Text>
+      <View >
+        {eventIds.length > 0 ? (
+          eventIds.map(event => (
+            <View key={event.id} style={{ marginBottom: 10 }}>
+              <TouchableOpacity>
+                <Text onPress={() => navigation.navigate('EventScreen', { event, isFull: event.participants >= event.participantLimit })} style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}>{event.title} - ({event.date})</Text>
+              </TouchableOpacity>
+            </View>
+
+          ))
+        ) : (
+          <Text>No events for this location.</Text>
+        )}
+      </View>
     </View>
   );
 }
@@ -134,63 +166,79 @@ export default function App() {
 
   return user ? (
     <PaperProvider theme={theme}>
-      <NavigationContainer >
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: colors.primary,
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }}>
-          <Stack.Screen name="Main" options={{ headerShown: false }}>
-            {() => (
-              <Tab.Navigator initialRouteName="Map">
-                <Tab.Screen name="Home" component={HomeScreen}
-                  options={{
-                    tabBarLabel: 'Home',
+      <EventProvider>
+        <NavigationContainer >
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: colors.primary,
+              },
+              headerTintColor: '#fff',
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}>
+            <Stack.Screen name="Main" options={{ headerShown: false }}>
+              {() => (
+                <Tab.Navigator initialRouteName="Map">
+                  <Tab.Screen name="Home" component={HomeScreen}
+                    options={{
+                      tabBarLabel: 'Home',
+                      tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons name="home" color={color} size={26} />
+                      ),
+                    }} />
+                  <Tab.Screen name="Profile" component={ProfileScreen} options={{
+                    tabBarLabel: 'Profile',
                     tabBarIcon: ({ color }) => (
-                      <MaterialCommunityIcons name="home" color={color} size={26} />
+                      <MaterialCommunityIcons name="account" color={color} size={26} />
                     ),
                   }} />
-                <Tab.Screen name="Profile" component={ProfileScreen} options={{
-                  tabBarLabel: 'Profile',
-                  tabBarIcon: ({ color }) => (
-                    <MaterialCommunityIcons name="account" color={color} size={26} />
-                  ),
-                }} />
-                <Tab.Screen name="Map" options={{
-                  tabBarLabel: 'Map',
-                  tabBarIcon: ({ color }) => (
-                    <MaterialCommunityIcons name="map" color={color} size={26} />
-                  ),
-                }} >
-                  {(props) => <MapScreen {...props} 
-                  token={token}
-                  places={places} 
-                  setPlaces={setPlaces} 
-                  filteredLocations={filteredLocations} 
-                  setFilteredLocations={setFilteredLocations} 
-                  bottomSheetRef={bottomSheetRef} 
-                  selectedMapItem={selectedMapItem} 
-                  handleMapItemDeselect={handleMapItemDeselect}
-                  handleMarkerPress={handleMarkerPress}
-                  mapRef={mapRef}
-                  collapseBottomSheet={collapseBottomSheet}
-                  handleListItemPress={handleListItemPress}/>}
-                </Tab.Screen>
-              </Tab.Navigator>
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="AddEventScreen" component={AddEventScreen} options={{ title: 'Add Event' }}/>
-          <Stack.Screen name="EventScreen" component={EventScreen} options={{ title: 'Event' }}/>
-          <Stack.Screen name="EditEventScreen" component={EditEventScreen} options={{ title: 'Edit Event' }}/>
-        </Stack.Navigator>
-      </NavigationContainer>
+                  <Tab.Screen name="Map" options={{
+                    tabBarLabel: 'Map',
+                    tabBarIcon: ({ color }) => (
+                      <MaterialCommunityIcons name="map" color={color} size={26} />
+                    ),
+                  }} >
+                    {(props) => <MapScreen {...props}
+                      token={token}
+                      places={places}
+                      setPlaces={setPlaces}
+                      filteredLocations={filteredLocations}
+                      setFilteredLocations={setFilteredLocations}
+                      bottomSheetRef={bottomSheetRef}
+                      handleMapItemDeselect={handleMapItemDeselect}
+                      selectedMapItem={selectedMapItem}
+                      handleMarkerPress={handleMarkerPress}
+                      mapRef={mapRef}
+                      collapseBottomSheet={collapseBottomSheet}
+                      handleListItemPress={handleListItemPress} />}
+                  </Tab.Screen>
+                </Tab.Navigator>
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="AddEventScreen" component={AddEventScreen} options={{ title: 'Add Event' }} />
+            <Stack.Screen name="EventScreen" component={EventScreen} options={{ title: 'Event' }} />
+            <Stack.Screen name="EditEventScreen" component={EditEventScreen} options={{ title: 'Edit Event' }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </EventProvider>
     </PaperProvider>
   ) : (
-      <AuthStack />
+    <AuthStack />
   );
 }
+
+const styles = StyleSheet.create({
+
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: 'white',
+  },
+});
