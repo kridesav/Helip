@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, Text, Pressable, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
+import LocationTypeWheel from './LocationTypeWheel';
 import { useNavigation } from '@react-navigation/native';
 import { useFetchEventsByLocationId } from '../hooks/events/useFetchEventsByLocationId';
 import { useTheme } from 'react-native-paper';
@@ -91,7 +92,7 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
           </View>
             <BottomSheetScrollView>
               {
-                filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) =>
+                filteredLocations.slice(pageNumber * 50, pageNumber * 50 + 50).map((item) =>
                 <View key={item.properties.id}>
                   <NativeButton  onPress={() => handleListItemPress(item)} title={item.properties.nimi_fi}></NativeButton>
                 </View>) || []
@@ -100,8 +101,8 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
           </>
           : 
           <View>
-            <Text>Settings</Text>
             <NativeButton onPress ={() => setSettingsMode(false)} title={"back"}></NativeButton>
+            <LocationTypeWheel />
           </View>
       }
       </View>
