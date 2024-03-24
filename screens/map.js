@@ -137,12 +137,14 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
               style={styles.map}
               initialRegion={region}
               showsUserLocation={true}
+              showsMyLocationButton={true}
               followUserLocation={true}
               customMapStyle={mapStyle}
               tracksViewChanges={false}
               showsIndoors={false}
               scrollEnabled={true}
               onPress={collapseBottomSheet}
+              mapPadding={{top:0, right:0, left:0, bottom:25}}
             >
               {places && places.map((item, index) => (
                 <Marker
