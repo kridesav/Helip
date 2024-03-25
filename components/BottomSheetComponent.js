@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    padding: 20,
+    padding: 10,
     marginVertical: 8,
     marginHorizontal: 16,
     borderWidth: 1,
