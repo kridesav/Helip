@@ -7,7 +7,7 @@ const SearchBarComponent = ({setFilteredLocations, places}) => {
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    if (searchText.length >= 2) {
+    if (searchText.length >= 3) {
       handleSearch(searchText)
     } else {
       setFilteredLocations(places)
