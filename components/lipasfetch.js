@@ -24,15 +24,16 @@ const useLipasFetch = (token) => {
         },
       });
       const data = await response.json();
-      if (Array.isArray(data)) {
-        data.sort(function(item1, item2){
-          const dist1 = haversine(lat, lon, item1.geometry.coordinates[1], item1.geometry.coordinates[0]);
-          const dist2 = haversine(lat, lon, item2.geometry.coordinates[1], item2.geometry.coordinates[0]);
-          return dist1 - dist2;
-        })
-        setPlaces(data);
-      } else {
-        console.error('Unexpected data: ', data);
+    if (Array.isArray(data)) {
+      data.forEach(item => {
+        item.distance = haversine(lat, lon, item.geometry.coordinates[1], item.geometry.coordinates[0]);
+      });
+      data.sort(function(item1, item2){
+        return item1.distance - item2.distance;
+      })
+      setPlaces(data);
+    } else {
+      console.error('Unexpected data: ', data);
       }
     }
   };

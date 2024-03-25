@@ -7,8 +7,12 @@ const SearchBarComponent = ({setFilteredLocations, places}) => {
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    handleSearch(searchText)
-  }, [places])
+    if (searchText.length >= 3) {
+      handleSearch(searchText)
+    } else {
+      setFilteredLocations(places)
+    }
+  }, [places, searchText])
 
   const handleSearch = (text) => {
     const filteredLocations= places.filter(function (location) {
@@ -25,10 +29,7 @@ const SearchBarComponent = ({setFilteredLocations, places}) => {
     <View style={{ width: '100%' }}>
       <BottomSheetTextInput style={styles.textInput} 
        placeholder="Search..."
-       onChangeText={function(text){
-        setSearchText(text)
-        }}
-        onEndEditing={() => handleSearch(searchText)}
+       onChangeText={setSearchText}
        value={searchText}/>
     </View>
   );

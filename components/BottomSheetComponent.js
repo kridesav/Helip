@@ -1,21 +1,21 @@
 import React from 'react';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useMemo, useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, Text, Pressable, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Pressable, TouchableOpacity, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 import SearchBarComponent from './SearchBarComponent';
 import { useNavigation } from '@react-navigation/native';
 import { useFetchEventsByLocationId } from '../hooks/events/useFetchEventsByLocationId';
 import { useTheme } from 'react-native-paper';
 import theme from '../theme'
+import { getSportIcon } from './getIcons';
 
 const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, handleMapItemDeselect }) => {
 
   const snapPoints = useMemo(() => ['3.5%', '15%', '40%', '80%'], []);
-  const [ pageNumber, setPageNumber ] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
   const { colors } = useTheme();
   const navigation = useNavigation();
-
 
   //Hakee locationId:n mukaan eventit
   const [locationId, setLocationId] = useState(null);
@@ -30,20 +30,20 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
   const { events } = useFetchEventsByLocationId(locationId);
 
 
-  
-const dynamicStyles = {
-  fullButton: {
-    backgroundColor: colors.danger,
-  },
-  fullButtonText: {
-    color: colors.tertiary,
-  },
-};
+  const dynamicStyles = {
+    fullButton: {
+      backgroundColor: colors.danger,
+    },
+    fullButtonText: {
+      color: colors.tertiary,
+    },
+  };
 
 
   const NativeButton = (props) => {
     return (
       <Pressable style={styles.button} onPress={props.onPress}>
+        <Image source={props.icon} style={styles.icon} />
         <Text style={styles.text}>{props.title}</Text>
       </Pressable>
     );
@@ -66,7 +66,7 @@ const dynamicStyles = {
                 {events.length > 0 ? (
                   events.map(event => (
                     <View key={event.id} style={{ marginBottom: 10 }}>
-                      <TouchableOpacity onPress={() => navigation.navigate('EventScreen', { event, isFull: event.participants >= event.participantLimit  })} style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate('EventScreen', { event, isFull: event.participants >= event.participantLimit })} style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}>
                         <Text style={styles.buttonText}>{event.title} - ({event.date})</Text>
                         {event.isFull && <Text style={styles.fullText}>Event Full</Text>}
                       </TouchableOpacity>
@@ -82,17 +82,22 @@ const dynamicStyles = {
           </View>
           :
           <>
-          <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
+            <SearchBarComponent setFilteredLocations={setFilteredLocations} places={places} />
             <BottomSheetScrollView>
               {
-                filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) =>
-                <View key={item.properties.id}>
-                  <NativeButton  onPress={() => handleListItemPress(item)} title={item.properties.nimi_fi}></NativeButton>
-                </View>) || []
+                filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) => {
+                  const icon = getSportIcon(item.properties.tyyppi_nim);
+                  return (
+                    <View key={item.properties.id}>
+                      <NativeButton onPress={() => handleListItemPress(item)} icon={icon} title={`${item.properties.nimi_fi} - ${item.distance.toFixed(2)} km`} />
+                    </View>
+                  );
+                }) || []
               }
+
             </BottomSheetScrollView>
           </>
-      }
+        }
       </View>
     </BottomSheet>
 
@@ -120,21 +125,24 @@ const styles = StyleSheet.create({
 
   },
   button: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,
     borderWidth: 1,
     borderRadius: 10,
     backgroundColor: 'white',
+    flexDirection: 'row',
+
   },
   text: {
-    fontSize: 16,
+    fontSize: 12,
     lineHeight: 21,
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'black',
+    flexShrink: 1,
   },
   fullText: {
     fontSize: 16,
@@ -142,6 +150,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'black',
+  },
+  icon: {
+    width: 24.4,
+    height: 36.8,
+    marginRight: 10,
   },
 
 });
