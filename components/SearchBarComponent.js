@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
-const SearchBarComponent = ({setFilteredLocations, places}) => {
+const SearchBarComponent = ({setFilteredLocations, places, snapBottomSheet}) => {
 
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    handleSearch(searchText)
-  }, [places])
+    if (searchText.length >= 2) {
+      handleSearch(searchText)
+    } else {
+      setFilteredLocations(places)
+    }
+  }, [places, searchText])
 
   const handleSearch = (text) => {
     const filteredLocations= places.filter(function (location) {
@@ -24,12 +28,10 @@ const SearchBarComponent = ({setFilteredLocations, places}) => {
   return (
     <View style={{ width: '85%' }}>
       <BottomSheetTextInput style={styles.textInput} 
-       placeholder="Search..."
-       onChangeText={function(text){
-        setSearchText(text)
-        }}
-        onEndEditing={() => handleSearch(searchText)}
-       value={searchText}/>
+        onPressOut={snapBottomSheet}
+        placeholder="Search..."
+        onChangeText={setSearchText}
+        value={searchText}/>
     </View>
   );
 };
