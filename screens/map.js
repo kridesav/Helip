@@ -93,7 +93,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
               mapPadding={{ top: 0, right: 0, left: 0, bottom: 25 }}
             >
               {places && places.map((item, index) => {
-                const icon = getSportIcon(item.properties.tyyppi_nim);
+                const icon = getSportIcon(item.properties.tyyppi_nim, 'map');
                 if (icon === null) {
                   return null;
                 }
