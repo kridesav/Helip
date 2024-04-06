@@ -13,6 +13,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import AddEventScreen from "./screens/events/AddEventScreen"
 import EventScreen from "./screens/events/EventScreen";
 import EditEventScreen from "./screens/events/EditEventScreen";
+import MyEvents from "./screens/events/MyEvents";
 import { PaperProvider } from 'react-native-paper';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme } from 'react-native-paper';
@@ -181,7 +182,7 @@ export default function App() {
             <Stack.Screen name="Main" options={{ headerShown: false }}>
               {() => (
                 <Tab.Navigator initialRouteName="Map">
-                  <Tab.Screen name="Home" component={HomeScreen}
+                  <Tab.Screen name="Home" component={MyEvents}
                     options={{
                       tabBarLabel: 'Home',
                       tabBarIcon: ({ color }) => (
