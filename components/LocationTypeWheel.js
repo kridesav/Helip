@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Image, TouchableOpacity, View, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAllSportsIcons } from './getIcons';
 import useAuth from '../hooks/useAuth';
@@ -52,16 +52,29 @@ export default function LocationTypeWheel({setPlaceTypeFilter, placeTypeFilter})
   }
 
   return (
-    <SafeAreaView style={{flex: 1,height:80}}>
-        <ScrollView horizontal={true} style={{height:80}}>
+    <View style={styles.container}>
+        <ScrollView horizontal={true}>
             {icons.map((item,index) => 
-                <TouchableOpacity key={index} activeOpacity={0.5} onPressOut={() => handleIconPress(item.uri.toString())}>
+                <TouchableOpacity style={[styles.icon_container, placeTypeFilter.includes(item.uri.toString()) ? styles.selected : '']} key={index} activeOpacity={0.5} onPressOut={() => handleIconPress(item.uri.toString())}>
                     <Image
                     source={item.uri}
                     />
                 </TouchableOpacity> 
             )}
         </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container:{
+    height: 55
+  },
+  selected:{
+    backgroundColor: 'gray'
+  },
+  icon_container:{
+    borderRadius:5,
+    padding:5
+  }
+})

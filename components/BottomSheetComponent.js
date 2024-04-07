@@ -105,8 +105,8 @@ const BottomSheetComponent = ({ placeTypeFilter, setPlaceTypeFilter, handleListI
           </>
           : 
           <View>
-            <NativeButton onPress ={() => setSettingsMode(false)} title={"back"}></NativeButton>
             <LocationTypeWheel placeTypeFilter={placeTypeFilter} setPlaceTypeFilter={setPlaceTypeFilter} />
+            <NativeButton onPress ={() => setSettingsMode(false)} title={"back"}></NativeButton>
           </View>
       }
       </View>
