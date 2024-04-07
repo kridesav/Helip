@@ -12,7 +12,7 @@ import { Button as IconButton } from 'react-native-elements';
 import theme from '../theme'
 import { getSportIcon } from './getIcons';
 
-const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, handleMapItemDeselect }) => {
+const BottomSheetComponent = ({ placeTypeFilter, setPlaceTypeFilter, handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, handleMapItemDeselect }) => {
 
   const snapPoints = useMemo(() => ['3.5%', '15%', '40%', '80%'], []);
   const [ pageNumber, setPageNumber ] = useState(0);
@@ -106,7 +106,7 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
           : 
           <View>
             <NativeButton onPress ={() => setSettingsMode(false)} title={"back"}></NativeButton>
-            <LocationTypeWheel />
+            <LocationTypeWheel placeTypeFilter={placeTypeFilter} setPlaceTypeFilter={setPlaceTypeFilter} />
           </View>
       }
       </View>

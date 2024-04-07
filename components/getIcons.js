@@ -49,7 +49,6 @@ export function getAllSportsIcons() {
     { name: 'footballIcon', uri: footballCircle },
     { name: 'gymIcon', uri: gymCircle },
     { name: 'swimmingIcon', uri: swimmingCircle },
-    { name: 'defaultIcon', uri: defaultCircle },
     { name: 'golfIcon', uri: basketballCircle },
     { name: 'iceSkatingIcon', uri: iceSkatingCircle },
     { name: 'basketballIcon', uri: basketballCircle },
@@ -63,7 +62,8 @@ export function getAllSportsIcons() {
     { name: 'danceIcon', uri: danceCircle },
     { name: 'baseballIcon', uri: baseballCircle },
     { name: 'motorsportsIcon', uri: motorsportsCircle },
-    { name: 'petsIcon', uri: petsCircle }
+    { name: 'petsIcon', uri: petsCircle },
+    { name: 'defaultIcon', uri: defaultCircle }
   ]
 }
 
