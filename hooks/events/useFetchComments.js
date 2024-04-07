@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
 import { firestore } from '../../config/firebaseConfig'
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
-export default useFetchComments = (eventId) => {
+export default function useFetchComments(eventId) {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
-        const q = query(collection(firestore, "comments"), where("eventId", "==", eventId));
+        if (!eventId) return;
+
+        const commentsRef = collection(firestore, "comments");
+        const q = query(commentsRef, where("eventId", "==", eventId), orderBy("createdAt", "desc"));
+
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const commentsArray = querySnapshot.docs.map(doc => ({
                 id: doc.id,
-                ...doc.data()
+                ...doc.data(),
             }));
             setComments(commentsArray);
         });
@@ -19,5 +23,4 @@ export default useFetchComments = (eventId) => {
     }, [eventId]);
 
     return { comments };
-};
-
+}

@@ -4,6 +4,7 @@ import { Button, Dialog, Portal, TextInput, Text, Card } from 'react-native-pape
 import { useFetchCurrentUserProfile } from "../hooks/useFetchCurrentUserProfile";
 import { addComment } from '../hooks/comments/utils/addComment'
 import { addReplyToComment } from '../hooks/comments/utils/addReplyToComment';
+import formatDateAndTime from '../../Helip/utils/formatDateAndTime';
 import useAuth from '../hooks/useAuth';
 
 export const CommentsDialog = ({ visible, onDismiss, eventId }) => {
@@ -79,7 +80,7 @@ export const CommentsDialog = ({ visible, onDismiss, eventId }) => {
     );
 };
 
-export const ReplyDialog = ({ visible, onDismiss, commentId}) => {
+export const ReplyDialog = ({ visible, onDismiss, commentId }) => {
     console.log("ReplyDialog commentId:", commentId);
 
     const [value, setValue] = React.useState({
@@ -169,13 +170,13 @@ export const CommentsView = ({ comments, eventId }) => {
                         <View key={comment.id}>
                             <Card.Content style={styles.card}>
                                 <Card.Title
-                                    title={`${comment?.displayName ? comment.displayName : comment?.firstName} said:`}
+                                    title={` ${comment?.displayName ? comment.displayName : comment?.firstName} said`}
                                 />
-
-                                <Text>{comment.comment}</Text>
+                                <Text>{`${formatDateAndTime(comment?.createdAt)}:`}</Text>
+                                <Text style={{marginTop:10}}>{comment.comment}</Text>
                             </Card.Content>
                             <Card.Actions>
-                                <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment.id);setSelectedEventId(eventId) }}>
+                                <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment.id); setSelectedEventId(eventId) }}>
                                     <Text>Reply</Text>
                                 </Button>
                             </Card.Actions>

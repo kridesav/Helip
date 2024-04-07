@@ -4,7 +4,7 @@ import { Alert } from 'react-native';
 
 export const addComment= async (commentData, userId, eventId, displayName, firstName) => {
     const commentRef = doc(collection(firestore, "comments"));
-    const commentWithUser = { ...commentData,commentedBy: userId, displayName: displayName, firstName: firstName, eventId: eventId, createdAt: serverTimestamp(), updatedAt: serverTimestamp()};
+    const commentWithUser = { ...commentData, commentedBy: userId, displayName: displayName, firstName: firstName, eventId: eventId, createdAt: serverTimestamp(), updatedAt: serverTimestamp()};
 
     try {
       await setDoc(commentRef, commentWithUser);
