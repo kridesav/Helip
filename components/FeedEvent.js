@@ -1,56 +1,86 @@
 import React from "react";
-import { Text, View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Card, Button, Text } from "react-native-paper";
 
-const FeedEvent = () => {
+const FeedEvent = ({ isJoining, navigation, userLocation, event, expandedId, calculateDistance, handleJoinEvent, toggleExpansion}) => {
     return(
-        <View style={styles.container}>
-            <View style={styles.inner_left}>
-                <Image source={require('../assets/Icons/circle/baseball.png')} />
+        <Card key={event.id} style={styles.card} onPress={() => toggleExpansion(event.id)}>
+            <View style={styles.cardLayout}>
+              {/* Conditional rendering for the image */}
+              <View style={styles.imageContainer}>
+                <Card.Cover source={"joku image"} style={styles.cover} />
+              </View>
+
+              {/* Container for text details */}
+              <View style={styles.textContainer}>
+                <Text style={styles.title}>{event.title}</Text>
+                <Text>Date: {event.date}</Text>
+                <Text>
+                  Distance:{" "}
+                  {userLocation
+                    ? `${calculateDistance(userLocation.latitude, userLocation.longitude, event.coordinates[1], event.coordinates[0]).toFixed(2)} km`
+                    : "Distance not available"}
+                </Text>
+                <Text>
+                  Slots: {event.participants}/{event.participantLimit}
+                </Text>
+              </View>
             </View>
-            <View style={styles.inner_middle}>
-                <View style={styles.inner_middle_top}>
-                    <View>
-                        <Text>Header</Text>
-                    </View>
-                    <View>
-                        <Text>DateTime</Text>
-                    </View>
-                </View>
-                <View>
-                    <Text>Location</Text>
-                </View>
-            </View>
-            <View style={styles.inner_right}>
-                <Image source={require('../assets/Icons/circle/baseball.png')} />
-            </View>
-        </View>
+
+            {expandedId === event.id && (
+              <>
+                <Card.Content style={{ marginTop: 10 }}>
+                  <Text>Description: {event.description}</Text>
+                  <Text>Location: {event.locationName}</Text>
+                </Card.Content>
+                <Card.Actions style={{ justifyContent: "space-between", paddingTop: 10 }}>
+                  <Button
+                    mode="outlined"
+                    onPress={() => navigation.navigate("EventScreen", { event })}
+                    style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}
+                  >
+                    Details
+                  </Button>
+                  <Button mode="contained" onPress={() => handleJoinEvent(event.id)} disabled={event.userJoined || isJoining}>
+                    {event.userJoined ? "Joined" : "Join"}
+                  </Button>
+                </Card.Actions>
+              </>
+            )}
+          </Card>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        width: '360px',
-        height: '80px',
-        marginTop: '20px',
-        display: 'flex',
-        flexDirection: 'row',
-        alignContent: 'center',
-        justifyContent: 'center'
+    card: {
+      margin: 8,
+      elevation: 4,
     },
-    inner_left: {
-        width: '25%'
+    cardLayout: {
+      flexDirection: "row",
+      alignItems: "center",
     },
-    inner_middle: {
-        width: '50%',
-        display: 'flex'
+    imageContainer: {
+      width: 50,
+      height: 50,
+      marginHorizontal: 20,
+      borderRadius: 100,
+      overflow: "hidden",
     },
-    inner_middle_top: {
-        display: 'flex',
-        flexDirection: 'row'
+    cover: {
+      width: "100%",
+      height: "100%",
     },
-    inner_right: {
-        width: '25%'
-    }
-})
+    textContainer: {
+      flex: 1,
+      padding: 10,
+    },
+    title: {
+      fontWeight: "bold",
+    },
+    fullButton: {
+      backgroundColor: "grey",
+    },
+  });
 
 export default FeedEvent
