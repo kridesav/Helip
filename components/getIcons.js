@@ -1,3 +1,4 @@
+//if length changes, addition to  placeTypeFilter.includes in map.js ned to change accordingly
 import {
   footballIcon,
   gymIcon,
@@ -49,10 +50,8 @@ export function getAllSportsIcons() {
     { name: 'footballIcon', uri: footballCircle },
     { name: 'gymIcon', uri: gymCircle },
     { name: 'swimmingIcon', uri: swimmingCircle },
-    { name: 'defaultIcon', uri: defaultCircle },
     { name: 'golfIcon', uri: basketballCircle },
     { name: 'iceSkatingIcon', uri: iceSkatingCircle },
-    { name: 'basketballIcon', uri: basketballCircle },
     { name: 'runningIcon', uri: runningCircle },
     { name: 'tennisIcon', uri: tennisCircle },
     { name: 'hockeyIcon', uri: hockeyCircle },
@@ -63,7 +62,8 @@ export function getAllSportsIcons() {
     { name: 'danceIcon', uri: danceCircle },
     { name: 'baseballIcon', uri: baseballCircle },
     { name: 'motorsportsIcon', uri: motorsportsCircle },
-    { name: 'petsIcon', uri: petsCircle }
+    { name: 'petsIcon', uri: petsCircle },
+    { name: 'defaultIcon', uri: defaultCircle }
   ]
 }
 

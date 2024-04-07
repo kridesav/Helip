@@ -52,24 +52,20 @@ function ProfileScreen() {
   );
 }
 
-function MapScreen({
-  collapseBottomSheet,
-  handleListItemPress,
-  mapRef,
-  handleMarkerPress,
-  token,
-  places,
-  setPlaces,
-  filteredLocations,
-  setFilteredLocations,
-  bottomSheetRef,
-  handleMapItemDeselect,
-  selectedMapItem,
-}) {
+
+function MapScreen({setPlaceTypeFilter, placeTypeFilter, collapseBottomSheet, handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Maps collapseBottomSheet={collapseBottomSheet} token={token} setPlaces={setPlaces} handleMarkerPress={handleMarkerPress} mapRef={mapRef} />
+      <Maps
+        placeTypeFilter={placeTypeFilter}
+        collapseBottomSheet={collapseBottomSheet}
+        token={token}
+        setPlaces={setPlaces}
+        handleMarkerPress={handleMarkerPress}
+        mapRef={mapRef} />
       <BottomSheetComponent
+        setPlaceTypeFilter={setPlaceTypeFilter}
+        placeTypeFilter={placeTypeFilter}
         handleListItemPress={handleListItemPress}
         places={places}
         filteredLocations={filteredLocations}
@@ -91,7 +87,7 @@ export default function App() {
   const [filteredLocations, setFilteredLocations] = React.useState([]);
   const [places, setPlaces] = React.useState([]);
   const [token, setToken] = useState(null);
-  const [placeTypeFilter, setPlaceTypeFilter] = useState("");
+  const [placeTypeFilter, setPlaceTypeFilter] = useState([])
 
   const mapRef = React.useRef(null);
 
@@ -178,21 +174,21 @@ export default function App() {
                     }}
                   >
                     {(props) => (
-                      <MapScreen
-                        {...props}
-                        token={token}
-                        places={places}
-                        setPlaces={setPlaces}
-                        filteredLocations={filteredLocations}
-                        setFilteredLocations={setFilteredLocations}
-                        bottomSheetRef={bottomSheetRef}
-                        handleMapItemDeselect={handleMapItemDeselect}
-                        selectedMapItem={selectedMapItem}
-                        handleMarkerPress={handleMarkerPress}
-                        mapRef={mapRef}
-                        collapseBottomSheet={collapseBottomSheet}
-                        handleListItemPress={handleListItemPress}
-                      />
+                      <MapScreen {...props}
+                      token={token}
+                      places={places}
+                      setPlaces={setPlaces}
+                      filteredLocations={filteredLocations}
+                      setFilteredLocations={setFilteredLocations}
+                      bottomSheetRef={bottomSheetRef}
+                      handleMapItemDeselect={handleMapItemDeselect}
+                      selectedMapItem={selectedMapItem}
+                      handleMarkerPress={handleMarkerPress}
+                      mapRef={mapRef}
+                      collapseBottomSheet={collapseBottomSheet}
+                      handleListItemPress={handleListItemPress}
+                      placeTypeFilter={placeTypeFilter} 
+                      setPlaceTypeFilter={setPlaceTypeFilter} />
                     )}
                   </Tab.Screen>
                 </Tab.Navigator>

@@ -81,7 +81,7 @@ const HomeScreen = () => {
     } finally {
       setIsJoining(false);
     }
-  };
+  }; 
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
