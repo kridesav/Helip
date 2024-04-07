@@ -13,6 +13,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { fetchEventById } from '../../hooks/events/utils/fetchEventById'
 import joinEvent from '../../hooks/events/utils/joinEvent'
 import { useRealTimeEvent } from '../../hooks/events/useEventRealTimeDetails';
+import { CommentsDialog, CommentsContainer } from "../../components/Comments";
+import useFetchComments from "../../hooks/events/useFetchComments";
 
 const EventScreen = () => {
 
@@ -23,16 +25,21 @@ const EventScreen = () => {
     const [event, setEvent] = useState(initialEvent);
 
     const { currentUser } = useAuth();
+    
     const userId = currentUser?.uid;
     const { eventData } = useRealTimeEvent(initialEvent.id);
-
     const isCreator = useIsEventCreator(event.createdBy);
 
+    //join-cancel
     const [hasJoined, setHasJoined] = useState(false);
     const isUser = useIfUserJoined(event.usersParticipating)
 
     const [isJoining, setIsJoining] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
+    
+    //comments
+    const { comments } = useFetchComments(event.id);
+    const [commentsVisible, setCommentsVisible] = useState(false);
 
     useEffect(() => {
         setHasJoined(isUser);
@@ -217,7 +224,15 @@ const EventScreen = () => {
                     )}
                 </View>
 
-
+                <View style={styles.portal}>
+                    <Button onPress={() => setCommentsVisible(true)}>Add Comment</Button>
+                    <CommentsContainer comments={comments} eventId={initialEvent.id}/>
+                    <CommentsDialog
+                        visible={commentsVisible}
+                        eventId={initialEvent.id}
+                        onDismiss={() => setCommentsVisible(false)}
+                    />
+                </View>
             </ScrollView >
         </PaperProvider>
     );
@@ -252,7 +267,11 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 16,
         fontWeight: "bold",
-    }
+    },
+    portal: {
+        padding: 20,
+        marginTop: 10,
+    },
 });
 
 

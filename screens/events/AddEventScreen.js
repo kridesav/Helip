@@ -117,7 +117,7 @@ const AddEventScreen = () => {
                                     <TextInput
                                         style={styles.textInput}
                                         mode="outlined"
-                                        placeholder="Event title"
+                                        label="Event title"
                                         containerStyle={styles.control}
                                         value={value.title}
                                         onChangeText={(text) => {
@@ -136,7 +136,7 @@ const AddEventScreen = () => {
                                         color={colors.primary} style={styles.iconStyle} />
                                     <TextInput
                                         style={styles.desc}
-                                        placeholder="Description"
+                                        label="Description"
                                         editable
                                         multiline
                                         numberOfLines={10}
@@ -162,8 +162,7 @@ const AddEventScreen = () => {
                                     <TextInput
                                         style={styles.textInput}
                                         mode="outlined"
-
-                                        placeholder="Max participants"
+                                        label="Max participants"
                                         containerStyle={styles.control}
                                         keyboardType='numeric'
                                         value={value.participantLimit.toString()}
