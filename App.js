@@ -93,6 +93,7 @@ function ProfileScreen() {
 
 
 function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
+  const [activeFilter, setActiveFilter] = useState(null)
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps
@@ -100,7 +101,9 @@ function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMark
         token={token}
         setPlaces={setPlaces}
         handleMarkerPress={handleMarkerPress}
-        mapRef={mapRef} />
+        mapRef={mapRef}
+        activeFilter={activeFilter} />
+        
       <BottomSheetComponent
         handleListItemPress={handleListItemPress}
         places={places}
@@ -108,7 +111,10 @@ function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMark
         setFilteredLocations={setFilteredLocations}
         bottomSheetRef={bottomSheetRef}
         handleMapItemDeselect={handleMapItemDeselect}
-        selectedMapItem={selectedMapItem} />
+        selectedMapItem={selectedMapItem}
+        activeFilter={activeFilter}
+        setActiveFilter={setActiveFilter}
+        />
     </GestureHandlerRootView>
   );
 }

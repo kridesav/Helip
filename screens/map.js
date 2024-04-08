@@ -16,7 +16,7 @@ import { debounce } from 'lodash';
 import { getSportIcon } from '../components/getIcons';
 
 
-export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token, collapseBottomSheet }) {
+export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token, collapseBottomSheet, activeFilter }) {
   const [region, setRegion] = useState({
     latitude: null,
     longitude: null,
@@ -94,7 +94,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
             >
               {places && places.map((item, index) => {
                 const icon = getSportIcon(item.properties.tyyppi_nim, 'map');
-                if (icon === null) {
+                if (icon === null || (activeFilter && icon !== activeFilter.uri2)) {
                   return null;
                 }
                 return (

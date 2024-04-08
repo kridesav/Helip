@@ -46,24 +46,24 @@ import {
 
 export function getAllSportsIcons() {
   return [
-    { name: 'footballIcon', uri: footballCircle },
-    { name: 'gymIcon', uri: gymCircle },
-    { name: 'swimmingIcon', uri: swimmingCircle },
-    { name: 'defaultIcon', uri: defaultCircle },
-    { name: 'golfIcon', uri: basketballCircle },
-    { name: 'iceSkatingIcon', uri: iceSkatingCircle },
-    { name: 'basketballIcon', uri: basketballCircle },
-    { name: 'runningIcon', uri: runningCircle },
-    { name: 'tennisIcon', uri: tennisCircle },
-    { name: 'hockeyIcon', uri: hockeyCircle },
-    { name: 'boxingIcon', uri: boxingCircle },
-    { name: 'volleyballIcon', uri: volleyballCircle },
-    { name: 'infoIcon', uri: infoCircle },
-    { name: 'skateIcon', uri: skateCircle },
-    { name: 'danceIcon', uri: danceCircle },
-    { name: 'baseballIcon', uri: baseballCircle },
-    { name: 'motorsportsIcon', uri: motorsportsCircle },
-    { name: 'petsIcon', uri: petsCircle }
+    { name: 'footballIcon', uri: footballCircle, uri2: footballIcon},
+    { name: 'gymIcon', uri: gymCircle, uri2: gymIcon},
+    { name: 'swimmingIcon', uri: swimmingCircle, uri2: swimmingIcon},
+    { name: 'defaultIcon', uri: defaultCircle, uri2: defaultIcon},
+    { name: 'golfIcon', uri: golfCircle, uri2: golfIcon},
+    { name: 'iceSkatingIcon', uri: iceSkatingCircle, uri2: iceSkatingIcon},
+    { name: 'basketballIcon', uri: basketballCircle, uri2: basketballIcon},
+    { name: 'runningIcon', uri: runningCircle, uri2: runningIcon},
+    { name: 'tennisIcon', uri: tennisCircle, uri2: tennisIcon},
+    { name: 'hockeyIcon', uri: hockeyCircle, uri2: hockeyIcon},
+    { name: 'boxingIcon', uri: boxingCircle, uri2: boxingIcon},
+    { name: 'volleyballIcon', uri: volleyballCircle, uri2: volleyballIcon},
+    { name: 'infoIcon', uri: infoCircle, uri2: infoIcon},
+    { name: 'skateIcon', uri: skateCircle, uri2: skateIcon},
+    { name: 'danceIcon', uri: danceCircle, uri2: danceIcon},
+    { name: 'baseballIcon', uri: baseballCircle, uri2: baseballIcon},
+    { name: 'motorsportsIcon', uri: motorsportsCircle, uri2: motorsportsIcon},
+    { name: 'petsIcon', uri: petsCircle, uri2: petsIcon},
   ]
 }
 
