@@ -14,6 +14,7 @@ import AddEventScreen from "./screens/events/AddEventScreen";
 import EventScreen from "./screens/events/EventScreen";
 import EditEventScreen from "./screens/events/EditEventScreen";
 import HomeScreen from "./screens/home";
+import MyEventsScreen from "./screens/MyEvents";
 import { PaperProvider } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme } from "react-native-paper";
@@ -156,6 +157,14 @@ export default function App() {
                     options={{
                       tabBarLabel: "Home",
                       tabBarIcon: ({ color }) => <MaterialCommunityIcons name="home" color={color} size={26} />,
+                    }}
+                  />
+                  <Tab.Screen
+                    name="My Events"
+                    component={MyEventsScreen}
+                    options={{
+                      tabBarLabel: "My Events",
+                      tabBarIcon: ({ color }) => <MaterialCommunityIcons name="text-account" color={color} size={26} />,
                     }}
                   />
                   <Tab.Screen
