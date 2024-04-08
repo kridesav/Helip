@@ -11,10 +11,11 @@ import theme from '../../theme';
 import useAuth from '../../hooks/useAuth';
 import { useFocusEffect } from '@react-navigation/native';
 import { fetchEventById } from '../../hooks/events/utils/fetchEventById'
+import { fetchCommentsByEventId } from '../../hooks/comments/useFetchCommentsByEventId'
 import joinEvent from '../../hooks/events/utils/joinEvent'
 import { useRealTimeEvent } from '../../hooks/events/useEventRealTimeDetails';
 import { CommentsDialog, CommentsContainer } from "../../components/Comments";
-import useFetchComments from "../../hooks/events/useFetchComments";
+import useFetchComments from "../../hooks/comments/useFetchComments";
 
 const EventScreen = () => {
 
@@ -141,11 +142,13 @@ const EventScreen = () => {
         }
     };
 
+
     useFocusEffect(
         React.useCallback(() => {
             fetchLatestEventDetails();
         }, [initialEvent.id])
     );
+
 
     if (!eventData) {
         return <Text>Event not found or has been removed.</Text>;

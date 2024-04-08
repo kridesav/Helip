@@ -80,7 +80,7 @@ export const CommentsDialog = ({ visible, onDismiss, eventId }) => {
     );
 };
 
-export const ReplyDialog = ({ visible, onDismiss, commentId }) => {
+export const ReplyDialog = ({ visible, onDismiss, commentId, targetReplyId }) => {
     console.log("ReplyDialog commentId:", commentId);
 
     const [value, setValue] = React.useState({
@@ -117,7 +117,7 @@ export const ReplyDialog = ({ visible, onDismiss, commentId }) => {
         };
 
         try {
-            const success = await addReplyToComment(replyData, userId, profile.displayName, profile.firstName, commentId);
+            const success = await addReplyToComment(replyData, userId, profile.displayName, profile.firstName, commentId, targetReplyId);
             if (success) {
                 console.log("Reply added successfully!");
             } else {
@@ -129,7 +129,7 @@ export const ReplyDialog = ({ visible, onDismiss, commentId }) => {
 
     };
 
-
+    
     return (
         <Portal>
             <Dialog visible={visible} onDismiss={onDismiss}>
@@ -155,50 +155,91 @@ export const ReplyDialog = ({ visible, onDismiss, commentId }) => {
     );
 };
 
-
 export const CommentsView = ({ comments, eventId }) => {
     const [repliesVisible, setRepliesVisible] = useState(false);
     const [selectedCommentId, setSelectedCommentId] = useState(null);
     const [selectedEventId, setSelectedEventId] = useState(null);
+    const [selectedTargetReplyId, setSelectedTargetReplyId] = useState(null);
+
+    const findQuoteForReply = (targetReplyId, comments) => {
+        let quotedText = '';
+
+        comments.forEach(comment => {
+            if (comment.replies) {
+                const targetReply = comment.replies.find(reply => reply.id === targetReplyId);
+                if (targetReply) {
+                    quotedText = targetReply.reply;
+                }
+            }
+        });
+
+        return quotedText;
+    };
 
     return (
         <View style={styles.portal}>
             <ScrollView>
                 {comments?.map((comment, index) => (
                     <Card key={index} style={{ margin: 8 }}>
-
-                        <View key={comment.id}>
-                            <Card.Content style={styles.card}>
-                                <Card.Title
-                                    title={` ${comment?.displayName ? comment.displayName : comment?.firstName} said`}
-                                />
-                                <Text>{`${formatDateAndTime(comment?.createdAt)}:`}</Text>
-                                <Text style={{marginTop:10}}>{comment.comment}</Text>
-                            </Card.Content>
+                        <Card.Content style={styles.card}>
+                            <Card.Title
+                                title={`${comment?.displayName ? comment.displayName : comment?.firstName} said`}
+                            />
+                            <Text style={{  color:"orange"}}>{formatDateAndTime(comment?.createdAt)}</Text>
+                            <Text style={{ marginTop: 10 }}>{comment.comment}</Text>
                             <Card.Actions>
-                                <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment.id); setSelectedEventId(eventId) }}>
+                                <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment.id); setSelectedEventId(eventId), setSelectedTargetReplyId(comment.id) }}>
                                     <Text>Reply</Text>
                                 </Button>
                             </Card.Actions>
+                        </Card.Content>
+                        {comment?.replies && comment?.replies.length > 0 && comment?.replies.map((reply, replyIndex) => (
+                            <Card key={`reply-${replyIndex}`} style={{ margin: 10, marginLeft: 20 }}>
+                                <Card.Content style={styles.card}>
+                                    {
+                                        reply.targetReplyId && reply.targetReplyId !== comment.id ?
+                                            <>
+                                                <Card.Title
+                                                    title={`${reply?.displayName ? reply.displayName : reply?.firstName} replied to ${reply?.displayName}`}
+                                                />
+                                                <Text style={{ marginBottom: 10, color:"orange" }}>{formatDateAndTime(reply?.createdAt)}</Text>
+                                                <Text style={{ marginLeft: 20, fontStyle: 'italic', color: "gray" }}>
+                                                    {reply?.displayName} said: "{findQuoteForReply(reply.targetReplyId, comments)}"
+                                                </Text>
+                                            </>
 
-                            {comment.replies && comment.replies.map((reply) => (
-                                <View key={reply.id} style={{ marginLeft: 20 }}>
-                                    <Text>{reply.text}</Text>
-                                </View>
-                            ))}
-                        </View>
+                                            :
+                                            <>
+                                                <Card.Title
+                                                    title={`${reply?.displayName ? reply.displayName : reply?.firstName} replied to ${comment?.displayName}`}
+                                                />
+                                                <Text style={{ marginBottom: 10, color:"orange" }}>{formatDateAndTime(reply?.createdAt)}</Text>
+                                                <Text style={{ marginLeft: 20, fontStyle: 'italic', color: "gray" }}>
+                                                    {comment?.displayName} said: "{comment.comment}"
+                                                </Text>
+                                            </>
+                                    }
+                                    <Text style={{ marginTop: 10 }}>{reply.reply}</Text>
+                                    <Card.Actions>
+                                        <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment.id); setSelectedTargetReplyId(reply.id); setSelectedEventId(eventId); }}>
+                                            <Text>Reply</Text>
+                                        </Button>
+                                    </Card.Actions>
+                                </Card.Content>
+                            </Card>
+                        ))}
                     </Card>
                 ))}
-
-
             </ScrollView>
+
             <ReplyDialog
                 visible={repliesVisible}
                 commentId={selectedCommentId}
                 eventId={selectedEventId}
+                targetReplyId={selectedTargetReplyId}
                 onDismiss={() => setRepliesVisible(false)}
             />
-        </View>
+        </View >
 
     );
 }
@@ -225,7 +266,8 @@ export const CommentsContainer = ({ comments }) => {
 const styles = StyleSheet.create({
     card: {
         padding: 10,
-
     },
+
+
 
 });
