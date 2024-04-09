@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextInput, useTheme, Surface, Text, Divider, Switch, Portal, Dialog } from 'react-native-paper';
+import { Button, TextInput, useTheme, Surface, Text, Divider, Switch, Portal, Dialog, Icon } from 'react-native-paper';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
 
@@ -33,9 +33,12 @@ export default function SettingsScreen({ route }) {
     return (
         <Surface style={styles.container}>
             <View style={styles.content}>
-                <Surface elevation={2} style={styles.bottomlist}>
+                <Surface elevation={5} style={styles.bottomlist}>
                     <View style={styles.switchContainer}>
-                        <Text style={styles.nameSubText}>Location</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon source="map-marker-outline" color="white" size={24} />
+                            <Text style={styles.nameSubText}>Location</Text>
+                        </View>
                         <Switch
                             style={styles.input}
                             value={location}
@@ -43,7 +46,10 @@ export default function SettingsScreen({ route }) {
                         />
                     </View>
                     <View style={styles.switchContainer}>
-                        <Text style={styles.nameSubText}>Notifications</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon source="bell" color="white" size={24} />
+                            <Text style={styles.nameSubText}>Notifications</Text>
+                        </View>
                         <Switch
                             style={styles.input}
                             value={notifications}
@@ -51,23 +57,23 @@ export default function SettingsScreen({ route }) {
                         />
                     </View>
                     <View style={styles.switchContainer}>
-                        <Text style={styles.nameSubText}>Night Mode</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon source="theme-light-dark" color="white" size={24} />
+                            <Text style={styles.nameSubText}>Night Mode</Text>
+                        </View>
                         <Switch
                             style={styles.input}
                             value={nightMode}
                             onValueChange={onToggleNightMode}
                         />
                     </View>
-                    <TouchableOpacity onPress={handleDeleteAccount}>
-                        <Text style={{ padding: 10, color: "red", fontSize: 16 }}>Delete Account</Text>
-                    </TouchableOpacity>
                     <Portal>
                         <Dialog visible={visible} onDismiss={() => hideDialog(false)}>
                             <Dialog.Icon icon="alert" color="red" />
-                            <Dialog.Title style={{textAlign: 'center'}}>Delete Account</Dialog.Title>
+                            <Dialog.Title style={{ textAlign: 'center' }}>Delete Account</Dialog.Title>
                             <Dialog.Content>
                                 <Text variant="bodyMedium">
-                                    Are you sure you want to delete your account? This action is irreversible.
+                                    Are you sure you want to delete your account? This action is permanent.
                                 </Text>
                             </Dialog.Content>
                             <Dialog.Actions>
@@ -76,6 +82,16 @@ export default function SettingsScreen({ route }) {
                             </Dialog.Actions>
                         </Dialog>
                     </Portal>
+                </Surface>
+                <Surface style={styles.bottomlist} elevation={4}>
+                    <Button icon="form-textbox-password" compact contentStyle={styles.button2}>
+                        Change Password
+                    </Button>
+                </Surface>
+                <Surface style={styles.bottomlist} elevation={2}>
+                    <Button icon="account-remove" compact contentStyle={styles.button2} labelStyle={{color: "red"}} onPress={handleDeleteAccount}>
+                        Delete Account
+                    </Button>
                 </Surface>
             </View>
         </Surface>
@@ -105,9 +121,8 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     nameSubText: {
-        color: "white",
         fontSize: 16,
-        marginTop: 2,
+        marginLeft: 10,
     },
     buttons: {
         marginTop: 30,
@@ -123,12 +138,17 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     input: {
-        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     switchContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
+    },
+    button2: {
+        justifyContent: "flex-start",
+        padding: 8,
     },
 });

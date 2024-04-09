@@ -1,11 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
-import { useTheme, Text, Avatar, Button, Divider, Surface, Dialog, Portal } from "react-native-paper";
+import { useTheme, Text, Avatar, Button, Divider, Surface, Icon } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { useFetchCurrentUserProfile } from "../hooks/useFetchCurrentUserProfile";
 import { signOut } from "firebase/auth";
 import useAuth from "../hooks/useAuth";
-import placeholderIcon from "../assets/icon.png";
 
 
 export default function ProfileScreen() {
@@ -13,7 +12,16 @@ export default function ProfileScreen() {
     const navigation = useNavigation();
     const { currentUser, auth } = useAuth();
     const { profile } = useFetchCurrentUserProfile(currentUser?.uid);
+    const [avatar, setAvatar] = useState(profile?.profilePictureUrl ?? "");
 
+    useEffect(() => {
+        if (!profile?.profilePictureUrl) {
+            setAvatar("https://www.w3schools.com/howto/img_avatar.png");
+        } else {
+            setAvatar(profile?.profilePictureUrl);
+        }
+    }, [profile?.profilePictureUrl]);
+        
     const handleLogout = () => {
         signOut(auth)
             .then(() => {
@@ -26,13 +34,11 @@ export default function ProfileScreen() {
 
     return (
         <Surface style={styles.container} elevation={1}>
-            <View style={styles.header}>
-                <Text style={styles.headerText}>Profile</Text>
-            </View>
+            
             <ScrollView contentContainerStyle={styles.content}>
                 <Avatar.Image
                     size={100}
-                    source={placeholderIcon}
+                    source={{uri: avatar}}
                 />
                 <Text style={styles.nameText}>
                     {profile?.displayName ?? "No display name"}
@@ -60,14 +66,13 @@ export default function ProfileScreen() {
                 </Surface>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={3}>
-                    <Text style={{ padding: 10, color: colors.primary }}>My Events</Text>
-                    <Divider />
-                    <Text style={{ padding: 10, color: colors.primary }}>My Comments</Text>
+                    <Button icon="calendar" compact contentStyle={styles.button2}>My Events </Button>
+                    <Button icon="message" compact contentStyle={styles.button2}>My Comments </Button>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={2}>
-                    <TouchableOpacity onPress={() => navigation.navigate("SettingsScreen")}>
-                        <Text style={{ padding: 10, color: colors.primary }}>Settings</Text>
-                    </TouchableOpacity>
+                    <Button icon="account-settings" compact contentStyle={styles.button2} onPress={() => navigation.navigate("SettingsScreen")}>
+                        Settings
+                    </Button>
                 </Surface>
             </ScrollView>
         </Surface>
@@ -90,6 +95,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         alignItems: "center",
         padding: 20,
+        marginTop: 30,
     },
     nameText: {
         color: "white",
@@ -115,8 +121,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         width: "70%",
     },
-    button: {
-    },
     bottomlist: {
         width: "100%",
         marginTop: 30,
@@ -133,5 +137,9 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         borderBottomEndRadius: 10,
         borderBottomStartRadius: 10,
+    },
+    button2: {
+        justifyContent: "flex-start",
+        padding: 8,
     },
 });

@@ -1,24 +1,54 @@
-import React, { useState } from 'react';
-import { Button, TextInput, useTheme, Surface, Text, Divider } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { Button, TextInput, useTheme, Surface, Icon, Avatar } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
+import useAuth from '../../hooks/useAuth';
+import editUser from '../../hooks/events/utils/editUser';
 
 export default function EditProfileScreen({ route }) {
     const { profile } = route.params;
     const [firstName, setFirstName] = useState(profile?.firstName ?? '');
     const [lastName, setLastName] = useState(profile?.lastName ?? '');
     const [displayName, setDisplayName] = useState(profile?.displayName ?? '');
+    const [avatar, setAvatar] = useState(profile?.profilePictureUrl ?? "");
+    const user = useAuth();
 
     const { colors } = useTheme();
 
-    const handleSave = () => {
-        // TODO save to firestore
-        console.log(firstName, lastName, displayName);
+    useEffect(() => {
+        if (!profile?.profilePictureUrl) {
+            setAvatar("https://www.w3schools.com/howto/img_avatar.png");
+        } else {
+            setAvatar(profile?.profilePictureUrl);
+        }
+    }, [profile?.profilePictureUrl]);
+
+    const handleSave = async () => {
+        const userData = {
+            firstName: firstName,
+            lastName: lastName,
+            displayName: displayName,
+            profilePictureUrl: avatar,
+        };
+
+        try {
+            const result = await editUser()(userData, user.currentUser.uid);
+            if (result) {
+                console.log("Profile updated");
+            }
+        } catch (error) {
+            console.error("Profile update error:", error);
+        }
     };
 
     return (
         <Surface style={styles.container}>
             <View style={styles.content}>
                 <Surface elevation={2} style={styles.bottomlist}>
+                <Avatar.Image
+                    style={{ alignSelf: "center", marginBottom: 20 }}
+                    size={100}
+                    source={{ uri: avatar }}
+                />
                 <TextInput
                     style={styles.input}
                     label="First Name"
@@ -32,6 +62,7 @@ export default function EditProfileScreen({ route }) {
                     onChangeText={setLastName}
                 />
                 <TextInput
+                    style={styles.input}
                     label="Display Name"
                     value={displayName}
                     onChangeText={setDisplayName}
@@ -90,9 +121,11 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: 30,
         borderRadius: 10,
-        padding: 10,
+        padding: 30,
     },
     input: {
         marginBottom: 10,
+        backgroundColor: 'transparent',
+        borderRadius: 10,
     },
 });
