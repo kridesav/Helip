@@ -27,7 +27,7 @@ const EventScreen = () => {
     const { currentUser } = useAuth();
     
     const userId = currentUser?.uid;
-    const { eventData } = useRealTimeEvent(initialEvent.id);
+    const { eventData } = useRealTimeEvent(initialEvent.id, currentUser);
     const isCreator = useIsEventCreator(event.createdBy);
 
     const [hasJoined, setHasJoined] = useState(false);
@@ -35,7 +35,7 @@ const EventScreen = () => {
     const [isJoining, setIsJoining] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
     
-    const { comments } = useRealTimeEventComments(event.id);
+    const { comments } = useRealTimeEventComments(event.id, currentUser);
     const [dialogVisible, setDialogVisible] = useState(false);
     const [show, setShow] = useState(false);
 
