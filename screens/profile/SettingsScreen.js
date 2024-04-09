@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, TextInput, useTheme, Surface, Text, Divider, Switch } from 'react-native-paper';
-import { View, StyleSheet } from 'react-native';
+import { Button, TextInput, useTheme, Surface, Text, Divider, Switch, Portal, Dialog } from 'react-native-paper';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
 
 export default function SettingsScreen({ route }) {
@@ -8,12 +8,27 @@ export default function SettingsScreen({ route }) {
     const [notifications, setNotifications] = useState(true);
     const [location, setLocation] = useState(true);
     const { colors } = useTheme();
+    const [visible, setVisible] = useState(false);
+
+    const hideDialog = (confirmation) => {
+        setVisible(false);
+        if (confirmation) {
+            alert("Account deleted");
+            // TODO logic
+        } else {
+            alert("Account not deleted");
+        }
+    };
 
     const onToggleNightMode = () => setNightMode(!nightMode);
 
     const onToggleNotifications = () => setNotifications(!notifications);
 
     const onToggleLocation = () => setLocation(!location);
+
+    function handleDeleteAccount() {
+        setVisible(true);
+    }
 
     return (
         <Surface style={styles.container}>
@@ -43,6 +58,24 @@ export default function SettingsScreen({ route }) {
                             onValueChange={onToggleNightMode}
                         />
                     </View>
+                    <TouchableOpacity onPress={handleDeleteAccount}>
+                        <Text style={{ padding: 10, color: "red", fontSize: 16 }}>Delete Account</Text>
+                    </TouchableOpacity>
+                    <Portal>
+                        <Dialog visible={visible} onDismiss={() => hideDialog(false)}>
+                            <Dialog.Icon icon="alert" color="red" />
+                            <Dialog.Title style={{textAlign: 'center'}}>Delete Account</Dialog.Title>
+                            <Dialog.Content>
+                                <Text variant="bodyMedium">
+                                    Are you sure you want to delete your account? This action is irreversible.
+                                </Text>
+                            </Dialog.Content>
+                            <Dialog.Actions>
+                                <Button onPress={() => hideDialog(false)}>Cancel</Button>
+                                <Button onPress={() => hideDialog(true)}>Delete</Button>
+                            </Dialog.Actions>
+                        </Dialog>
+                    </Portal>
                 </Surface>
             </View>
         </Surface>

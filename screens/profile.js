@@ -13,17 +13,6 @@ export default function ProfileScreen() {
     const navigation = useNavigation();
     const { currentUser, auth } = useAuth();
     const { profile } = useFetchCurrentUserProfile(currentUser?.uid);
-    const [visible, setVisible] = useState(false);
-
-    const hideDialog = (confirmation) => {
-        setVisible(false);
-        if (confirmation) {
-            alert("Account deleted");
-            // TODO logic
-        } else {
-            alert("Account not deleted");
-        }
-    };
 
     const handleLogout = () => {
         signOut(auth)
@@ -34,10 +23,6 @@ export default function ProfileScreen() {
                 console.error("Logout Error:", error);
             });
     };
-
-    function handleDeleteAccount() {
-        setVisible(true);
-    }
 
     return (
         <Surface style={styles.container} elevation={1}>
@@ -68,41 +53,21 @@ export default function ProfileScreen() {
                 </View>
                 <Surface style={styles.bottomlist} elevation={5}>
                 <Text style={styles.activityTitle}>My Activity</Text>
-                <Text style={{ padding: 10, color: colors.primary }}>Events created: {profile?.eventsCreated.length}</Text>
-                <Text style={{ padding: 10, color: colors.primary }}>Events participated: {profile?.eventsParticipating.length}</Text>
+                <Surface style={styles.activitylist} elevation={4}>
+                <Text style={styles.nameSubText2}>Events created: {profile?.eventsCreated.length}</Text>
+                <Text style={styles.nameSubText2}>Events joined: {profile?.eventsParticipating.length}</Text>
+                <Text style={styles.nameSubText2}>Comments: {profile?.commentsSent.length}</Text>
                 </Surface>
-                <Surface style={styles.bottomlist} elevation={4}>
+                </Surface>
+                <Surface style={styles.bottomlist} elevation={3}>
                     <Text style={{ padding: 10, color: colors.primary }}>My Events</Text>
-                    <Text style={{ padding: 10, color: colors.primary }}>My Posts</Text>
+                    <Divider />
                     <Text style={{ padding: 10, color: colors.primary }}>My Comments</Text>
                 </Surface>
-                <Surface style={styles.bottomlist} elevation={4}>
+                <Surface style={styles.bottomlist} elevation={2}>
                     <TouchableOpacity onPress={() => navigation.navigate("SettingsScreen")}>
                         <Text style={{ padding: 10, color: colors.primary }}>Settings</Text>
                     </TouchableOpacity>
-                    <Divider />
-                    <TouchableOpacity onPress={() => navigation.navigate("ChangePWScreen")}>
-                        <Text style={{ padding: 10, color: colors.primary }}>Change Password</Text>
-                    </TouchableOpacity>
-                    <Divider />
-                    <TouchableOpacity onPress={handleDeleteAccount}>
-                        <Text style={{ padding: 10, color: "red" }}>Delete Account</Text>
-                    </TouchableOpacity>
-                    <Portal>
-                        <Dialog visible={visible} onDismiss={() => hideDialog(false)}>
-                            <Dialog.Icon icon="alert" color="red" />
-                            <Dialog.Title style={{textAlign: 'center'}}>Delete Account</Dialog.Title>
-                            <Dialog.Content>
-                                <Text variant="bodyMedium">
-                                    Are you sure you want to delete your account? This action is irreversible.
-                                </Text>
-                            </Dialog.Content>
-                            <Dialog.Actions>
-                                <Button onPress={() => hideDialog(false)}>Cancel</Button>
-                                <Button onPress={() => hideDialog(true)}>Delete</Button>
-                            </Dialog.Actions>
-                        </Dialog>
-                    </Portal>
                 </Surface>
             </ScrollView>
         </Surface>
@@ -137,6 +102,13 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 2,
     },
+    nameSubText2: {
+        color: "white",
+        fontSize: 12,
+        marginTop: 2,
+        padding: 4,
+        textAlign: "center",
+    },
     buttons: {
         marginTop: 30,
         flexDirection: "row",
@@ -155,5 +127,11 @@ const styles = StyleSheet.create({
         color: "white",
         textAlign: "center",
         fontSize: 16,
+    },
+    activitylist: {
+        width: "100%",
+        paddingBottom: 10,
+        borderBottomEndRadius: 10,
+        borderBottomStartRadius: 10,
     },
 });
