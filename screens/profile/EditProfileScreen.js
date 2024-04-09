@@ -44,29 +44,29 @@ export default function EditProfileScreen({ route }) {
         <Surface style={styles.container}>
             <View style={styles.content}>
                 <Surface elevation={2} style={styles.bottomlist}>
-                <Avatar.Image
-                    style={{ alignSelf: "center", marginBottom: 20 }}
-                    size={100}
-                    source={{ uri: avatar }}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="First Name"
-                    value={firstName}
-                    onChangeText={setFirstName}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="Last Name"
-                    value={lastName}
-                    onChangeText={setLastName}
-                />
-                <TextInput
-                    style={styles.input}
-                    label="Display Name"
-                    value={displayName}
-                    onChangeText={setDisplayName}
-                />
+                    <Avatar.Image
+                        style={{ alignSelf: "center", marginBottom: 20 }}
+                        size={100}
+                        source={{ uri: avatar }}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        label="First Name"
+                        value={firstName}
+                        onChangeText={setFirstName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        label="Last Name"
+                        value={lastName}
+                        onChangeText={setLastName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        label="Display Name"
+                        value={displayName}
+                        onChangeText={setDisplayName}
+                    />
                 </Surface>
                 <View style={styles.buttons}>
                     <Button style={styles.button} icon="camera-image" mode="outlined" compact disabled >

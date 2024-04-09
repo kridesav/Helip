@@ -89,7 +89,7 @@ export default function SettingsScreen({ route }) {
                     </Button>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={2}>
-                    <Button icon="account-remove" compact contentStyle={styles.button2} labelStyle={{color: "red"}} onPress={handleDeleteAccount}>
+                    <Button icon="account-remove" compact contentStyle={styles.button2} labelStyle={{ color: "red" }} onPress={handleDeleteAccount}>
                         Delete Account
                     </Button>
                 </Surface>

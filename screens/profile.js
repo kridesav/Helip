@@ -21,7 +21,7 @@ export default function ProfileScreen() {
             setAvatar(profile?.profilePictureUrl);
         }
     }, [profile?.profilePictureUrl]);
-        
+
     const handleLogout = () => {
         signOut(auth)
             .then(() => {
@@ -34,11 +34,11 @@ export default function ProfileScreen() {
 
     return (
         <Surface style={styles.container} elevation={1}>
-            
+
             <ScrollView contentContainerStyle={styles.content}>
                 <Avatar.Image
                     size={100}
-                    source={{uri: avatar}}
+                    source={{ uri: avatar }}
                 />
                 <Text style={styles.nameText}>
                     {profile?.displayName ?? "No display name"}
@@ -58,15 +58,15 @@ export default function ProfileScreen() {
                     </Button>
                 </View>
                 <Surface style={styles.bottomlist} elevation={5}>
-                <Text style={styles.activityTitle}>My Activity</Text>
-                <Surface style={styles.activitylist} elevation={4}>
-                <Text style={styles.nameSubText2}>Events created: {profile?.eventsCreated.length}</Text>
-                <Text style={styles.nameSubText2}>Events joined: {profile?.eventsParticipating.length}</Text>
-                <Text style={styles.nameSubText2}>Comments: {profile?.commentsSent.length}</Text>
-                </Surface>
+                    <Text style={styles.activityTitle}>My Activity</Text>
+                    <Surface style={styles.activitylist} elevation={4}>
+                        <Text style={styles.nameSubText2}>Events created: {profile?.eventsCreated.length}</Text>
+                        <Text style={styles.nameSubText2}>Events joined: {profile?.eventsParticipating.length}</Text>
+                        <Text style={styles.nameSubText2}>Comments: {profile?.commentsSent.length}</Text>
+                    </Surface>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={3}>
-                    <Button icon="calendar" compact contentStyle={styles.button2}>My Events </Button>
+                    <Button icon="calendar" compact contentStyle={styles.button2} onPress={() => navigation.navigate("My Events")}>My Events </Button>
                     <Button icon="message" compact contentStyle={styles.button2}>My Comments </Button>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={2}>
