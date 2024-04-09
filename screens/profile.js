@@ -66,13 +66,19 @@ export default function ProfileScreen() {
                         Edit Profile
                     </Button>
                 </View>
+                <Surface style={styles.bottomlist} elevation={5}>
+                <Text style={styles.activityTitle}>My Activity</Text>
+                <Text style={{ padding: 10, color: colors.primary }}>Events created: {profile?.eventsCreated.length}</Text>
+                <Text style={{ padding: 10, color: colors.primary }}>Events participated: {profile?.eventsParticipating.length}</Text>
+                </Surface>
+                <Surface style={styles.bottomlist} elevation={4}>
+                    <Text style={{ padding: 10, color: colors.primary }}>My Events</Text>
+                    <Text style={{ padding: 10, color: colors.primary }}>My Posts</Text>
+                    <Text style={{ padding: 10, color: colors.primary }}>My Comments</Text>
+                </Surface>
                 <Surface style={styles.bottomlist} elevation={4}>
                     <TouchableOpacity onPress={() => navigation.navigate("SettingsScreen")}>
                         <Text style={{ padding: 10, color: colors.primary }}>Settings</Text>
-                    </TouchableOpacity>
-                    <Divider />
-                    <TouchableOpacity onPress={() => navigation.navigate("MyEventsStats")}>
-                        <Text style={{ padding: 10, color: colors.primary }}>My Events data</Text>
                     </TouchableOpacity>
                     <Divider />
                     <TouchableOpacity onPress={() => navigation.navigate("ChangePWScreen")}>
@@ -142,5 +148,12 @@ const styles = StyleSheet.create({
     bottomlist: {
         width: "100%",
         marginTop: 30,
+        borderRadius: 10,
+    },
+    activityTitle: {
+        padding: 10,
+        color: "white",
+        textAlign: "center",
+        fontSize: 16,
     },
 });

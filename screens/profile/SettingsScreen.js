@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     bottomlist: {
         width: "100%",
         marginTop: 30,
+        borderRadius: 10,
     },
     input: {
         marginBottom: 10,

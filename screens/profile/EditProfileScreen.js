@@ -18,21 +18,19 @@ export default function EditProfileScreen({ route }) {
     return (
         <Surface style={styles.container}>
             <View style={styles.content}>
-                <Surface style={styles.bottomlist}>
+                <Surface elevation={2} style={styles.bottomlist}>
                 <TextInput
                     style={styles.input}
                     label="First Name"
                     value={firstName}
                     onChangeText={setFirstName}
                 />
-                <Divider />
                 <TextInput
                     style={styles.input}
                     label="Last Name"
                     value={lastName}
                     onChangeText={setLastName}
                 />
-                <Divider />
                 <TextInput
                     label="Display Name"
                     value={displayName}
@@ -91,6 +89,8 @@ const styles = StyleSheet.create({
     bottomlist: {
         width: "100%",
         marginTop: 30,
+        borderRadius: 10,
+        padding: 10,
     },
     input: {
         marginBottom: 10,
