@@ -90,7 +90,6 @@ export default function App() {
   const [filteredLocations, setFilteredLocations] = React.useState([]);
   const [places, setPlaces] = React.useState([]);
   const [token, setToken] = useState(null);
-  const [placeTypeFilter, setPlaceTypeFilter] = useState([])
 
   const mapRef = React.useRef(null);
 
