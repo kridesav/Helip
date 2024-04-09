@@ -15,7 +15,8 @@ import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { debounce } from 'lodash';
 import { getSportIcon } from '../components/getIcons';
 
-export default function MapScreen({ placeTypeFilter, handleMarkerPress, setPlaces, mapRef, token, collapseBottomSheet }) {
+
+export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token, collapseBottomSheet, activeFilter }) {
   const [region, setRegion] = useState({
     latitude: null,
     longitude: null,
@@ -92,9 +93,8 @@ export default function MapScreen({ placeTypeFilter, handleMarkerPress, setPlace
               mapPadding={{ top: 0, right: 0, left: 0, bottom: 25 }}
             >
               {places && places.map((item, index) => {
-                const icon = getSportIcon(item.properties.tyyppi_nim, 'map');   
-                // +20 is the amount of imports in geticons.js beofre the ones we are using here       
-                if (icon === null || placeTypeFilter.includes((icon+20).toString())) {
+                const icon = getSportIcon(item.properties.tyyppi_nim, 'map');
+                if (icon === null || (activeFilter && icon !== activeFilter.uri2)) {
                   return null;
                 }
                 return (

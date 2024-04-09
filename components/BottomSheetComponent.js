@@ -12,11 +12,11 @@ import { Button as IconButton } from 'react-native-elements';
 import theme from '../theme'
 import { getSportIcon } from './getIcons';
 
-const BottomSheetComponent = ({ placeTypeFilter, setPlaceTypeFilter, handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, handleMapItemDeselect }) => {
+const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, setFilteredLocations, bottomSheetRef, selectedMapItem, handleMapItemDeselect, activeFilter, setActiveFilter }) => {
 
   const snapPoints = useMemo(() => ['3.5%', '15%', '40%', '80%'], []);
-  const [ pageNumber, setPageNumber ] = useState(0);
-  const [ settingMode, setSettingsMode ] = useState(false);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [settingMode, setSettingsMode] = useState(false);
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -42,6 +42,12 @@ const BottomSheetComponent = ({ placeTypeFilter, setPlaceTypeFilter, handleListI
     },
   };
 
+  useEffect(() => {
+    if (!settingMode) {
+      setActiveFilter(null);
+    }
+  }, [settingMode]);
+
 
   const NativeButton = (props) => {
     return (
@@ -50,7 +56,13 @@ const BottomSheetComponent = ({ placeTypeFilter, setPlaceTypeFilter, handleListI
         <Text style={styles.text}>{props.title}</Text>
       </Pressable>
     );
-  }
+  };
+
+  const filteredAndSlicedLocations = activeFilter
+  ? filteredLocations
+      .filter(item => getSportIcon(item.properties.tyyppi_nim) === activeFilter.uri)
+      .slice(pageNumber * 100, pageNumber * 100 + 100)
+  : filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100);
 
   return (
     <BottomSheet index={1} snapPoints={snapPoints} ref={bottomSheetRef} keyboardBehavior='interactive' android_keyboardInputMode='adjustResize' keyboardBlurBehavior='restore'>
@@ -84,31 +96,28 @@ const BottomSheetComponent = ({ placeTypeFilter, setPlaceTypeFilter, handleListI
 
           </View>
           :
-          !settingMode?
           <>
-          <View style={{ width: '100%', flexDirection: 'row' }}>
-            <SearchBarComponent snapBottomSheet={handleMapItemDeselect} setFilteredLocations={setFilteredLocations} places={places} />
-            <IconButton onPress={() => setSettingsMode(true)} containerStyle={{paddingTop:5}} icon={{name: "settings"}} type="clear"></IconButton>
-          </View>
-          <BottomSheetScrollView>
-              {
-                filteredLocations.slice(pageNumber * 100, pageNumber * 100 + 100).map((item) => {
-                  const icon = getSportIcon(item.properties.tyyppi_nim);
-                  return (
-                    <View key={item.properties.id}>
-                      <NativeButton onPress={() => handleListItemPress(item)} icon={icon} title={`${item.properties.nimi_fi} - ${item.distance.toFixed(2)} km`} />
-                    </View>
-                  );
-                }) || []
-              }
-            </BottomSheetScrollView>
+            <View>
+              <View style={{ width: '100%', flexDirection: 'row' }}>
+                <SearchBarComponent snapBottomSheet={handleMapItemDeselect} setFilteredLocations={setFilteredLocations} places={places} />
+                <IconButton onPress={() => setSettingsMode(!settingMode)} containerStyle={{ paddingTop: 5 }} icon={{ name: "settings" }} type="clear"></IconButton>
+              </View>
+              {settingMode && <LocationTypeWheel onActiveIconChange={setActiveFilter} />}
+              <BottomSheetScrollView>
+                {
+                  filteredAndSlicedLocations.map((item) => {
+                    const icon = getSportIcon(item.properties.tyyppi_nim);
+                    return (
+                      <View key={item.properties.id}>
+                        <NativeButton onPress={() => handleListItemPress(item)} icon={icon} title={`${item.properties.nimi_fi} - ${item.distance.toFixed(2)} km`} />
+                      </View>
+                    );
+                  }) || []
+                }
+              </BottomSheetScrollView>
+            </View>
           </>
-          : 
-          <View>
-            <LocationTypeWheel placeTypeFilter={placeTypeFilter} setPlaceTypeFilter={setPlaceTypeFilter} />
-            <NativeButton onPress ={() => setSettingsMode(false)} title={"back"}></NativeButton>
-          </View>
-      }
+        }
       </View>
     </BottomSheet>
 

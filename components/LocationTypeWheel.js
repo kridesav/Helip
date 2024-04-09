@@ -1,80 +1,40 @@
-import { useEffect } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Image, TouchableOpacity, View, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAllSportsIcons } from './getIcons';
-import useAuth from '../hooks/useAuth';
+import React, { useEffect, useState } from 'react';
 
 const icons = getAllSportsIcons()
 
-export default function LocationTypeWheel({setPlaceTypeFilter, placeTypeFilter}) {
-
-  const { currentUser } = useAuth();
-  const userId = currentUser?.uid;
+export default function LocationTypeWheel({ onActiveIconChange }) {
+  const [activeIcon, setActiveIcon] = useState(null)
 
   useEffect(() => {
-    _retrieveFiler()
-  },[])
+    onActiveIconChange(activeIcon)
+  }, [activeIcon])
 
-  _storeFilter = async (filterBP) => {
-    try {
-      await AsyncStorage.setItem(
-        `${userId}:filter`,
-        `${filterBP.join(',')}`,
-      );
-    } catch (error) {
-      console.log(error)
-    }
-  };
-  _retrieveFiler = async () => {
-    try {
-      const value = await AsyncStorage.getItem(`${userId}:filter`,);
-      if (value !== null) {
-        // We have data!!
-        setPlaceTypeFilter(value.split(','))
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  };
-
-  const handleIconPress = (item) => {
-    console.log(item)
-    if (placeTypeFilter.includes(item)){
-      setPlaceTypeFilter(oldValues => {
-        return oldValues.filter(arrayItem => arrayItem !== item)
-      })
+  function handleFilter(id) {
+    if (activeIcon !== id) {
+      setActiveIcon(id)
     } else {
-      setPlaceTypeFilter([...placeTypeFilter, item])
-      _storeFilter([...placeTypeFilter, item])
-      console.log([...placeTypeFilter, item])
+      setActiveIcon(null)
     }
   }
-
+  
   return (
-    <View style={styles.container}>
-        <ScrollView horizontal={true}>
+    <SafeAreaView style={{height:40}}>
+        <ScrollView horizontal={true} style={{height:20, marginHorizontal: 15}} showsHorizontalScrollIndicator={false}>
             {icons.map((item,index) => 
-                <TouchableOpacity style={[styles.icon_container, placeTypeFilter.includes(item.uri.toString()) ? styles.selected : '']} key={index} activeOpacity={0.5} onPressOut={() => handleIconPress(item.uri.toString())}>
-                    <Image
-                    source={item.uri}
-                    />
-                </TouchableOpacity> 
+                <TouchableOpacity key={index} activeOpacity={0.5} onPress={() => handleFilter(item)}>
+                <Image
+                source={item.uri}
+                style={[
+                  { width: 35, height: 35, marginHorizontal: 2 },
+                  activeIcon === item && { borderWidth: 2, borderRadius: 20, borderColor: 'black'}
+                ]}
+                />
+            </TouchableOpacity> 
             )}
         </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container:{
-    height: 55
-  },
-  selected:{
-    backgroundColor: 'gray'
-  },
-  icon_container:{
-    borderRadius:5,
-    padding:5
-  }
-})
