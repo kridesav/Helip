@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { firestore } from '../../config/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
 
-export const useRealTimeEvent = (eventId) => {
+export const useRealTimeEvent = (eventId, currentUser) => {
   const [eventData, setEventData] = useState(null);
   
  
   useEffect(() => {
-    if (!eventId) return;
+    if (!eventId || currentUser) return;
 
     const unsubscribe = onSnapshot(doc(firestore, "events", eventId),
       (doc) => {

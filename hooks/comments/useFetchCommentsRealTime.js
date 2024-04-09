@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { firestore } from '../../config/firebaseConfig';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 
-export function useRealTimeEventComments(eventId) {
+export function useRealTimeEventComments(eventId, currentUser) {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
-        if (!eventId) return;
+        if (!eventId || currentUser) return;
 
         const commentsQuery = query(collection(firestore, "comments"), where("eventId", "==", eventId), orderBy("createdAt", "asc"));
 
