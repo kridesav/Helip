@@ -1,5 +1,7 @@
 export default formatDateAndTime = (timestamp) => {
 
+  if (!timestamp) return;
+
     const date = timestamp.toDate();
 
     const formattedDate = new Intl.DateTimeFormat('fi-FI', {

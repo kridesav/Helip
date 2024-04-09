@@ -11,11 +11,10 @@ import theme from '../../theme';
 import useAuth from '../../hooks/useAuth';
 import { useFocusEffect } from '@react-navigation/native';
 import { fetchEventById } from '../../hooks/events/utils/fetchEventById'
-import { fetchCommentsByEventId } from '../../hooks/comments/useFetchCommentsByEventId'
 import joinEvent from '../../hooks/events/utils/joinEvent'
 import { useRealTimeEvent } from '../../hooks/events/useEventRealTimeDetails';
+import { useRealTimeEventComments } from "../../hooks/comments/useFetchCommentsRealTime";
 import { CommentsDialog, CommentsContainer } from "../../components/Comments";
-import useFetchComments from "../../hooks/comments/useFetchComments";
 
 const EventScreen = () => {
 
@@ -31,16 +30,14 @@ const EventScreen = () => {
     const { eventData } = useRealTimeEvent(initialEvent.id);
     const isCreator = useIsEventCreator(event.createdBy);
 
-    //join-cancel
     const [hasJoined, setHasJoined] = useState(false);
-    const isUser = useIfUserJoined(event.usersParticipating)
-
+    const isUser = useIfUserJoined(event.usersParticipating);
     const [isJoining, setIsJoining] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
     
-    //comments
-    const { comments } = useFetchComments(event.id);
-    const [commentsVisible, setCommentsVisible] = useState(false);
+    const { comments } = useRealTimeEventComments(event.id);
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         setHasJoined(isUser);
@@ -142,7 +139,6 @@ const EventScreen = () => {
         }
     };
 
-
     useFocusEffect(
         React.useCallback(() => {
             fetchLatestEventDetails();
@@ -157,7 +153,6 @@ const EventScreen = () => {
 
     return (
         <PaperProvider theme={theme}>
-
             <ScrollView contentContainerStyle={styles.container} >
                 <View style={styles.detailContainer}>
                     <Text style={styles.header}> {eventData.title} at {eventData.locationName}</Text>
@@ -228,12 +223,13 @@ const EventScreen = () => {
                 </View>
 
                 <View style={styles.portal}>
-                    <Button onPress={() => setCommentsVisible(true)}>Add Comment</Button>
-                    <CommentsContainer comments={comments} eventId={initialEvent.id}/>
+                    <Button onPress={() => setDialogVisible(true)}>Add Comment</Button>
+                    <CommentsContainer comments={comments} eventId={initialEvent.id} show={show} setShow={setShow} setDialogVisible={setDialogVisible}/>
                     <CommentsDialog
-                        visible={commentsVisible}
+                        visible={dialogVisible}
+                        setDialogVisible={setDialogVisible}
                         eventId={initialEvent.id}
-                        onDismiss={() => setCommentsVisible(false)}
+                        onDismiss={() => setDialogVisible(false)}
                     />
                 </View>
             </ScrollView >
