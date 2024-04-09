@@ -59,7 +59,6 @@ function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMark
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps
-        placeTypeFilter={placeTypeFilter}
         collapseBottomSheet={collapseBottomSheet}
         token={token}
         setPlaces={setPlaces}
@@ -68,8 +67,6 @@ function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMark
         activeFilter={activeFilter} />
         
       <BottomSheetComponent
-        setPlaceTypeFilter={setPlaceTypeFilter}
-        placeTypeFilter={placeTypeFilter}
         handleListItemPress={handleListItemPress}
         places={places}
         filteredLocations={filteredLocations}
@@ -201,8 +198,7 @@ export default function App() {
                       mapRef={mapRef}
                       collapseBottomSheet={collapseBottomSheet}
                       handleListItemPress={handleListItemPress}
-                      placeTypeFilter={placeTypeFilter} 
-                      setPlaceTypeFilter={setPlaceTypeFilter} />
+                      />
                     )}
                   </Tab.Screen>
                 </Tab.Navigator>
