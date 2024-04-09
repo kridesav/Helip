@@ -19,8 +19,9 @@ const MyEvents = () => {
   
     const [expandedId, setExpandedId] = useState(null);
     const [isJoining, setIsJoining] = useState(false);
-    const [joinedEventIds, setJoinedEventIds] = useState(null);
+    const [joinedEventIds, setJoinedEventIds] = useState([]);
     const [createdEventIds, setCreatedEventIds] = useState([]);
+    const [showEvents, setShowEvents] = useState([false,false])
 
     useEffect(() => {
         const updatedEventIds = eventIds
@@ -86,13 +87,33 @@ const MyEvents = () => {
     }; 
 
     return(
-        <View>
-            <Pressable style={styles.button} /* onPress={props.onPress} */>
+        <View style={styles.container}>
+            <Pressable style={styles.button} onPress={() => setShowEvents([!showEvents[0],showEvents[1]])}>
                 <Text>Created Events</Text>
             </Pressable>
-            <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
-                {createdEventIds.length > 0 ? (
-                    createdEventIds.map((event) => (
+            {
+                showEvents[0] ? 
+                <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
+                    {createdEventIds.length > 0 ? (
+                        createdEventIds.map((event) => (
+                        <FeedEvent navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+                        ))
+                    ) : (
+                        <View style={styles.centered}>
+                        <Text>No events for this location.</Text>
+                        </View>
+                    )}
+                </ScrollView>
+                : ''
+            }
+            <Pressable style={styles.button} onPress={() => setShowEvents([showEvents[0],!showEvents[1]])}>
+                <Text>Joined</Text>
+            </Pressable>
+            {
+                showEvents[1] ? 
+                <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
+                {joinedEventIds.length > 0 ? (
+                    joinedEventIds.map((event) => (
                     <FeedEvent navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
                     ))
                 ) : (
@@ -100,21 +121,9 @@ const MyEvents = () => {
                     <Text>No events for this location.</Text>
                     </View>
                 )}
-            </ScrollView>
-            <Pressable style={styles.button} /* onPress={props.onPress} */>
-                <Text>Joined</Text>
-            </Pressable>
-            <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
-            {joinedEventIds.length > 0 ? (
-                joinedEventIds.map((event) => (
-                <FeedEvent navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
-                ))
-            ) : (
-                <View style={styles.centered}>
-                <Text>No events for this location.</Text>
-                </View>
-            )}
-            </ScrollView>
+                </ScrollView>
+                : ''
+            }
         </View>
     )
 }
@@ -125,6 +134,21 @@ const styles = StyleSheet.create({
       justifyContent: "center",
       alignItems: "center",
     },
+    button : {
+        padding: 10,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        borderWidth: 1,
+        borderRadius: 10,
+        backgroundColor: 'white',
+        
+    },
+    container: {
+        flexDirection: 'column',
+        flex: 1,
+        backgroundColor: 'gray',
+        height: '100vh'
+    }
   });
 
 export default MyEvents
