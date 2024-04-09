@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Alert, Pressable } from "react-native";
 import { useTheme, Text } from "react-native-paper";
 import { EventContext } from "../context/EventProvider";
 import { useNavigation } from "@react-navigation/native";
@@ -19,8 +19,8 @@ const MyEvents = () => {
   
     const [expandedId, setExpandedId] = useState(null);
     const [isJoining, setIsJoining] = useState(false);
-    const [joinedEventId, setJoinedEventId] = useState(null);
-    const [filteredEventIds, setFilteredEventIds] = useState([]);
+    const [joinedEventIds, setJoinedEventIds] = useState(null);
+    const [createdEventIds, setCreatedEventIds] = useState([]);
 
     useEffect(() => {
         const updatedEventIds = eventIds
@@ -28,9 +28,10 @@ const MyEvents = () => {
             ...event,
             userJoined: event.usersParticipating.includes(currentUser?.uid),
           }))
-          .filter((event) => event.createdBy === currentUser?.uid);
-    
-        setFilteredEventIds(updatedEventIds);
+        const filterCreated =  updatedEventIds .filter((event) => event.createdBy === currentUser?.uid);
+        const filterJoined = updatedEventIds .filter((event) => event.userJoined === currentUser?.uid);
+        setCreatedEventIds(filterCreated);
+        setJoinedEventIds(filterJoined);
     }, [eventIds, currentUser?.uid]);
         
     const toggleExpansion = (id) => {
@@ -73,7 +74,6 @@ const MyEvents = () => {
             const success = await joinEvent(eventId, currentUser.uid);
             if (success) {
             Alert.alert("Joined", "You have successfully joined the event.");
-            setJoinedEventId(eventId);
             } else {
             Alert.alert("Error", "Could not join the event.");
             }
@@ -86,9 +86,27 @@ const MyEvents = () => {
     }; 
 
     return(
-        <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
-            {filteredEventIds.length > 0 ? (
-                filteredEventIds.map((event) => (
+        <View>
+            <Pressable style={styles.button} /* onPress={props.onPress} */>
+                <Text>Created Events</Text>
+            </Pressable>
+            <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
+                {createdEventIds.length > 0 ? (
+                    createdEventIds.map((event) => (
+                    <FeedEvent navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+                    ))
+                ) : (
+                    <View style={styles.centered}>
+                    <Text>No events for this location.</Text>
+                    </View>
+                )}
+            </ScrollView>
+            <Pressable style={styles.button} /* onPress={props.onPress} */>
+                <Text>Joined</Text>
+            </Pressable>
+            <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
+            {joinedEventIds.length > 0 ? (
+                joinedEventIds.map((event) => (
                 <FeedEvent navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
                 ))
             ) : (
@@ -96,7 +114,8 @@ const MyEvents = () => {
                 <Text>No events for this location.</Text>
                 </View>
             )}
-        </ScrollView>
+            </ScrollView>
+        </View>
     )
 }
 
