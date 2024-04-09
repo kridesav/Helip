@@ -1,3 +1,4 @@
+//if length changes, addition to  placeTypeFilter.includes in map.js ned to change accordingly
 import {
   footballIcon,
   gymIcon,
