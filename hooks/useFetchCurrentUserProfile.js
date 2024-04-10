@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { firestore } from '../config/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 export const useFetchCurrentUserProfile = () => {
@@ -10,25 +10,20 @@ export const useFetchCurrentUserProfile = () => {
   const currentUser = auth.currentUser;
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (currentUser) {
-        try {
-          const docRef = doc(firestore, "users", currentUser.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setProfile({ uid: docSnap.id, ...docSnap.data() });
-          } else {
-            console.log("No such document!");
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
+    if (currentUser) {
+      const docRef = doc(firestore, "users", currentUser.uid);
 
-    fetchUserProfile();
+      const unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setProfile({ uid: docSnap.id, ...docSnap.data() });
+        } else {
+          console.log("No such document!");
+        }
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    }
   }, [currentUser]);
 
   return { profile, loading };
