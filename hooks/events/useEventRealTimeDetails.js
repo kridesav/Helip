@@ -7,7 +7,7 @@ export const useRealTimeEvent = (eventId, currentUser) => {
   
  
   useEffect(() => {
-    if (!eventId || currentUser) return;
+    if (!eventId) return;
 
     const unsubscribe = onSnapshot(doc(firestore, "events", eventId),
       (doc) => {

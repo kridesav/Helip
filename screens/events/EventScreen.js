@@ -35,7 +35,7 @@ const EventScreen = () => {
     const [isJoining, setIsJoining] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
     
-    const { comments } = useRealTimeEventComments(event.id, currentUser);
+    const { comments } = useRealTimeEventComments(event.id, userId);
     const [dialogVisible, setDialogVisible] = useState(false);
     const [show, setShow] = useState(false);
 

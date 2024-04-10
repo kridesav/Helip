@@ -2,20 +2,20 @@ import { useEffect, useState } from 'react';
 import { firestore } from '../../config/firebaseConfig';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 
-export function useRealTimeEventComments(eventId, currentUser) {
+//Realtime listeners for comments and replies + cleaning the listeners after users sign out.
+export function useRealTimeEventComments(eventId) {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
-        if (!eventId || currentUser) return;
+        if (!eventId) {
+            return;
+        }
 
         const commentsQuery = query(collection(firestore, "comments"), where("eventId", "==", eventId), orderBy("createdAt", "asc"));
-
+        let unsubscribes = []; 
         const unsubscribeComments = onSnapshot(commentsQuery, (querySnapshot) => {
-            const unsubscribes = [];
-
+      
             querySnapshot.docs.forEach(doc => {
-                const commentData = { id: doc.id, ...doc.data(), replies: [] };
-
                 const repliesRef = collection(firestore, `comments/${doc.id}/replies`);
                 const repliesQuery = query(repliesRef, orderBy("createdAt", "asc"));
 
@@ -37,11 +37,12 @@ export function useRealTimeEventComments(eventId, currentUser) {
             });
 
             setComments(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), replies: [] })));
-
-            return () => unsubscribes.forEach(unsub => unsub());
         });
 
-        return () => unsubscribeComments();
+        unsubscribes.push(unsubscribeComments); 
+        return () => {
+            unsubscribes.forEach(unsub => unsub()); 
+        };
     }, [eventId]);
 
     return { comments };

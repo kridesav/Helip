@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { Button, Dialog, Portal, TextInput, Text, Card} from 'react-native-paper';
+import { Button, Dialog, Portal, TextInput, Text, Card } from 'react-native-paper';
 import { useFetchCurrentUserProfile } from "../hooks/useFetchCurrentUserProfile";
 import { addComment } from '../hooks/comments/utils/addComment'
 import { addReplyToComment } from '../hooks/comments/utils/addReplyToComment';
 import formatDateAndTime from '../../Helip/utils/formatDateAndTime';
+import { findQuoteForReply } from '../utils/findQuoteForReply';
 import useAuth from '../hooks/useAuth';
 
 
-
 export const CommentsDialog = ({ visible, setDialogVisible, onDismiss, eventId }) => {
- 
+
     const [value, setValue] = React.useState({
         comment: "",
         eventId: eventId,
@@ -54,12 +54,12 @@ export const CommentsDialog = ({ visible, setDialogVisible, onDismiss, eventId }
             console.log("Failed to add the comment");
         }
     };
-   
+
 
     return (
 
         <Portal>
-            <Dialog visible={visible} onDismiss={onDismiss} style={{marginBottom:110}}>
+            <Dialog visible={visible} onDismiss={onDismiss} style={{ marginBottom: 110 }}>
                 <Dialog.Title>Add a Comment</Dialog.Title>
                 <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
                     <Dialog.Content>
@@ -84,9 +84,7 @@ export const CommentsDialog = ({ visible, setDialogVisible, onDismiss, eventId }
     );
 };
 
-export const ReplyDialog = ({ visible, onDismiss, commentId, targetReplyId, setRepliesVisible }) => {
-    console.log("ReplyDialog commentId:", commentId);
-
+export const ReplyDialog = ({ visible, onDismiss, commentId, targetReplyId, setRepliesVisible, selectedDisplayName, selectedReplyDisplayName, selectedComment, allComments }) => {
     const [value, setValue] = React.useState({
         reply: "",
     });
@@ -115,7 +113,7 @@ export const ReplyDialog = ({ visible, onDismiss, commentId, targetReplyId, setR
 
 
     const addReplyToFirestore = async () => {
-        console.log("Adding reply, commentId:", commentId);
+      
         const replyData = {
             reply: value.reply,
         };
@@ -136,8 +134,21 @@ export const ReplyDialog = ({ visible, onDismiss, commentId, targetReplyId, setR
 
     return (
         <Portal>
-            <Dialog visible={visible} onDismiss={onDismiss} style={{marginBottom:110}}>
-                <Dialog.Title>Add a reply</Dialog.Title>
+            <Dialog visible={visible} onDismiss={onDismiss} style={{ marginBottom: 135 }}>
+                {
+                    targetReplyId && targetReplyId !== commentId ?
+                        <>
+                            <Dialog.Title>Reply to {selectedReplyDisplayName}</Dialog.Title>
+                            <Text style={{ marginLeft: 20, marginBottom: 10, fontStyle: 'italic', color: "gray" }}>who said: "{findQuoteForReply(targetReplyId, allComments)}"
+                            </Text>
+                        </>
+                        :
+                        <>
+                           <Dialog.Title>Reply to {selectedDisplayName}</Dialog.Title>
+                            <Text style={{ marginLeft: 20, marginBottom: 10, fontStyle: 'italic', color: "gray" }}>who said: "{selectedComment}"
+                            </Text>
+                        </>
+                }
                 <Dialog.Content>
                     <TextInput
                         label="Reply"
@@ -164,21 +175,10 @@ export const CommentsView = ({ comments, eventId }) => {
     const [selectedCommentId, setSelectedCommentId] = useState(null);
     const [selectedEventId, setSelectedEventId] = useState(null);
     const [selectedTargetReplyId, setSelectedTargetReplyId] = useState(null);
-
-    const findQuoteForReply = (targetReplyId, comments) => {
-        let quotedText = '';
-        console.log(comments);
-        comments.forEach(comment => {
-            if (comment.replies) {
-                const targetReply = comment.replies.find(reply => reply.id === targetReplyId);
-                if (targetReply) {
-                    quotedText = targetReply.reply;
-                }
-            }
-        });
-
-        return quotedText;
-    };
+    const [selectedDisplayName, setSelectedDisplayName] = useState(null);
+    const [selectedReplyDisplayName, setSelectedReplyDisplayName] = useState(null);
+    const [selectedComment, setSelectedComment] = useState(null);
+    const [allComments, setAllComments] = useState([])
 
     return (
         <View style={styles.portal}>
@@ -192,7 +192,7 @@ export const CommentsView = ({ comments, eventId }) => {
                             <Text style={{ color: "orange" }}>{formatDateAndTime(comment?.createdAt)}</Text>
                             <Text style={{ marginTop: 10 }}>{comment.comment}</Text>
                             <Card.Actions>
-                                <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment.id); setSelectedEventId(eventId), setSelectedTargetReplyId(comment.id) }}>
+                                <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedEventId(eventId); setSelectedTargetReplyId(comment?.id); setSelectedDisplayName(comment?.displayName); setSelectedComment(comment?.comment) }}>
                                     <Text>Reply</Text>
                                 </Button>
                             </Card.Actions>
@@ -219,13 +219,13 @@ export const CommentsView = ({ comments, eventId }) => {
                                                 />
                                                 <Text style={{ marginBottom: 10, color: "orange" }}>{formatDateAndTime(reply?.createdAt)}</Text>
                                                 <Text style={{ marginLeft: 20, fontStyle: 'italic', color: "gray" }}>
-                                                    {comment?.displayName} said: "{comment.comment}"
+                                                    {comment?.displayName} said: "{comment?.comment}"
                                                 </Text>
                                             </>
                                     }
-                                    <Text style={{ marginTop: 10 }}>{reply.reply}</Text>
+                                    <Text style={{ marginTop: 10 }}>{reply?.reply}</Text>
                                     <Card.Actions>
-                                        <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment.id); setSelectedTargetReplyId(reply.id); setSelectedEventId(eventId); }}>
+                                        <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedTargetReplyId(reply?.id); setSelectedEventId(eventId); setSelectedDisplayName(comment?.displayName); setSelectedReplyDisplayName(reply?.displayName); setSelectedComment(comment?.comment); setAllComments(comments) }}>
                                             <Text>Reply</Text>
                                         </Button>
                                     </Card.Actions>
@@ -237,12 +237,16 @@ export const CommentsView = ({ comments, eventId }) => {
             </ScrollView>
 
             <ReplyDialog
+                selectedDisplayName={selectedDisplayName}
+                selectedReplyDisplayName={selectedReplyDisplayName}
+                selectedComment={selectedComment}
                 setRepliesVisible={setRepliesVisible}
                 visible={repliesVisible}
                 commentId={selectedCommentId}
                 eventId={selectedEventId}
                 targetReplyId={selectedTargetReplyId}
                 onDismiss={() => setRepliesVisible(false)}
+                allComments={allComments}
             />
         </View >
 

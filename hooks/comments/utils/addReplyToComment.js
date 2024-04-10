@@ -14,7 +14,10 @@ export const addReplyToComment = async (replyData, userId, displayName, firstNam
         return false;
     }
 
-
+    if (!displayName) {
+        console.error("displayName is undefined or not passed correctly.");
+        return false;
+    }
 
     try {
 
