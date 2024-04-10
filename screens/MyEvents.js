@@ -29,10 +29,11 @@ const MyEvents = () => {
             ...event,
             userJoined: event.usersParticipating.includes(currentUser?.uid),
           }))
-        const filterCreated =  updatedEventIds .filter((event) => event.createdBy === currentUser?.uid);
-        const filterJoined = updatedEventIds .filter((event) => event.userJoined === currentUser?.uid);
+        const filterCreated =  updatedEventIds.filter((event) => event.createdBy === currentUser?.uid);
+        const filterJoined = updatedEventIds.filter((event) => event.userJoined);
         setCreatedEventIds(filterCreated);
         setJoinedEventIds(filterJoined);
+        console.log(filterJoined)
     }, [eventIds, currentUser?.uid]);
         
     const toggleExpansion = (id) => {
@@ -87,53 +88,36 @@ const MyEvents = () => {
     }; 
 
     return(
-        <View style={styles.container}>
-            <Pressable style={styles.button} onPress={() => setShowEvents([!showEvents[0],showEvents[1]])}>
-                <Text>Created Events</Text>
-            </Pressable>
-            {
-                showEvents[0] ? 
+        <View style={styles.container}>   
                 <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
-                    {createdEventIds.length > 0 ? (
-                        createdEventIds.map((event) => (
-                        <FeedEvent navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
-                        ))
-                    ) : (
-                        <View style={styles.centered}>
-                        <Text>No events for this location.</Text>
+                    <View style={styles.buttonContainer}>
+                        <Pressable style={[styles.button, showEvents[0] && { borderWidth: 2, borderRadius: 20, borderColor: 'black'}]} onPress={() => setShowEvents([!showEvents[0],false])}>
+                            <Text>Created Events</Text>
+                        </Pressable>
+                        <Pressable style={[styles.button, showEvents[1] && { borderWidth: 2, borderRadius: 20, borderColor: 'black'}]} onPress={() => setShowEvents([false,!showEvents[1]])}>
+                            <Text>Joined</Text>
+                        </Pressable>
                         </View>
-                    )}
+                    {createdEventIds.length > 0 && showEvents[0] ? 
+                    (
+                        createdEventIds.map((event) => (
+                        <FeedEvent key={event.id} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+                        ))
+                    ) : ''
+                    }
+                    {joinedEventIds.length > 0 && showEvents[1] ? 
+                    (
+                        joinedEventIds.map((event) => (
+                        <FeedEvent key={event.id} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+                        ))
+                    ) : ''
+                    }
                 </ScrollView>
-                : ''
-            }
-            <Pressable style={styles.button} onPress={() => setShowEvents([showEvents[0],!showEvents[1]])}>
-                <Text>Joined</Text>
-            </Pressable>
-            {
-                showEvents[1] ? 
-                <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
-                {joinedEventIds.length > 0 ? (
-                    joinedEventIds.map((event) => (
-                    <FeedEvent navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
-                    ))
-                ) : (
-                    <View style={styles.centered}>
-                    <Text>No events for this location.</Text>
-                    </View>
-                )}
-                </ScrollView>
-                : ''
-            }
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    centered: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
     button : {
         padding: 10,
         marginVertical: 8,
@@ -141,13 +125,16 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         backgroundColor: 'white',
+        height:45
         
     },
     container: {
-        flexDirection: 'column',
         flex: 1,
-        backgroundColor: 'gray',
-        height: '100vh'
+        backgroundColor: 'gray'
+    },
+    buttonContainer:{
+        flex: 1,
+        flexDirection: 'row',
     }
   });
 

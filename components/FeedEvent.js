@@ -8,7 +8,7 @@ const FeedEvent = ({ isJoining, navigation, userLocation, event, expandedId, cal
             <View style={styles.cardLayout}>
               {/* Conditional rendering for the image */}
               <View style={styles.imageContainer}>
-                <Card.Cover source={"joku image"} style={styles.cover} />
+                <Card.Cover /* source={"joku image"} */ style={styles.cover} />
               </View>
 
               {/* Container for text details */}
