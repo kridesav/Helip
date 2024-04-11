@@ -112,7 +112,8 @@ const MyEvents = () => {
                         ))
                     ) : ''
                     }
-                </ScrollView>
+                    <Text style={{marginBottom:50}}></Text>
+                </ScrollView>         
         </View>
     )
 }

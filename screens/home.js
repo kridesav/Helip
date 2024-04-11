@@ -94,6 +94,7 @@ const HomeScreen = () => {
           <Text>No events for this location.</Text>
         </View>
       )}
+      <Text style={{marginBottom:50}}></Text>
     </ScrollView>
   );
 };

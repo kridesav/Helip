@@ -6,12 +6,10 @@ const FeedEvent = ({ isJoining, navigation, userLocation, event, expandedId, cal
     return(
         <Card key={event.id} style={styles.card} onPress={() => toggleExpansion(event.id)}>
             <View style={styles.cardLayout}>
-              {/* Conditional rendering for the image */}
               <View style={styles.imageContainer}>
                 <Card.Cover /* source={"joku image"} */ style={styles.cover} />
               </View>
 
-              {/* Container for text details */}
               <View style={styles.textContainer}>
                 <Text style={styles.title}>{event.title}</Text>
                 <Text>Date: {event.date}</Text>
