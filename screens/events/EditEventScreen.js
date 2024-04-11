@@ -162,7 +162,7 @@ const EditEventScreen = () => {
                                     <TextInput
                                         style={styles.textInput}
                                         mode="outlined"
-                                        placeholder="Event title"
+                                        label="Event title"
                                         containerStyle={styles.control}
                                         value={value.title}
                                         onChangeText={(text) => {
@@ -181,13 +181,12 @@ const EditEventScreen = () => {
                                         color={colors.primary} style={styles.iconStyle} />
                                     <TextInput
                                         style={styles.desc}
-                                        placeholder="Description"
+                                        label="Description"
                                         editable
                                         multiline
                                         numberOfLines={10}
                                         maxLength={400}
                                         value={value.description}
-
                                         onChangeText={(text) => {
                                             setValue({ ...value, description: text });
 
@@ -206,8 +205,7 @@ const EditEventScreen = () => {
                                     <TextInput
                                         style={styles.textInput}
                                         mode="outlined"
-
-                                        placeholder="Max participants"
+                                        label="Max participants"
                                         containerStyle={styles.control}
                                         keyboardType='numeric'
                                         value={value.participantLimit.toString()}
