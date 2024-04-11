@@ -22,35 +22,17 @@ import { useFetchCurrentUserProfile } from "./hooks/useFetchCurrentUserProfile";
 import { EventProvider, EventContext } from "./context/EventProvider";
 import { useNavigation } from "@react-navigation/native";
 import theme from "./theme";
+import Profile from "./screens/profile";
+import EditProfileScreen from "./screens/profile/EditProfileScreen";
+import SettingsScreen from "./screens/profile/SettingsScreen";
 
 const Stack = createStackNavigator();
 
 //placeholder
 function ProfileScreen() {
-  const { colors } = useTheme();
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        console.log("User logged out");
-      })
-      .catch((error) => {
-        console.error("Logout Error:", error);
-      });
-  };
-
-  const { profile } = useFetchCurrentUserProfile();
-
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colors.tertiary }}>
-      <Text>Settings!</Text>
-      <Text style={{ marginTop: 10 }}>Profile Data:</Text>
-      <Text style={{ marginTop: 5 }}>Email: {profile?.email ?? "No email"}</Text>
-      <Text style={{ marginTop: 5 }}>
-        Name: {profile?.firstName ?? "No first name"} {profile?.lastName ?? "No last name"}
-      </Text>
-      <Button title="Logout" onPress={handleLogout} />
-    </View>
-  );
+return (
+  <Profile />
+);
 }
 
 
@@ -206,6 +188,9 @@ export default function App() {
             <Stack.Screen name="AddEventScreen" component={AddEventScreen} options={{ title: "Add Event" }} />
             <Stack.Screen name="EventScreen" component={EventScreen} options={{ title: "Event" }} />
             <Stack.Screen name="EditEventScreen" component={EditEventScreen} options={{ title: "Edit Event" }} />
+            <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
+            <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: "Settings" }} />
+
           </Stack.Navigator>
         </NavigationContainer>
       </EventProvider>
