@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Button, TextInput, useTheme, Surface, Text, Divider, Switch, Portal, Dialog, Icon } from 'react-native-paper';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Button, Surface, Text, Switch, Portal, Dialog, Icon } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
 
 
 export default function SettingsScreen({ route }) {
     const [nightMode, setNightMode] = useState(false);
     const [notifications, setNotifications] = useState(true);
     const [location, setLocation] = useState(true);
-    const { colors } = useTheme();
     const [visible, setVisible] = useState(false);
 
     const hideDialog = (confirmation) => {
@@ -21,10 +20,13 @@ export default function SettingsScreen({ route }) {
     };
 
     const onToggleNightMode = () => setNightMode(!nightMode);
+    // TODO logic
 
     const onToggleNotifications = () => setNotifications(!notifications);
+    // TODO logic
 
     const onToggleLocation = () => setLocation(!location);
+    // TODO logic
 
     function handleDeleteAccount() {
         setVisible(true);
@@ -84,12 +86,12 @@ export default function SettingsScreen({ route }) {
                     </Portal>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={4}>
-                    <Button icon="form-textbox-password" compact contentStyle={styles.button2}>
+                    <Button icon="form-textbox-password" compact contentStyle={styles.button}>
                         Change Password
                     </Button>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={2}>
-                    <Button icon="account-remove" compact contentStyle={styles.button2} labelStyle={{ color: "red" }} onPress={handleDeleteAccount}>
+                    <Button icon="account-remove" compact contentStyle={styles.button} labelStyle={{ color: "red" }} onPress={handleDeleteAccount}>
                         Delete Account
                     </Button>
                 </Surface>
@@ -101,36 +103,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    header: {
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    headerText: {
-        color: "white",
-        fontSize: 18,
-    },
     content: {
         flexGrow: 1,
         alignItems: "center",
         padding: 20,
     },
-    nameText: {
-        color: "white",
-        fontWeight: "bold",
-        fontSize: 20,
-        marginTop: 10,
-    },
     nameSubText: {
         fontSize: 16,
         marginLeft: 10,
-    },
-    buttons: {
-        marginTop: 30,
-        flexDirection: "row",
-        justifyContent: "space-around",
-        width: "70%",
-    },
-    button: {
     },
     bottomlist: {
         width: "100%",
@@ -147,7 +127,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
     },
-    button2: {
+    button: {
         justifyContent: "flex-start",
         padding: 8,
     },
