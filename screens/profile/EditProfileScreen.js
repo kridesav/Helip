@@ -4,8 +4,10 @@ import { View, StyleSheet } from 'react-native';
 import useAuth from '../../hooks/useAuth';
 import editUser from '../../hooks/events/utils/editUser';
 
+
 export default function EditProfileScreen({ route }) {
-    const { profile } = route.params;
+    const { profile: initialProfile } = route.params;
+    const [profile, setProfile] = useState(initialProfile);
     const [firstName, setFirstName] = useState(profile?.firstName ?? '');
     const [lastName, setLastName] = useState(profile?.lastName ?? '');
     const [displayName, setDisplayName] = useState(profile?.displayName ?? '');
@@ -25,12 +27,14 @@ export default function EditProfileScreen({ route }) {
             const result = await editUser()(userData, user.currentUser.uid);
             if (result) {
                 console.log("Profile updated");
+                setProfile(userData);
             }
         } catch (error) {
             console.error("Profile update error:", error);
         }
-        setVisible(false);
+        setVisible(false)
     };
+
 
     const handleAvatar = () => setVisible(!visible);
 

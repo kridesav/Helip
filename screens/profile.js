@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
-import { useTheme, Text, Avatar, Button, Surface } from "react-native-paper";
+import { Text, Avatar, Button, Surface } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { useFetchCurrentUserProfile } from "../hooks/useFetchCurrentUserProfile";
 import { signOut } from "firebase/auth";
