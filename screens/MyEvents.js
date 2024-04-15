@@ -99,14 +99,14 @@ const MyEvents = () => {
                     {createdEventIds.length > 0 && showEvents[0] ? 
                     (
                         createdEventIds.map((event) => (
-                        <FeedEvent userId={currentUser?.uid} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+                        <FeedEvent key={event.id} userId={currentUser?.uid} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
                         ))
                     ) : ''
                     }
                     {joinedEventIds.length > 0 && showEvents[1] ? 
                     (
                         joinedEventIds.map((event) => (
-                        <FeedEvent userId={currentUser?.uid} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+                        <FeedEvent key={event.id} userId={currentUser?.uid} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
                         ))
                     ) : ''
                     }

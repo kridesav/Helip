@@ -7,10 +7,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const FeedEvent = ({ userId ,isJoining, navigation, userLocation, event, expandedId, calculateDistance, handleJoinEvent, toggleExpansion}) => {
     
   const [newCommentCount, setNewCommentCount] = useState(0);
-  const [lastChecked, setLastChecked] = useState(null)
   const { comments } = useRealTimeEventComments(event.id, userId);
 
-  const checkIfEventHasNewComments = () => {
+  const checkIfEventHasNewComments = (lastChecked) => {
     let newComments = 0
     comments.map(function(comment){
       comment.updatedAt.seconds > lastChecked + 2 ? newComments++ : ''
@@ -30,24 +29,23 @@ const FeedEvent = ({ userId ,isJoining, navigation, userLocation, event, expande
     }
   };
 
-  const retrieveCommentsChecked = async () => {
-    try {
-      const value = await AsyncStorage.getItem(`@CommentsChecked:${userId}:${event.id}`);
-      if (value !== null) {
-        setLastChecked(value)
-      } 
-    } catch (error) {
-      console.log('Error retrieving comments from async storage')
+  const retrieveCommentsChecked = async (length) => {
+    if(length > 0){
+      try {
+        const value = await AsyncStorage.getItem(`@CommentsChecked:${userId}:${event.id}`);
+        if (value !== null) {
+          checkIfEventHasNewComments(value)
+        } 
+      } catch (error) {
+        console.log('Error retrieving comments from async storage')
+      }
     }
   };
 
   useEffect(() => {
-    retrieveCommentsChecked()
+    retrieveCommentsChecked(comments.length)
   }, [comments])
 
-  useEffect(() => {
-    checkIfEventHasNewComments()
-  }, [lastChecked])
 
   const handleDetailsButtonClick = () => {
     saveCommentsChecked()
