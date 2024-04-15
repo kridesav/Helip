@@ -87,7 +87,7 @@ const HomeScreen = () => {
     <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
       {filteredEventIds.length > 0 ? (
         filteredEventIds.map((event) => (
-          <FeedEvent key={event.id} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+          <FeedEvent navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
         ))
       ) : (
         <View style={styles.centered}>

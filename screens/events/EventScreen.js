@@ -43,6 +43,7 @@ const EventScreen = () => {
         setHasJoined(isUser);
     }, [isUser]);
 
+    
     const handleJoinPress = () => {
 
         Alert.alert(
