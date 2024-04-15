@@ -3,12 +3,12 @@ import { View, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } f
 import { Button, Dialog, Portal, TextInput, Text, Card } from 'react-native-paper';
 import { useFetchCurrentUserProfile } from "../hooks/useFetchCurrentUserProfile";
 import { addComment } from '../hooks/comments/utils/addComment'
+import softDeleteComment from '../../Helip/hooks/comments/utils/deleteComment'
+import softDeleteReply from '../hooks/comments/utils/deleteReply';
 import { addReplyToComment } from '../hooks/comments/utils/addReplyToComment';
 import formatDateAndTime from '../../Helip/utils/formatDateAndTime';
 import { findQuoteForReply } from '../utils/findQuoteForReply';
 import useAuth from '../hooks/useAuth';
-
-
 export const CommentsDialog = ({ visible, setDialogVisible, onDismiss, eventId }) => {
 
     const [value, setValue] = React.useState({
@@ -113,7 +113,7 @@ export const ReplyDialog = ({ visible, onDismiss, commentId, targetReplyId, setR
 
 
     const addReplyToFirestore = async () => {
-      
+
         const replyData = {
             reply: value.reply,
         };
@@ -144,7 +144,7 @@ export const ReplyDialog = ({ visible, onDismiss, commentId, targetReplyId, setR
                         </>
                         :
                         <>
-                           <Dialog.Title>Reply to {selectedDisplayName}</Dialog.Title>
+                            <Dialog.Title>Reply to {selectedDisplayName}</Dialog.Title>
                             <Text style={{ marginLeft: 20, marginBottom: 10, fontStyle: 'italic', color: "gray" }}>who said: "{selectedComment}"
                             </Text>
                         </>
@@ -170,7 +170,7 @@ export const ReplyDialog = ({ visible, onDismiss, commentId, targetReplyId, setR
     );
 };
 
-export const CommentsView = ({ comments, eventId }) => {
+export const CommentsView = ({ comments, eventId, currentUser }) => {
     const [repliesVisible, setRepliesVisible] = useState(false);
     const [selectedCommentId, setSelectedCommentId] = useState(null);
     const [selectedEventId, setSelectedEventId] = useState(null);
@@ -179,6 +179,42 @@ export const CommentsView = ({ comments, eventId }) => {
     const [selectedReplyDisplayName, setSelectedReplyDisplayName] = useState(null);
     const [selectedComment, setSelectedComment] = useState(null);
     const [allComments, setAllComments] = useState([])
+
+    const handleDeleteComment = (commentId) => {
+
+        Alert.alert(
+            "Confirm",
+            "Are you sure you want to delete this comment?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Yes", onPress: () => {
+                        softDeleteComment(commentId);
+                        setRepliesVisible(false)
+                    }
+                }
+            ]
+        );
+    };
+
+    const handleDeleteReply = (replyId, commentId) => {
+
+        Alert.alert(
+            "Confirm",
+            "Are you sure you want to delete this comment?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Yes", onPress: () => {
+                        softDeleteReply(replyId, commentId);
+                        setRepliesVisible(false)
+                    }
+                }
+            ]
+        );
+    };
+
+
 
     return (
         <View style={styles.portal}>
@@ -190,11 +226,15 @@ export const CommentsView = ({ comments, eventId }) => {
                                 title={`${comment?.displayName ? comment.displayName : comment?.firstName} said`}
                             />
                             <Text style={{ color: "orange" }}>{formatDateAndTime(comment?.createdAt)}</Text>
-                            <Text style={{ marginTop: 10 }}>{comment.comment}</Text>
+                            <Text style={{ marginTop: 10 }}>{comment.deleted ? comment.content : comment.comment}</Text>
                             <Card.Actions>
+                            {currentUser.uid === comment.commentedBy && !comment.deleted && (
+                                <Button icon="delete" onPress={() => softDeleteComment(comment.id)}>Delete</Button>
+                            )}
+                            { !comment.deleted && 
                                 <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedEventId(eventId); setSelectedTargetReplyId(comment?.id); setSelectedDisplayName(comment?.displayName); setSelectedComment(comment?.comment) }}>
                                     <Text>Reply</Text>
-                                </Button>
+                                </Button>}
                             </Card.Actions>
                         </Card.Content>
                         {comment?.replies && comment?.replies.length > 0 && comment?.replies.map((reply, replyIndex) => (
@@ -208,10 +248,9 @@ export const CommentsView = ({ comments, eventId }) => {
                                                 />
                                                 <Text style={{ marginBottom: 10, color: "orange" }}>{formatDateAndTime(reply?.createdAt)}</Text>
                                                 <Text style={{ marginLeft: 20, fontStyle: 'italic', color: "gray" }}>
-                                                    {reply?.displayName} said: "{findQuoteForReply(reply.targetReplyId, comments)}"
+                                                    {reply?.displayName} said: "{reply.deleted ? reply.content : findQuoteForReply(reply.targetReplyId, comments)}"
                                                 </Text>
                                             </>
-
                                             :
                                             <>
                                                 <Card.Title
@@ -219,15 +258,17 @@ export const CommentsView = ({ comments, eventId }) => {
                                                 />
                                                 <Text style={{ marginBottom: 10, color: "orange" }}>{formatDateAndTime(reply?.createdAt)}</Text>
                                                 <Text style={{ marginLeft: 20, fontStyle: 'italic', color: "gray" }}>
-                                                    {comment?.displayName} said: "{comment?.comment}"
+                                                    {comment?.displayName} said: "{comment.deleted ? comment.content : comment?.comment}"
                                                 </Text>
                                             </>
                                     }
-                                    <Text style={{ marginTop: 10 }}>{reply?.reply}</Text>
+                                    <Text style={{ marginTop: 10 }}>{reply.deleted ? reply.content : reply?.reply}</Text>
                                     <Card.Actions>
+                                    {reply.repliedBy === currentUser.uid && !reply.deleted &&  (<Button icon="delete" onPress={() => handleDeleteReply(reply.id, comment.id)}>Delete</Button>)}
+                                    {!reply.deleted &&
                                         <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedTargetReplyId(reply?.id); setSelectedEventId(eventId); setSelectedDisplayName(comment?.displayName); setSelectedReplyDisplayName(reply?.displayName); setSelectedComment(comment?.comment); setAllComments(comments) }}>
                                             <Text>Reply</Text>
-                                        </Button>
+                                        </Button>}
                                     </Card.Actions>
                                 </Card.Content>
                             </Card>
@@ -253,7 +294,7 @@ export const CommentsView = ({ comments, eventId }) => {
     );
 }
 
-export const CommentsContainer = ({ comments, show, setShow }) => {
+export const CommentsContainer = ({ comments, show, setShow, currentUser}) => {
     const noComments = comments?.length === 0;
 
     return (
@@ -263,7 +304,7 @@ export const CommentsContainer = ({ comments, show, setShow }) => {
             ) : (
                 <>
                     <Button title="Toggle Comments" mode="elevated" onPress={() => setShow(!show)}>Toggle Comments</Button>
-                    {show && <CommentsView comments={comments}
+                    {show && <CommentsView comments={comments} currentUser={currentUser}
                         onDismiss={() => setRepliesVisible(false)} />}
                 </>
             )}

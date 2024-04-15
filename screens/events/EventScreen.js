@@ -37,7 +37,7 @@ const EventScreen = () => {
     
     const { comments } = useRealTimeEventComments(event.id, userId);
     const [dialogVisible, setDialogVisible] = useState(false);
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState(true);
 
     useEffect(() => {
         setHasJoined(isUser);
@@ -224,7 +224,7 @@ const EventScreen = () => {
 
                 <View style={styles.portal}>
                     <Button onPress={() => setDialogVisible(true)}>Add Comment</Button>
-                    <CommentsContainer comments={comments} eventId={initialEvent.id} show={show} setShow={setShow} setDialogVisible={setDialogVisible}/>
+                    <CommentsContainer comments={comments} eventId={initialEvent.id} show={show} setShow={setShow} setDialogVisible={setDialogVisible} currentUser = {currentUser}/>
                     <CommentsDialog
                         visible={dialogVisible}
                         setDialogVisible={setDialogVisible}
