@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const FeedEvent = ({ userId ,isJoining, navigation, userLocation, event, expandedId, calculateDistance, handleJoinEvent, toggleExpansion}) => {
     
   const [newCommentCount, setNewCommentCount] = useState(0);
-  const { comments } = useRealTimeEventComments(event.id, userId);
+  const { comments } = userId ? useRealTimeEventComments(event.id, userId) : ''
 
   const checkIfEventHasNewComments = (lastChecked) => {
     let newComments = 0
@@ -43,7 +43,7 @@ const FeedEvent = ({ userId ,isJoining, navigation, userLocation, event, expande
   };
 
   useEffect(() => {
-    retrieveCommentsChecked(comments.length)
+    comments ? retrieveCommentsChecked(comments.length): ''
   }, [comments])
 
 
