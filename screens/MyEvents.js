@@ -20,7 +20,7 @@ const MyEvents = () => {
     const [isJoining, setIsJoining] = useState(false);
     const [joinedEventIds, setJoinedEventIds] = useState([]);
     const [createdEventIds, setCreatedEventIds] = useState([]);
-    const [showEvents, setShowEvents] = useState([false,false])
+    const [showEvents, setShowEvents] = useState([true,false])
 
     useEffect(() => {
         const updatedEventIds = eventIds
