@@ -15,6 +15,7 @@ import joinEvent from '../../hooks/events/utils/joinEvent'
 import { useRealTimeEvent } from '../../hooks/events/useEventRealTimeDetails';
 import { useRealTimeEventComments } from "../../hooks/comments/useFetchCommentsRealTime";
 import { CommentsDialog, CommentsContainer } from "../../components/Comments";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const EventScreen = () => {
 
@@ -38,6 +39,25 @@ const EventScreen = () => {
     const { comments } = useRealTimeEventComments(event.id, userId);
     const [dialogVisible, setDialogVisible] = useState(false);
     const [show, setShow] = useState(false);
+
+    const saveCommentsChacked = async () => {
+        try {
+        await AsyncStorage.setItem(
+            `@CommentsChecked:${userId}:${event.id}`,
+            `${new Date().getTime() / 1000}`,
+        );    
+        } catch (error) {
+        console.log('Error storing comments to async storage')
+        }
+    }
+
+    useEffect(() => {
+        if (userId && event.id){
+            console.log('ran')
+            saveCommentsChacked()
+        }
+    }, [userId])
+    
 
     useEffect(() => {
         setHasJoined(isUser);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
 import { Card, Button, Text, Badge } from "react-native-paper";
 import { useRealTimeEventComments } from "../hooks/comments/useFetchCommentsRealTime";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -9,25 +10,29 @@ const FeedEvent = ({ userId ,isJoining, navigation, userLocation, event, expande
   const [newCommentCount, setNewCommentCount] = useState(0);
   const { comments } = userId ? useRealTimeEventComments(event.id, userId) : ''
 
+  const isFocused = useIsFocused();
+
   const checkIfEventHasNewComments = (lastChecked) => {
     let newComments = 0
     comments.map(function(comment){
       comment.updatedAt.seconds > lastChecked + 2 ? newComments++ : ''
+      console.log(comment.updatedAt.seconds, lastChecked)
       comment.replies.map(reply => reply.updatedAt.seconds > lastChecked ? newComments++ : '' )
     })
+    
     setNewCommentCount(newComments)
   }
 
-  const saveCommentsChecked = async () => {
+  const initLastChecked = async () => {
     try {
-      await AsyncStorage.setItem(
+    await AsyncStorage.setItem(
         `@CommentsChecked:${userId}:${event.id}`,
-        `${new Date().getTime() / 1000}`,
-      );
+        `0`,
+    );
     } catch (error) {
-      console.log('Error storing comments to async storage')
+    console.log('Error storing comments to async storage')
     }
-  };
+  }
 
   const retrieveCommentsChecked = async (length) => {
     if(length > 0){
@@ -35,7 +40,9 @@ const FeedEvent = ({ userId ,isJoining, navigation, userLocation, event, expande
         const value = await AsyncStorage.getItem(`@CommentsChecked:${userId}:${event.id}`);
         if (value !== null) {
           checkIfEventHasNewComments(value)
-        } 
+        } else {
+          initLastChecked()
+        }
       } catch (error) {
         console.log('Error retrieving comments from async storage')
       }
@@ -44,13 +51,7 @@ const FeedEvent = ({ userId ,isJoining, navigation, userLocation, event, expande
 
   useEffect(() => {
     comments ? retrieveCommentsChecked(comments.length): ''
-  }, [comments])
-
-
-  const handleDetailsButtonClick = () => {
-    saveCommentsChecked()
-    navigation.navigate("EventScreen", { event })
-  }
+  }, [comments, isFocused])
 
   return(
     <Card key={event.id} style={styles.card} onPress={() => toggleExpansion(event.id)}>
@@ -84,7 +85,7 @@ const FeedEvent = ({ userId ,isJoining, navigation, userLocation, event, expande
             <Card.Actions style={{ justifyContent: "space-between", paddingTop: 10 }}>
               <Button
                 mode="outlined"
-                onPress={handleDetailsButtonClick}
+                onPress={() => navigation.navigate("EventScreen", { event })}
                 style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}
               >
                 Details
