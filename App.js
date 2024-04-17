@@ -21,22 +21,23 @@ import { useTheme } from "react-native-paper";
 import { useFetchCurrentUserProfile } from "./hooks/useFetchCurrentUserProfile";
 import { EventProvider, EventContext } from "./context/EventProvider";
 import { useNavigation } from "@react-navigation/native";
-import theme from "./theme";
+import { darkTheme, lightTheme } from "./theme";
 import Profile from "./screens/profile";
 import EditProfileScreen from "./screens/profile/EditProfileScreen";
 import SettingsScreen from "./screens/profile/SettingsScreen";
+import { themeContext } from "./utils/themeContext";
 
 const Stack = createStackNavigator();
 
 //placeholder
 function ProfileScreen() {
-return (
-  <Profile />
-);
+  return (
+    <Profile />
+  );
 }
 
 
-function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
+function MapScreen({ collapseBottomSheet, handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
   const [activeFilter, setActiveFilter] = useState(null)
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -47,7 +48,7 @@ function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMark
         handleMarkerPress={handleMarkerPress}
         mapRef={mapRef}
         activeFilter={activeFilter} />
-        
+
       <BottomSheetComponent
         handleListItemPress={handleListItemPress}
         places={places}
@@ -58,7 +59,7 @@ function MapScreen({collapseBottomSheet, handleListItemPress, mapRef, handleMark
         selectedMapItem={selectedMapItem}
         activeFilter={activeFilter}
         setActiveFilter={setActiveFilter}
-        />
+      />
     </GestureHandlerRootView>
   );
 }
@@ -72,8 +73,14 @@ export default function App() {
   const [filteredLocations, setFilteredLocations] = React.useState([]);
   const [places, setPlaces] = React.useState([]);
   const [token, setToken] = useState(null);
+  const [ themeMode, setThemeMode ] = useState('dark');
+  const [theme, setTheme] = useState(themeMode === 'dark' ? darkTheme : lightTheme);
 
   const mapRef = React.useRef(null);
+
+  useEffect(() => {
+    setTheme(themeMode === 'dark' ? darkTheme : lightTheme);
+  }, [themeMode]);
 
   //BottomSheet manip
   const bottomSheetRef = React.useRef(null);
@@ -117,84 +124,86 @@ export default function App() {
   }, []);
 
   return user ? (
-    <PaperProvider theme={theme}>
-      <EventProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerStyle: {
-                backgroundColor: colors.primary,
-              },
-              headerTintColor: "#fff",
-              headerTitleStyle: {
-                fontWeight: "bold",
-              },
-            }}
-          >
-            <Stack.Screen name="Main" options={{ headerShown: false }}>
-              {() => (
-                <Tab.Navigator initialRouteName="Map">
-                  <Tab.Screen
-                    name="Home"
-                    component={HomeScreen}
-                    options={{
-                      tabBarLabel: "Home",
-                      tabBarIcon: ({ color }) => <MaterialCommunityIcons name="home" color={color} size={26} />,
-                    }}
-                  />
-                  <Tab.Screen
-                    name="My Events"
-                    component={MyEventsScreen}
-                    options={{
-                      tabBarLabel: "My Events",
-                      tabBarIcon: ({ color }) => <MaterialCommunityIcons name="text-account" color={color} size={26} />,
-                    }}
-                  />
-                  <Tab.Screen
-                    name="Profile"
-                    component={ProfileScreen}
-                    options={{
-                      tabBarLabel: "Profile",
-                      tabBarIcon: ({ color }) => <MaterialCommunityIcons name="account" color={color} size={26} />,
-                    }}
-                  />
-                  <Tab.Screen
-                    name="Map"
-                    options={{
-                      tabBarLabel: "Map",
-                      tabBarIcon: ({ color }) => <MaterialCommunityIcons name="map" color={color} size={26} />,
-                    }}
-                  >
-                    {(props) => (
-                      <MapScreen {...props}
-                      token={token}
-                      places={places}
-                      setPlaces={setPlaces}
-                      filteredLocations={filteredLocations}
-                      setFilteredLocations={setFilteredLocations}
-                      bottomSheetRef={bottomSheetRef}
-                      handleMapItemDeselect={handleMapItemDeselect}
-                      selectedMapItem={selectedMapItem}
-                      handleMarkerPress={handleMarkerPress}
-                      mapRef={mapRef}
-                      collapseBottomSheet={collapseBottomSheet}
-                      handleListItemPress={handleListItemPress}
-                      />
-                    )}
-                  </Tab.Screen>
-                </Tab.Navigator>
-              )}
-            </Stack.Screen>
-            <Stack.Screen name="AddEventScreen" component={AddEventScreen} options={{ title: "Add Event" }} />
-            <Stack.Screen name="EventScreen" component={EventScreen} options={{ title: "Event" }} />
-            <Stack.Screen name="EditEventScreen" component={EditEventScreen} options={{ title: "Edit Event" }} />
-            <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
-            <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: "Settings" }} />
+    <themeContext.Provider value={{ theme, setTheme, themeMode, setThemeMode }}>
+      <PaperProvider theme={theme}>
+        <EventProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                headerStyle: {
+                  backgroundColor: colors.primary,
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold",
+                },
+              }}
+            >
+              <Stack.Screen name="Main" options={{ headerShown: false }}>
+                {() => (
+                  <Tab.Navigator initialRouteName="Map">
+                    <Tab.Screen
+                      name="Home"
+                      component={HomeScreen}
+                      options={{
+                        tabBarLabel: "Home",
+                        tabBarIcon: ({ color }) => <MaterialCommunityIcons name="home" color={color} size={26} />,
+                      }}
+                    />
+                    <Tab.Screen
+                      name="My Events"
+                      component={MyEventsScreen}
+                      options={{
+                        tabBarLabel: "My Events",
+                        tabBarIcon: ({ color }) => <MaterialCommunityIcons name="text-account" color={color} size={26} />,
+                      }}
+                    />
+                    <Tab.Screen
+                      name="Profile"
+                      component={ProfileScreen}
+                      options={{
+                        tabBarLabel: "Profile",
+                        tabBarIcon: ({ color }) => <MaterialCommunityIcons name="account" color={color} size={26} />,
+                      }}
+                    />
+                    <Tab.Screen
+                      name="Map"
+                      options={{
+                        tabBarLabel: "Map",
+                        tabBarIcon: ({ color }) => <MaterialCommunityIcons name="map" color={color} size={26} />,
+                      }}
+                    >
+                      {(props) => (
+                        <MapScreen {...props}
+                          token={token}
+                          places={places}
+                          setPlaces={setPlaces}
+                          filteredLocations={filteredLocations}
+                          setFilteredLocations={setFilteredLocations}
+                          bottomSheetRef={bottomSheetRef}
+                          handleMapItemDeselect={handleMapItemDeselect}
+                          selectedMapItem={selectedMapItem}
+                          handleMarkerPress={handleMarkerPress}
+                          mapRef={mapRef}
+                          collapseBottomSheet={collapseBottomSheet}
+                          handleListItemPress={handleListItemPress}
+                        />
+                      )}
+                    </Tab.Screen>
+                  </Tab.Navigator>
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="AddEventScreen" component={AddEventScreen} options={{ title: "Add Event" }} />
+              <Stack.Screen name="EventScreen" component={EventScreen} options={{ title: "Event" }} />
+              <Stack.Screen name="EditEventScreen" component={EditEventScreen} options={{ title: "Edit Event" }} />
+              <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
+              <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: "Settings" }} />
 
-          </Stack.Navigator>
-        </NavigationContainer>
-      </EventProvider>
-    </PaperProvider>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </EventProvider>
+      </PaperProvider>
+    </themeContext.Provider>
   ) : (
     <AuthStack />
   );

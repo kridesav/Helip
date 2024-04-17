@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Surface, Text, Switch, Portal, Dialog, Icon } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
+import { themeContext } from '../../utils/themeContext';
+import { darkTheme, lightTheme } from '../../theme';
 
 
 export default function SettingsScreen({ route }) {
-    const [nightMode, setNightMode] = useState(false);
+    const { theme, setTheme, themeMode, setThemeMode } = React.useContext(themeContext);
     const [notifications, setNotifications] = useState(true);
     const [location, setLocation] = useState(true);
     const [visible, setVisible] = useState(false);
@@ -19,8 +21,7 @@ export default function SettingsScreen({ route }) {
         }
     };
 
-    const onToggleNightMode = () => setNightMode(!nightMode);
-    // TODO logic
+    const onToggleNightMode = () => setThemeMode(themeMode === 'dark' ? 'light' : 'dark');
 
     const onToggleNotifications = () => setNotifications(!notifications);
     // TODO logic
@@ -38,7 +39,7 @@ export default function SettingsScreen({ route }) {
                 <Surface elevation={5} style={styles.bottomlist}>
                     <View style={styles.switchContainer}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon source="map-marker-outline" color="white" size={24} />
+                            <Icon source="map-marker-outline" size={24} />
                             <Text style={styles.nameSubText}>Location</Text>
                         </View>
                         <Switch
@@ -49,7 +50,7 @@ export default function SettingsScreen({ route }) {
                     </View>
                     <View style={styles.switchContainer}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon source="bell" color="white" size={24} />
+                            <Icon source="bell" size={24} />
                             <Text style={styles.nameSubText}>Notifications</Text>
                         </View>
                         <Switch
@@ -60,12 +61,12 @@ export default function SettingsScreen({ route }) {
                     </View>
                     <View style={styles.switchContainer}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon source="theme-light-dark" color="white" size={24} />
+                            <Icon source="theme-light-dark" size={24} />
                             <Text style={styles.nameSubText}>Night Mode</Text>
                         </View>
                         <Switch
                             style={styles.input}
-                            value={nightMode}
+                            value={themeMode === 'dark'}
                             onValueChange={onToggleNightMode}
                         />
                     </View>
