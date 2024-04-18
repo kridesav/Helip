@@ -1,24 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Surface, Text, Switch, Portal, Dialog, Icon } from 'react-native-paper';
+import { Button, Surface, Text, Switch, Portal, Dialog, Icon, TextInput } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import { themeContext } from '../../utils/themeContext';
 import { darkTheme, lightTheme } from '../../theme';
+import changePassword from '../../hooks/changePassword';
+import deleteUserAccount from '../../hooks/deleteUser';
+import reauthenticateUser from '../../hooks/reauthenticateUser';
+import { set } from 'lodash';
 
 
 export default function SettingsScreen({ route }) {
     const { theme, setTheme, themeMode, setThemeMode } = React.useContext(themeContext);
     const [notifications, setNotifications] = useState(true);
     const [location, setLocation] = useState(true);
-    const [visible, setVisible] = useState(false);
+    const [deleteDialog, setDeleteDialog] = useState(false);
+    const [secondDialogVisible, setSecondDialogVisible] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [action, setAction] = useState(null);
+    const [passwordDialogVisible, setPasswordDialogVisible] = useState(false);
 
     const hideDialog = (confirmation) => {
-        setVisible(false);
+        setDeleteDialog(false);
         if (confirmation) {
             alert("Account deleted");
-            // TODO logic
+            deleteUserAccount();
         } else {
             alert("Account not deleted");
         }
+    };
+
+    const handleChangePassword = () => {
+        setAction('changePassword');
+        setSecondDialogVisible(true);
+
+    };
+
+    const handleReauthenticateUser = (email, password) => {
+        reauthenticateUser(email, password)
+            .then(() => {
+                setSecondDialogVisible(false);
+                setPassword('');
+                setEmail('');
+
+                if (action === 'changePassword') {
+                    setPasswordDialogVisible(true);
+                } else if (action === 'deleteAccount') {
+                    setDeleteDialog(true);
+                }
+
+                setAction(null);
+            })
+            .catch((error) => {
+                if (error.code === 'auth/invalid-email') {
+                    alert('Please enter a valid email address.');
+                    setEmail('');
+                } else if (error.code === 'auth/invalid-credential') {
+                    alert('Incorrect password. Please try again.');
+                    setPassword('');
+                } else if (error.code === 'auth/too-many-requests') {
+                    alert('Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.');
+                    setEmail('');
+                    setPassword('');
+                }
+                console.log(error);
+            });
     };
 
     const onToggleNightMode = () => setThemeMode(themeMode === 'dark' ? 'light' : 'dark');
@@ -30,7 +78,8 @@ export default function SettingsScreen({ route }) {
     // TODO logic
 
     function handleDeleteAccount() {
-        setVisible(true);
+        setAction('deleteAccount');
+        setSecondDialogVisible(true);
     }
 
     return (
@@ -71,7 +120,7 @@ export default function SettingsScreen({ route }) {
                         />
                     </View>
                     <Portal>
-                        <Dialog visible={visible} onDismiss={() => hideDialog(false)}>
+                        <Dialog visible={deleteDialog} onDismiss={() => hideDialog(false)}>
                             <Dialog.Icon icon="alert" color="red" />
                             <Dialog.Title style={{ textAlign: 'center' }}>Delete Account</Dialog.Title>
                             <Dialog.Content>
@@ -84,10 +133,81 @@ export default function SettingsScreen({ route }) {
                                 <Button onPress={() => hideDialog(true)}>Delete</Button>
                             </Dialog.Actions>
                         </Dialog>
+                        <Dialog visible={secondDialogVisible} onDismiss={() => {
+                            setSecondDialogVisible(false)
+                            setAction(null);
+                            setEmail('');
+                            setPassword('');
+                        }}>
+                            <Dialog.Title>Confirmation needed</Dialog.Title>
+                            <Dialog.Content>
+                                <TextInput
+                                    label="Email"
+                                    value={email}
+                                    onChangeText={setEmail}
+                                />
+                                <TextInput
+                                    label="Password"
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry
+                                />
+                            </Dialog.Content>
+                            <Dialog.Actions>
+                                <Button onPress={() => {
+                                    setSecondDialogVisible(false)
+                                    setAction(null);
+                                    setEmail('');
+                                    setPassword('');
+                                }}>Cancel</Button>
+                                <Button onPress={() => handleReauthenticateUser(email, password)}>Submit</Button>
+                            </Dialog.Actions>
+                        </Dialog>
+                        <Dialog visible={passwordDialogVisible} onDismiss={() => {
+                            setPasswordDialogVisible(false)
+                            setNewPassword('');
+                            setConfirmPassword('');
+                        }}>
+                            <Dialog.Title>Change Password</Dialog.Title>
+                            <Dialog.Content>
+                                <TextInput
+                                    label="New Password"
+                                    value={newPassword}
+                                    onChangeText={setNewPassword}
+                                    secureTextEntry
+                                />
+                                <TextInput
+                                    label="Confirm Password"
+                                    value={confirmPassword}
+                                    onChangeText={setConfirmPassword}
+                                    secureTextEntry
+                                />
+                            </Dialog.Content>
+                            <Dialog.Actions>
+                                <Button onPress={() => {
+                                    setPasswordDialogVisible(false)
+                                    setNewPassword('');
+                                    setConfirmPassword('');
+                                }}>
+                                    Cancel</Button>
+                                <Button onPress={() => {
+                                    if (newPassword === confirmPassword) {
+                                        changePassword(newPassword).then(() => {
+                                            setPasswordDialogVisible(false);
+                                            setNewPassword('');
+                                            setConfirmPassword('');
+                                            alert("Password changed");
+                                        });
+                                    } else {
+                                        alert("Passwords do not match");
+                                    }
+                                }}>Submit</Button>
+                            </Dialog.Actions>
+                        </Dialog>
                     </Portal>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={4}>
-                    <Button icon="form-textbox-password" compact contentStyle={styles.button}>
+                    <Button icon="form-textbox-password" compact contentStyle={styles.button} onPress={handleChangePassword}>
                         Change Password
                     </Button>
                 </Surface>
