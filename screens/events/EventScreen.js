@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, ScrollView, Alert, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Button, PaperProvider } from "react-native-paper"
-import { useTheme } from 'react-native-paper';
+import { Button, Surface, Avatar, useTheme } from "react-native-paper"
 import { useIsEventCreator } from '../../hooks/events/useIsEventCreator';
 import { useIfUserJoined } from "../../hooks/useIfUserJoined";
 import CancelJoinEvent from '../../hooks/events/utils/cancelJoinEvent'
-import theme from '../../theme';
 import useAuth from '../../hooks/useAuth';
 import { useFocusEffect } from '@react-navigation/native';
 import { fetchEventById } from '../../hooks/events/utils/fetchEventById'
@@ -26,7 +24,7 @@ const EventScreen = () => {
     const [event, setEvent] = useState(initialEvent);
 
     const { currentUser } = useAuth();
-    
+
     const userId = currentUser?.uid;
     const { eventData } = useRealTimeEvent(initialEvent.id, currentUser);
     const isCreator = useIsEventCreator(event.createdBy);
@@ -35,35 +33,35 @@ const EventScreen = () => {
     const isUser = useIfUserJoined(event.usersParticipating);
     const [isJoining, setIsJoining] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
-    
+
     const { comments } = useRealTimeEventComments(event.id, userId);
     const [dialogVisible, setDialogVisible] = useState(false);
     const [show, setShow] = useState(true);
 
     const saveCommentsChacked = async () => {
         try {
-        await AsyncStorage.setItem(
-            `@CommentsChecked:${userId}:${event.id}`,
-            `${new Date().getTime() / 1000}`,
-        );    
+            await AsyncStorage.setItem(
+                `@CommentsChecked:${userId}:${event.id}`,
+                `${new Date().getTime() / 1000}`,
+            );
         } catch (error) {
-        console.log('Error storing comments to async storage')
+            console.log('Error storing comments to async storage')
         }
     }
 
     useEffect(() => {
-        if (userId && event.id){
+        if (userId && event.id) {
             console.log('ran')
             saveCommentsChacked()
         }
     }, [userId])
-    
+
 
     useEffect(() => {
         setHasJoined(isUser);
     }, [isUser]);
 
-    
+
     const handleJoinPress = () => {
 
         Alert.alert(
@@ -171,128 +169,163 @@ const EventScreen = () => {
         return <Text>Event not found or has been removed.</Text>;
     }
 
+    const styles = StyleSheet.create({
+
+        bottomlist: {
+            width: "100%",
+            marginTop: 15,
+            borderRadius: 10,
+            padding: 10,
+            marginBottom: 20
+        },
+        title: {
+            padding: 10,
+            textAlign: "center",
+            fontSize: 16,
+            color: colors.primary,
+            fontWeight: "bold",
+        },
+        eventList: {
+            width: "100%",
+            padding: 10,
+            borderBottomEndRadius: 10,
+            borderBottomStartRadius: 10,
+            fontWeight: "bold",
+        },
+
+        container: {
+            alignItems: "center",
+            padding: 5,
+            marginTop: 30,
+        },
+        detailContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: 10,
+            marginTop: 10,
+            padding: 10,
+            borderWidth: 1,
+            borderColor: colors.secondary,
+            borderRadius: 10,
+
+        },
+        detailText: {
+            marginLeft: 10,
+            color: colors.secondary,
+
+        },
+        fullEventText: {
+            textAlign: 'center',
+            alignItems: 'center',
+            marginTop: 10,
+            padding: 10,
+            fontSize: 20,
+
+        },
+ 
+        portal: {
+            padding: 20,
+            marginTop: 10,
+        },
+        buttons: {
+            flexDirection: "row",
+            justifyContent: "space-around",
+
+        },
+    });
+
 
     return (
-        <PaperProvider theme={theme}>
+        <Surface elevation={1}>
             <ScrollView contentContainerStyle={styles.container} >
-                <View style={styles.detailContainer}>
-                    <Text style={styles.header}> {eventData.title} at {eventData.locationName}</Text>
-                </View>
-                <View style={styles.detailContainer}>
-                    <Icon name="calendar" size={20} />
-                    <Text style={styles.detailText}>{eventData.date}</Text>
-                </View>
+                <Surface style={styles.bottomlist} elevation={5}>
+                <Text style={styles.title}>{eventData.title} at {eventData.locationName}</Text>
+                    <Surface style={styles.bottomlist} elevation={4}>                       
+                        <View style={styles.detailContainer}>
+                            <Icon name="calendar" size={20} style={{ color: colors.primary }} />
+                            <Text style={styles.detailText}>{eventData.date}</Text>
+                        </View>
 
-                <View style={styles.detailContainer}>
-                    <Icon name="clock-start" size={20} />
-                    <Text style={styles.detailText}>{eventData.StartTime}</Text>
-                </View>
+                        <View style={styles.detailContainer}>
+                            <Icon name="clock-start" size={20} style={{ color: colors.primary }} />
+                            <Text style={styles.detailText}>{eventData.StartTime}</Text>
+                        </View>
 
-                <View style={styles.detailContainer}>
-                    <Icon name="clock-end" size={20} />
-                    <Text style={styles.detailText}>{eventData.EndTime}</Text>
-                </View>
-                <View style={styles.detailContainer}>
-                    <Icon name="information" size={20} />
-                    <Text style={styles.detailText}>{eventData.description}</Text>
-                </View>
-                <View style={styles.detailContainer}>
-                    <Icon name="account-multiple-plus" size={20} />
-                    <Text style={styles.detailText}>{eventData.participants}/{eventData.participantLimit} participants</Text>
-                </View>
-                <View style={styles.buttons}>
-                    {isCreator ? (
-                        <Button
-                            icon="check-circle"
-                            mode="elevated"
-                            title="Edit"
-                            style={styles.control}
-                            onPress={() => navigation.navigate('EditEventScreen', { event })}
-                        >
-                            Edit
-                        </Button>
-                    ) : hasJoined ? (
-                        <>
+                        <View style={styles.detailContainer}>
+                            <Icon name="clock-end" size={20} style={{ color: colors.primary}} />
+                            <Text style={styles.detailText}>{eventData.EndTime}</Text>
+                        </View>
+                        <View style={styles.detailContainer} >
+                            <Icon name="information" size={20} style={{ color: colors.primary }} />
+                            <Text style={styles.detailText}>{eventData.description}</Text>
+                        </View>
+                        <View style={styles.detailContainer}>
+                            <Icon name="account-multiple-plus" size={20} style={{ color: colors.primary }} />
+                            <Text style={styles.detailText}>{eventData.participants}/{eventData.participantLimit} participants</Text>
+                        </View>
+
+                    </Surface>
+                    <View style={styles.buttons}>
+                        {isCreator && (
                             <Button
-                                icon="cancel"
+                                icon="check-circle"
                                 mode="elevated"
-                                title="Cancel Join"
-                                style={styles.control}
-                                onPress={handleCancelJoinPress}
-                                disabled={isCanceling}
+                                title="Edit"
+                                style={[styles.control, styles.editButton]}
+                                onPress={() => navigation.navigate('EditEventScreen', { event })}
                             >
-                                {isJoining ? <ActivityIndicator /> : "Cancel Join"}
+                                Edit
                             </Button>
-                            {eventData.isFull && <Text style={styles.fullEventText}>Event Full</Text>}
-                        </>
-                    ) : eventData.isFull ? (
-                        <Text style={styles.fullEventText}>Event Full</Text>
-
-
-                    ) : (
-                        <Button
-                            title="Join"
-                            icon="check-circle"
-                            mode="elevated"
-                            style={styles.control}
-                            onPress={handleJoinPress}
-                            disabled={isJoining || isUser}
-                        >
-                            {isJoining ? <ActivityIndicator /> : "Join"}
-                        </Button>
-                    )}
-                </View>
-
-                <View style={styles.portal}>
-                    <Button onPress={() => setDialogVisible(true)}>Add Comment</Button>
-                    <CommentsContainer comments={comments} eventId={initialEvent.id} show={show} setShow={setShow} setDialogVisible={setDialogVisible} currentUser = {currentUser}/>
-                    <CommentsDialog
-                        visible={dialogVisible}
-                        setDialogVisible={setDialogVisible}
-                        eventId={initialEvent.id}
-                        onDismiss={() => setDialogVisible(false)}
-                    />
-                </View>
+                        )}
+                        {hasJoined ? (
+                            <>
+                                <Button
+                                    icon="cancel"
+                                    mode="elevated"
+                                    title="Cancel Join"
+                                    style={[styles.control, isCreator && styles.nextToEditButton]}
+                                    onPress={handleCancelJoinPress}
+                                    disabled={isCanceling}
+                                >
+                                    {isJoining ? <ActivityIndicator /> : "Cancel Join"}
+                                </Button>
+                                {eventData.isFull && <Text style={styles.fullEventText}>Event Full</Text>}
+                            </>
+                        ) : eventData.isFull ? (
+                            <Text style={styles.fullEventText}>Event Full</Text>
+                        ) : (
+                            <Button
+                                title="Join"
+                                icon="check-circle"
+                                mode="elevated"
+                                style={[styles.control, isCreator && styles.nextToEditButton]}
+                                onPress={handleJoinPress}
+                                disabled={isJoining}
+                            >
+                                {isJoining ? <ActivityIndicator /> : "Join"}
+                            </Button>
+                        )}
+                    </View>
+                </Surface>
+                <Surface elevation={5} style={{borderRadius: 10}}>
+                    <View style={styles.portal}>
+                        <Button title="Comment"
+                            icon="comment"
+                            mode="elevated" onPress={() => setDialogVisible(true)}>Add Comment</Button>
+                        <CommentsContainer comments={comments} eventId={initialEvent.id} show={show} setShow={setShow} setDialogVisible={setDialogVisible} currentUser={currentUser} />
+                        <CommentsDialog
+                            visible={dialogVisible}
+                            setDialogVisible={setDialogVisible}
+                            eventId={initialEvent.id}
+                            onDismiss={() => setDialogVisible(false)}
+                        />
+                    </View>
+                </Surface>
             </ScrollView >
-        </PaperProvider>
+        </Surface>
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-    },
-    detailContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: '#cccccc',
-        borderRadius: 5,
-    },
-    detailText: {
-        marginLeft: 10,
-    },
-    fullEventText: {
-        textAlign: 'center',
-        alignItems: 'center',
-        marginTop: 10,
-        padding: 10,
-        fontSize: 20,
-    },
-    control: {
-        marginTop: 20,
-    },
-    header: {
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    portal: {
-        padding: 20,
-        marginTop: 10,
-    },
-});
 
 
 
