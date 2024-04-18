@@ -8,7 +8,6 @@ import joinEvent from "../hooks/events/utils/joinEvent";
 import * as Location from "expo-location";
 import FeedEvent from "../components/FeedEvent";
 
-
 const MyEvents = () => {
 
     const { colors } = useTheme();
@@ -21,7 +20,7 @@ const MyEvents = () => {
     const [isJoining, setIsJoining] = useState(false);
     const [joinedEventIds, setJoinedEventIds] = useState([]);
     const [createdEventIds, setCreatedEventIds] = useState([]);
-    const [showEvents, setShowEvents] = useState([false,false])
+    const [showEvents, setShowEvents] = useState([true,false])
 
     useEffect(() => {
         const updatedEventIds = eventIds
@@ -33,7 +32,6 @@ const MyEvents = () => {
         const filterJoined = updatedEventIds.filter((event) => event.userJoined);
         setCreatedEventIds(filterCreated);
         setJoinedEventIds(filterJoined);
-        console.log(filterJoined)
     }, [eventIds, currentUser?.uid]);
         
     const toggleExpansion = (id) => {
@@ -101,14 +99,14 @@ const MyEvents = () => {
                     {createdEventIds.length > 0 && showEvents[0] ? 
                     (
                         createdEventIds.map((event) => (
-                        <FeedEvent key={event.id} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+                        <FeedEvent key={event.id} userId={currentUser?.uid} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
                         ))
                     ) : ''
                     }
                     {joinedEventIds.length > 0 && showEvents[1] ? 
                     (
                         joinedEventIds.map((event) => (
-                        <FeedEvent key={event.id} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
+                        <FeedEvent key={event.id} userId={currentUser?.uid} navigation={navigation} isJoining={isJoining} event={event} userLocation={userLocation} expandedId={expandedId} toggleExpansion={toggleExpansion} calculateDistance={calculateDistance} handleJoinEvent={handleJoinEvent} />
                         ))
                     ) : ''
                     }

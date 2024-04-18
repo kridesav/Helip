@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
-import { useTheme, Text, Avatar, Button, Surface } from "react-native-paper";
+import { Text, Avatar, Button, Surface } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { useFetchCurrentUserProfile } from "../hooks/useFetchCurrentUserProfile";
 import { signOut } from "firebase/auth";
@@ -71,18 +71,15 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     nameText: {
-        color: "white",
         fontWeight: "bold",
         fontSize: 20,
         marginTop: 10,
     },
     nameSubText: {
-        color: "white",
         fontSize: 14,
         marginTop: 2,
     },
     activityText: {
-        color: "white",
         fontSize: 12,
         marginTop: 2,
         padding: 4,
@@ -101,7 +98,6 @@ const styles = StyleSheet.create({
     },
     activityTitle: {
         padding: 10,
-        color: "white",
         textAlign: "center",
         fontSize: 16,
     },
