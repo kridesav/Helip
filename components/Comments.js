@@ -229,7 +229,7 @@ export const CommentsView = ({ comments, eventId, currentUser }) => {
                             <Text style={{ marginTop: 10 }}>{comment.deleted ? comment.content : comment.comment}</Text>
                             <Card.Actions>
                             {currentUser.uid === comment.commentedBy && !comment.deleted && (
-                                <Button icon="delete" onPress={() => softDeleteComment(comment.id)}>Delete</Button>
+                                <Button icon="delete" onPress={() => handleDeleteComment(comment.id)}>Delete</Button>
                             )}
                             { !comment.deleted && 
                                 <Button onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedEventId(eventId); setSelectedTargetReplyId(comment?.id); setSelectedDisplayName(comment?.displayName); setSelectedComment(comment?.comment) }}>
