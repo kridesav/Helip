@@ -319,9 +319,9 @@ export const CommentsContainer = ({ comments, show, setShow, currentUser }) => {
     const { colors } = useTheme();
 
     return (
-        <View style={{ marginTop: 20, width: "100%"}} >
+        <View style={{ marginTop: 20, paddingBottom: 50, width: "100%"}} >
             {noComments ? (
-                <Text style={{ color: colors.tertiary, textAlign: "center", margin: 20, fontSize: 16}}>No comments yet</Text>
+                <Text style={{ color: colors.inversePrimary, textAlign: "center", margin: 20, fontSize: 16}}>No comments yet</Text>
             ) : (
                 <>
                     <Button title="Toggle Comments" icon={"comment-multiple"} mode="elevated" onPress={() => setShow(!show)}>Toggle Comments</Button>

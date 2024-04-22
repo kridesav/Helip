@@ -176,13 +176,14 @@ const EventScreen = () => {
             marginTop: 15,
             borderRadius: 10,
             padding: 10,
+            paddingBottom: 20,
             marginBottom: 20,
            
         },
         title: {
             padding: 10,
             textAlign: "center",
-            fontSize: 16,
+            fontSize: 18,
             color: colors.primary,
             fontWeight: "bold",
         },
@@ -190,7 +191,7 @@ const EventScreen = () => {
         container: {
             alignItems: "center",
             padding: 5,
-            marginTop: 30,
+         
         },
         detailContainer: {
             flexDirection: 'row',
@@ -201,14 +202,17 @@ const EventScreen = () => {
             borderWidth: 1,
             borderColor: colors.secondary,
             borderRadius: 10,
+                    
 
         },
         detailText: {
             marginLeft: 10,
             color: colors.secondary,
+            fontSize: 15,
 
         },
         fullEventText: {
+            color: colors.error,
             textAlign: 'center',
             alignItems: 'center',
             marginTop: 10,
@@ -219,7 +223,6 @@ const EventScreen = () => {
  
         portal: {
             padding: 10,
-            marginTop: 10,
            
         },
         buttons: {
@@ -227,11 +230,16 @@ const EventScreen = () => {
             justifyContent: "space-around",
 
         },
+
+        control:{
+            margin: 10,
+        }
+       
     });
 
 
     return (
-        <Surface style={{backgroundColor: colors.inversePrimary}}>
+        <Surface style={{backgroundColor: colors.onPrimaryContainer}}>
             <ScrollView contentContainerStyle={styles.container} >
                 <Surface style={styles.bottomlist} elevation={5}>
                 <Text style={styles.title}>{eventData.title} at {eventData.locationName}</Text>

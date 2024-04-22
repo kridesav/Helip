@@ -94,7 +94,7 @@ const AddEventScreen = () => {
             flex: 1,
             padding: 20,
             justifyContent: "center",
-            backgroundColor: colors.backdrop,
+            backgroundColor: colors.surfaceDisabled,
         },
         container: {
             alignItems: "center",
