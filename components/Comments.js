@@ -220,107 +220,108 @@ export const CommentsView = ({ comments, eventId, currentUser }) => {
 
 
     return (
-        <Surface elevation={1}>
-            <View style={styles.portal}>
-                <ScrollView>
-                    <Surface elevation={3}>
-                        {comments?.map((comment, index) => (
-                            <Card key={index} style={{ margin: 8 }}>
+
+        <View>
+            <ScrollView contentContainerStyle={styles.container}>
+                {comments?.map((comment, index) => (
+                    <Card key={index} style={styles.bottomlist}>
+                        <Card.Content style={styles.card}>
+                            <Surface elevation={5} style={{ borderRadius: 10, marginBottom: 5 }}>
+                                <Card.Title
+                                    title={`${comment?.displayName ? comment.displayName : comment?.firstName} said:`}
+                                />
+                                <Surface elevation={1} style={{ padding: 10 }}>
+                                    <Text style={{ color: colors.tertiary }}>{formatDateAndTime(comment?.createdAt)}</Text>
+                                    <Text style={{ marginTop: 20 }}>{comment.deleted ? comment.content : comment.comment}</Text>
+                                    <Card.Actions style={{ marginTop: 10 }}>
+                                        {currentUser.uid === comment.commentedBy && !comment.deleted && (
+                                            <Button icon="delete" title="delete" mode="elevated" onPress={() => handleDeleteComment(comment.id)}>Delete</Button>
+                                        )}
+                                        {!comment.deleted &&
+                                            <Button title="reply" icon={"reply"} mode="elevated" onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedEventId(eventId); setSelectedTargetReplyId(comment?.id); setSelectedDisplayName(comment?.displayName); setSelectedComment(comment?.comment) }}>
+                                                <Text>Reply</Text>
+                                            </Button>}
+                                    </Card.Actions>
+                                </Surface>
+                            </Surface>
+                        </Card.Content>
+                        {comment?.replies && comment?.replies.length > 0 && comment?.replies.map((reply, replyIndex) => (
+                            <Card key={`reply-${replyIndex}`} style={{ margin: 10, marginLeft: 20 }}>
                                 <Card.Content style={styles.card}>
-                                    <Surface elevation={3} style={{ borderRadius: 10 }}>
-                                        <Card.Title
-                                            title={`${comment?.displayName ? comment.displayName : comment?.firstName} said:`}
-                                        />
-                                        <Surface elevation={4} style={{ padding: 10 }}>
-                                            <Text style={{ color: colors.tertiary }}>{formatDateAndTime(comment?.createdAt)}</Text>
-                                            <Text style={{ marginTop: 20 }}>{comment.deleted ? comment.content : comment.comment}</Text>
-                                            <Card.Actions style={{ marginTop: 10 }}>
-                                                {currentUser.uid === comment.commentedBy && !comment.deleted && (
-                                                    <Button icon="delete" title="delete" mode="elevated" onPress={() => handleDeleteComment(comment.id)}>Delete</Button>
-                                                )}
-                                                {!comment.deleted &&
-                                                    <Button title="reply" icon={"reply"} mode="elevated" onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedEventId(eventId); setSelectedTargetReplyId(comment?.id); setSelectedDisplayName(comment?.displayName); setSelectedComment(comment?.comment) }}>
-                                                        <Text>Reply</Text>
-                                                    </Button>}
-                                            </Card.Actions>
-                                        </Surface>
-                                    </Surface>
+
+                                    {
+                                        reply.targetReplyId && reply.targetReplyId !== comment.id ?
+                                            <>
+                                                <Surface elevation={3} style={{ padding: 10, borderRadius: 10 }}>
+                                                    <Card.Title
+                                                        title={`${reply?.displayName ? reply.displayName : reply?.firstName} replied to ${reply?.displayName}:`}
+                                                    />
+                                                    <Surface elevation={1} style={{ padding: 10, borderRadius: 10 }}>
+                                                        <Text style={{ marginBottom: 10, color: colors.tertiary }}>{formatDateAndTime(reply?.createdAt)}</Text>
+                                                        <Text style={{ marginLeft: 20, fontStyle: 'italic', color: colors.outline, marginTop: 10 }}>
+                                                            {reply?.displayName} said: "{reply.deleted ? reply.content : findQuoteForReply(reply.targetReplyId, comments)}"
+                                                        </Text>
+                                                    </Surface>
+                                                </Surface>
+
+                                            </>
+                                            :
+                                            <>
+                                                <Surface elevation={3} style={{ padding: 10, borderRadius: 10 }}>
+                                                    <Card.Title
+                                                        title={`${reply?.displayName ? reply.displayName : reply?.firstName} replied to ${comment?.displayName}:`}
+                                                    />
+                                                    <Surface elevation={1} style={{ padding: 10, borderRadius: 10 }}>
+                                                        <Text style={{ marginBottom: 10, color: colors.tertiary }}>{formatDateAndTime(reply?.createdAt)}</Text>
+                                                        <Text style={{ marginLeft: 20, fontStyle: 'italic', color: colors.outline, marginTop: 10 }}>
+                                                            {comment?.displayName} said: "{comment.deleted ? comment.content : comment?.comment}"
+                                                        </Text>
+                                                    </Surface>
+                                                </Surface>
+                                            </>
+                                    }
+
+                                    <Text style={{ marginTop: 20 }}>{reply.deleted ? reply.content : reply?.reply}</Text>
+                                    <Card.Actions style={{ marginTop: 10 }}>
+                                        {reply.repliedBy === currentUser.uid && !reply.deleted && (<Button icon="delete" title="delete" mode="elevated" onPress={() => handleDeleteReply(reply.id, comment.id)}>Delete</Button>)}
+                                        {!reply.deleted &&
+                                            <Button title="reply" icon={"reply"} mode="elevated" onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedTargetReplyId(reply?.id); setSelectedEventId(eventId); setSelectedDisplayName(comment?.displayName); setSelectedReplyDisplayName(reply?.displayName); setSelectedComment(comment?.comment); setAllComments(comments) }}>
+                                                <Text>Reply</Text>
+                                            </Button>}
+                                    </Card.Actions>
                                 </Card.Content>
-                                {comment?.replies && comment?.replies.length > 0 && comment?.replies.map((reply, replyIndex) => (
-                                    <Card key={`reply-${replyIndex}`} style={{ margin: 10, marginLeft: 20 }}>
-                                        <Card.Content style={styles.card}>
-
-                                            {
-                                                reply.targetReplyId && reply.targetReplyId !== comment.id ?
-                                                    <>
-                                                        <Surface elevation={2} style={{ padding: 10, borderRadius: 10 }}>
-                                                            <Card.Title
-                                                                title={`${reply?.displayName ? reply.displayName : reply?.firstName} replied to ${reply?.displayName}:`}
-                                                            />
-                                                            <Surface elevation={4} style={{ padding: 10, borderRadius: 10 }}>
-                                                                <Text style={{ marginBottom: 10, color: colors.tertiary }}>{formatDateAndTime(reply?.createdAt)}</Text>
-                                                                <Text style={{ marginLeft: 20, fontStyle: 'italic', color: colors.outline, marginTop: 10 }}>
-                                                                    {reply?.displayName} said: "{reply.deleted ? reply.content : findQuoteForReply(reply.targetReplyId, comments)}"
-                                                                </Text>
-                                                            </Surface>
-                                                        </Surface>
-                                                    </>
-                                                    :
-                                                    <>
-                                                        <Surface elevation={2} style={{ padding: 10, borderRadius: 10 }}>
-                                                            <Card.Title
-                                                                title={`${reply?.displayName ? reply.displayName : reply?.firstName} replied to ${comment?.displayName}:`}
-                                                            />
-                                                            <Surface elevation={4} style={{ padding: 10, borderRadius: 10 }}>
-                                                                <Text style={{ marginBottom: 10, color: colors.tertiary }}>{formatDateAndTime(reply?.createdAt)}</Text>
-                                                                <Text style={{ marginLeft: 20, fontStyle: 'italic', color: colors.outline, marginTop: 10 }}>
-                                                                    {comment?.displayName} said: "{comment.deleted ? comment.content : comment?.comment}"
-                                                                </Text>
-                                                            </Surface>
-                                                        </Surface>
-                                                    </>
-                                            }
-
-                                            <Text style={{ marginTop: 20 }}>{reply.deleted ? reply.content : reply?.reply}</Text>
-                                            <Card.Actions style={{ marginTop: 10 }}>
-                                                {reply.repliedBy === currentUser.uid && !reply.deleted && (<Button icon="delete" title="delete" mode="elevated" onPress={() => handleDeleteReply(reply.id, comment.id)}>Delete</Button>)}
-                                                {!reply.deleted &&
-                                                    <Button title="reply" icon={"reply"} mode="elevated" onPress={() => { setRepliesVisible(true); setSelectedCommentId(comment?.id); setSelectedTargetReplyId(reply?.id); setSelectedEventId(eventId); setSelectedDisplayName(comment?.displayName); setSelectedReplyDisplayName(reply?.displayName); setSelectedComment(comment?.comment); setAllComments(comments) }}>
-                                                        <Text>Reply</Text>
-                                                    </Button>}
-                                            </Card.Actions>
-                                        </Card.Content>
-                                    </Card>
-                                ))}
                             </Card>
                         ))}
-                    </Surface>
-                </ScrollView>
+                    </Card>
+                ))}
 
-                <ReplyDialog
-                    selectedDisplayName={selectedDisplayName}
-                    selectedReplyDisplayName={selectedReplyDisplayName}
-                    selectedComment={selectedComment}
-                    setRepliesVisible={setRepliesVisible}
-                    visible={repliesVisible}
-                    commentId={selectedCommentId}
-                    eventId={selectedEventId}
-                    targetReplyId={selectedTargetReplyId}
-                    onDismiss={() => setRepliesVisible(false)}
-                    allComments={allComments}
-                />
-            </View >
-        </Surface>
+            </ScrollView>
+
+            <ReplyDialog
+                selectedDisplayName={selectedDisplayName}
+                selectedReplyDisplayName={selectedReplyDisplayName}
+                selectedComment={selectedComment}
+                setRepliesVisible={setRepliesVisible}
+                visible={repliesVisible}
+                commentId={selectedCommentId}
+                eventId={selectedEventId}
+                targetReplyId={selectedTargetReplyId}
+                onDismiss={() => setRepliesVisible(false)}
+                allComments={allComments}
+            />
+        </View >
+
     );
 }
 
 export const CommentsContainer = ({ comments, show, setShow, currentUser }) => {
     const noComments = comments?.length === 0;
+    const { colors } = useTheme();
 
     return (
-        <View style={{ marginTop: 20 }}>
+        <View style={{ marginTop: 20, width: "100%"}} >
             {noComments ? (
-                <Text style={{ color: color.tertury, textAlign: "center" }}>No comments</Text>
+                <Text style={{ color: colors.tertiary, textAlign: "center", margin: 20, fontSize: 16}}>No comments yet</Text>
             ) : (
                 <>
                     <Button title="Toggle Comments" icon={"comment-multiple"} mode="elevated" onPress={() => setShow(!show)}>Toggle Comments</Button>
@@ -334,22 +335,16 @@ export const CommentsContainer = ({ comments, show, setShow, currentUser }) => {
 
 const styles = StyleSheet.create({
     card: {
-        padding: 10,
+        padding: 5,
 
     },
-    backgroundImage: {
-        flex: 1,
+
+    bottomlist: {
         width: "100%",
-        height: "100%",
-    },
-    flex: {
-        flex: 1,
-    },
-    flexGrow: {
-        flexGrow: 1,
-        justifyContent: "center",
-    },
+        marginTop: 8,
+        borderRadius: 10,
 
+    },
 
 
 });

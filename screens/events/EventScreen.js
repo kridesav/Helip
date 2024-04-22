@@ -176,20 +176,14 @@ const EventScreen = () => {
             marginTop: 15,
             borderRadius: 10,
             padding: 10,
-            marginBottom: 20
+            marginBottom: 20,
+           
         },
         title: {
             padding: 10,
             textAlign: "center",
             fontSize: 16,
             color: colors.primary,
-            fontWeight: "bold",
-        },
-        eventList: {
-            width: "100%",
-            padding: 10,
-            borderBottomEndRadius: 10,
-            borderBottomStartRadius: 10,
             fontWeight: "bold",
         },
 
@@ -224,8 +218,9 @@ const EventScreen = () => {
         },
  
         portal: {
-            padding: 20,
+            padding: 10,
             marginTop: 10,
+           
         },
         buttons: {
             flexDirection: "row",
@@ -236,11 +231,11 @@ const EventScreen = () => {
 
 
     return (
-        <Surface elevation={1}>
+        <Surface style={{backgroundColor: colors.inversePrimary}}>
             <ScrollView contentContainerStyle={styles.container} >
                 <Surface style={styles.bottomlist} elevation={5}>
                 <Text style={styles.title}>{eventData.title} at {eventData.locationName}</Text>
-                    <Surface style={styles.bottomlist} elevation={4}>                       
+                    <Surface style={styles.bottomlist} elevation={1}>                       
                         <View style={styles.detailContainer}>
                             <Icon name="calendar" size={20} style={{ color: colors.primary }} />
                             <Text style={styles.detailText}>{eventData.date}</Text>
@@ -307,7 +302,7 @@ const EventScreen = () => {
                         )}
                     </View>
                 </Surface>
-                <Surface elevation={5} style={{borderRadius: 10}}>
+            
                     <View style={styles.portal}>
                         <Button title="Comment"
                             icon="comment"
@@ -320,7 +315,7 @@ const EventScreen = () => {
                             onDismiss={() => setDialogVisible(false)}
                         />
                     </View>
-                </Surface>
+             
             </ScrollView >
         </Surface>
     );

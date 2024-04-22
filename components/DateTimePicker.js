@@ -35,10 +35,29 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
         }
     };
 
+    
+    
+
+    const styles = StyleSheet.create({
+        DateContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 10,
+            backgroundColor: colors.shadow
+        },
+        iconStyle: {
+            marginLeft: 5,
+
+        },
+
+    });
+
+
+
     return (
         <View style={styles.DateContainer}>
             <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                <Icon name="calendar" size={20} color={colors.primary} />
+                <Icon name="calendar" size={20} color={colors.inversePrimary} />
             </TouchableOpacity>
             {showDatePicker && (
                 <DateTimePicker
@@ -51,14 +70,14 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
             )}
 
             <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
-                <Icon name="clock-start" size={20} color={colors.primary} style={styles.iconStyle} />
+                <Icon name="clock-start" size={20} color={colors.inversePrimary} style={styles.iconStyle} />
             </TouchableOpacity>
             {showStartTimePicker && (
                 <DateTimePicker mode="time" is24Hour={true} value={StartTime} onChange={onChangeStartTime} />
             )}
 
             <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
-                <Icon name="clock-end" size={20} style={styles.iconStyle} color={colors.primary} />
+                <Icon name="clock-end" size={20} style={styles.iconStyle} color={colors.inversePrimary} />
             </TouchableOpacity>
             {showEndTimePicker && (
                 <DateTimePicker mode="time" is24Hour={true} value={EndTime} onChange={onChangeEndTime} />
@@ -68,17 +87,3 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
     )
 }
 
-const styles = StyleSheet.create({
-    DateContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-
-        padding: 10,
-
-    },
-    iconStyle: {
-        marginLeft: 5,
-    
-    },
-
-});

@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { TextInput, Button, Text } from "react-native-paper";
+import { TextInput, Button, Text, useTheme, Surface } from "react-native-paper";
 import useAuth from '../../hooks/useAuth';
 import DateTimePicker from '../../components/DateTimePicker';
 import { validateInput } from '../../utils/validateInput';
 import formatTime from '../../utils/formatTime';
 import formatDate from '../../utils/formatDate';
-import { useTheme } from 'react-native-paper';
 import editEvent from "../../hooks/events/utils/editEvent";
 import deleteEvent from "../../hooks/events/utils/deleteEvent";
 import { parseTime, parseDate } from '../../utils/parse'
@@ -129,6 +128,91 @@ const EditEventScreen = () => {
         }
     };
 
+
+    const styles = StyleSheet.create({
+        backgroundImage: {
+            flex: 1,
+            width: "100%",
+            height: "100%",
+            backgroundColor: colors.surfaceVariant,
+        },
+        overlay: {
+            flex: 1,
+            padding: 20,
+            justifyContent: "center",
+            backgroundColor: colors.backdrop,
+        },
+        container: {
+            alignItems: "center",
+            justifyContent: "center",
+        },
+
+        textareaContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingBottom: 10,
+            marginTop: 20,
+            width: '98%',
+
+        },
+
+        textInputContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingBottom: 10,
+            marginTop: 20,
+
+
+        },
+        textInput: {
+            width: '90%',
+        },
+
+        controls: {
+            width: "100%",
+            marginTop: 10
+
+        },
+        control: {
+            marginTop: 20,
+
+        },
+        iconStyle: {
+            marginRight: 5,
+
+        },
+        desc: {
+            flex: 1,
+            textAlignVertical: 'top',
+            height: 100,
+            fontSize: 18,
+        },
+        inputStyle: {
+            fontSize: 18,
+
+        },
+        leftIconContainerStyle: {
+
+        },
+
+        errorText: {
+            color: colors.error,
+            fontSize: 16,
+            padding: 2,
+            marginTop:0,
+            margin:5
+
+        },
+        inputSurface: {
+            backgroundColor: colors.inversePrimary,
+            borderRadius: 10,
+            padding: 5,
+            marginBottom: 15,
+
+        }
+
+    });
+
     return (
 
         <KeyboardAvoidingView
@@ -136,184 +220,116 @@ const EditEventScreen = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
-
-            <View style={{ backgroundColor: colors.primary, padding: 10 }}>
-                <Text style={{ color: colors.text }}>{event.locationName}</Text>
+            <View style={{ backgroundColor: colors.inversePrimary, padding: 10 }}>
+                <Text style={{ color: colors.primary, fontWeight: "bold", fontSize: 18 }}>{event.locationName}</Text>
                 <View style={{ flexGrow: 1 }}>
-                    <Text style={{ color: colors.text }}>{event.katuosoite}{event.location} </Text>
+                    <Text style={{ color: colors.primary, fontSize: 15 }}>{event.locationAddress}</Text>
+                    <Text style={{ color: colors.primary, fontSize: 15 }}>{event.location}</Text>
                 </View>
             </View>
+            <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+                <ScrollView contentContainerStyle={styles.flexGrow}>
 
-            <ScrollView contentContainerStyle={styles.flexGrow}>
-                <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
-                    <View style={styles.overlay}>
+                    <Surface style={styles.overlay} elevation={5}>
                         <View style={styles.container}>
-
-                            <DateTimePicker setDate={setDate}
-                                setStartTime={setStartTime}
-                                setEndTime={setEndTime}
-                                date={date} StartTime={StartTime}
-                                EndTime={EndTime} />
-
+                            <Surface elevation={0}>
+                                <DateTimePicker setDate={setDate}
+                                    setStartTime={setStartTime}
+                                    setEndTime={setEndTime}
+                                    date={date} StartTime={StartTime}
+                                    EndTime={EndTime} />
+                            </Surface>
                             <View style={styles.controls}>
-                                <View style={styles.textInputContainer}>
-                                    <Icon name="format-title" size={20} style={styles.iconStyle}
-                                        color={colors.primary} />
-                                    <TextInput
-                                        style={styles.textInput}
-                                        mode="outlined"
-                                        label="Event title"
-                                        containerStyle={styles.control}
-                                        value={value.title}
-                                        onChangeText={(text) => {
-                                            setValue({ ...value, title: text });
-                                            if (errors.title) {
-                                                setErrors({ ...errors, title: null });
-                                            }
-                                        }}
+                                <Surface elevation={4} style={styles.inputSurface}>
+                                    <View style={styles.textInputContainer}>
+                                        <Icon name="format-title" size={20} style={styles.iconStyle}
+                                            color={colors.primary} />
+                                        <TextInput
+                                            style={styles.textInput}
+                                            mode="outlined"
+                                            label="Event title"
+                                            containerStyle={styles.control}
+                                            value={value.title}
+                                            onChangeText={(text) => {
+                                                setValue({ ...value, title: text });
+                                                if (errors.title) {
+                                                    setErrors({ ...errors, title: null });
+                                                }
+                                            }}
 
-                                    />
+                                        />
+                                    </View>
+                                    {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
+                                </Surface>
+                                <Surface elevation={4} style={styles.inputSurface}>
+                                    <View style={styles.textareaContainer}>
+                                        <Icon name="information" size={20}
+                                            color={colors.primary} style={styles.iconStyle} />
+                                        <TextInput
+                                            style={styles.desc}
+                                            label="Description"
+                                            editable
+                                            multiline
+                                            numberOfLines={10}
+                                            maxLength={400}
+                                            value={value.description}
+                                            onChangeText={(text) => {
+                                                setValue({ ...value, description: text });
 
-                                </View>
-                                {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
-                                <View style={styles.textareaContainer}>
-                                    <Icon name="information" size={20}
-                                        color={colors.primary} style={styles.iconStyle} />
-                                    <TextInput
-                                        style={styles.desc}
-                                        label="Description"
-                                        editable
-                                        multiline
-                                        numberOfLines={10}
-                                        maxLength={400}
-                                        value={value.description}
-                                        onChangeText={(text) => {
-                                            setValue({ ...value, description: text });
-
-                                            if (errors.description) {
-                                                setErrors({ ...errors, description: null });
-                                            }
-                                        }}
-                                    />
+                                                if (errors.description) {
+                                                    setErrors({ ...errors, description: null });
+                                                }
+                                            }}
+                                        />
 
 
-                                </View>
-                                {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
-                                <View style={styles.textInputContainer}>
-                                    <Icon name="account-multiple-plus" size={20}
-                                        color={colors.primary} style={styles.iconStyle} />
-                                    <TextInput
-                                        style={styles.textInput}
-                                        mode="outlined"
-                                        label="Max participants"
-                                        containerStyle={styles.control}
-                                        keyboardType='numeric'
-                                        value={value.participantLimit.toString()}
-                                        onChangeText={(text) => {
-                                            setValue({
-                                                ...value,
-                                                participantLimit: text ? parseInt(text, 10) : 0
-                                            })
-                                            if (errors.participantLimit) {
-                                                setErrors({ ...errors, participantLimit: null });
-                                            }
-                                        }}
+                                    </View>
+                                    {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
+                                </Surface>
+                                <Surface elevation={4} style={styles.inputSurface}>
+                                    <View style={styles.textInputContainer}>
+                                        <Icon name="account-multiple-plus" size={20}
+                                            color={colors.primary} style={styles.iconStyle} />
+                                        <TextInput
+                                            style={styles.textInput}
+                                            mode="outlined"
+                                            label="Max participants"
+                                            containerStyle={styles.control}
+                                            keyboardType='numeric'
+                                            value={value.participantLimit.toString()}
+                                            onChangeText={(text) => {
+                                                setValue({
+                                                    ...value,
+                                                    participantLimit: text ? parseInt(text, 10) : 0
+                                                })
+                                                if (errors.participantLimit) {
+                                                    setErrors({ ...errors, participantLimit: null });
+                                                }
+                                            }}
 
-                                        maxLength={20}
-                                    />
+                                            maxLength={20}
+                                        />
 
-                                </View>
-                                {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
-                                <View style={styles.buttons}>
-                                    <Button icon="check-circle" mode="elevated" title="Modify" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
-                                    <Button icon="delete" mode="elevated" title="Delete" style={styles.control} onPress={handleDelete} >Delete</Button>
-                                    <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
-                                </View>
+                                    </View>
+                                    {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
+                                    </Surface>
+                                    <View style={styles.buttons}>
+                                        <Button icon="check-circle" mode="elevated" title="Modify" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
+                                        <Button icon="delete" mode="elevated" title="Delete" style={styles.control} onPress={handleDelete} >Delete</Button>
+                                        <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
+                                    </View>
                             </View>
 
                         </View>
-                    </View>
-                </ImageBackground>
-            </ScrollView>
+                    </Surface>
+                </ScrollView>
+            </ImageBackground>
+
         </KeyboardAvoidingView >
 
     );
 };
 
-const styles = StyleSheet.create({
-    backgroundImage: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-    },
-    overlay: {
-        flex: 1,
-        padding: 20,
-        justifyContent: "center",
-        backgroundColor: "rgba(0,0,0,0.9)",
-    },
-    container: {
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    textareaContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingBottom: 10,
-        marginTop: 20,
-        width: '98%',
-
-    },
-
-    textInputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingBottom: 10,
-        marginTop: 20,
-      
-
-    },
-    textInput: {
-        width: '90%',
-    },
-
-    controls: {
-        width: "100%",
-      
-    },
-    control: {
-        marginTop: 20,
-
-    },
-    iconStyle: {
-        marginRight: 5,
-
-    },
-    desc: {
-        flex: 1,
-        textAlignVertical: 'top',
-        height: 100,
-        fontSize: 18,
-
-    },
-    inputStyle: {
-        fontSize: 18,
-    
-    },
-    leftIconContainerStyle: {
-        
-    },
-
-    errorText: {
-        color: 'red',
-        fontSize: 16,
-        padding: 2,
-        marginTop: 5
-
-    },
-
-});
 
 
 export default EditEventScreen;
