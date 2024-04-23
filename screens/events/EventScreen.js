@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, Alert, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ScrollView, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Button, Surface, Avatar, useTheme } from "react-native-paper"
+import { Button, Surface, useTheme, Text } from "react-native-paper"
 import { useIsEventCreator } from '../../hooks/events/useIsEventCreator';
 import { useIfUserJoined } from "../../hooks/useIfUserJoined";
 import CancelJoinEvent from '../../hooks/events/utils/cancelJoinEvent'
@@ -14,6 +14,9 @@ import { useRealTimeEvent } from '../../hooks/events/useEventRealTimeDetails';
 import { useRealTimeEventComments } from "../../hooks/comments/useFetchCommentsRealTime";
 import { CommentsDialog, CommentsContainer } from "../../components/Comments";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Userlist from "../../components/Userlist";
+import fetchUserData from "../../hooks/fetchUsersByEventId";
+import LoadingIndicator from "../../components/Loading"
 
 const EventScreen = () => {
 
@@ -38,6 +41,9 @@ const EventScreen = () => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [show, setShow] = useState(true);
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [participants, setParticipants] = useState([]);
     const saveCommentsChacked = async () => {
         try {
             await AsyncStorage.setItem(
@@ -178,7 +184,7 @@ const EventScreen = () => {
             padding: 10,
             paddingBottom: 20,
             marginBottom: 20,
-           
+
         },
         title: {
             padding: 10,
@@ -191,7 +197,7 @@ const EventScreen = () => {
         container: {
             alignItems: "center",
             padding: 5,
-         
+
         },
         detailContainer: {
             flexDirection: 'row',
@@ -202,7 +208,7 @@ const EventScreen = () => {
             borderWidth: 1,
             borderColor: colors.secondary,
             borderRadius: 10,
-                    
+
 
         },
         detailText: {
@@ -220,10 +226,10 @@ const EventScreen = () => {
             fontSize: 20,
 
         },
- 
+
         portal: {
             padding: 10,
-           
+
         },
         buttons: {
             flexDirection: "row",
@@ -231,42 +237,60 @@ const EventScreen = () => {
 
         },
 
-        control:{
+        control: {
             margin: 10,
         }
-       
+
     });
 
+    const handleShowParticipants = async () => {
+        setIsLoading(true);
+        try {
+            const userData = await fetchUserData(eventData.usersParticipating);
+            setParticipants(userData);
+            setModalVisible(true);
+        } catch (error) {
+            console.error("Failed to fetch participants:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
-        <Surface style={{backgroundColor: colors.onPrimaryContainer}}>
+        <Surface style={{ backgroundColor: colors.inversePrimary }}>
             <ScrollView contentContainerStyle={styles.container} >
                 <Surface style={styles.bottomlist} elevation={5}>
-                <Text style={styles.title}>{eventData.title} at {eventData.locationName}</Text>
-                    <Surface style={styles.bottomlist} elevation={1}>                       
+                    <Text style={styles.title}>{eventData.title} at {eventData.locationName}</Text>
+                    <Surface style={styles.bottomlist} elevation={1}>
                         <View style={styles.detailContainer}>
                             <Icon name="calendar" size={20} style={{ color: colors.primary }} />
                             <Text style={styles.detailText}>{eventData.date}</Text>
                         </View>
-
                         <View style={styles.detailContainer}>
                             <Icon name="clock-start" size={20} style={{ color: colors.primary }} />
                             <Text style={styles.detailText}>{eventData.StartTime}</Text>
                         </View>
-
                         <View style={styles.detailContainer}>
-                            <Icon name="clock-end" size={20} style={{ color: colors.primary}} />
+                            <Icon name="clock-end" size={20} style={{ color: colors.primary }} />
                             <Text style={styles.detailText}>{eventData.EndTime}</Text>
                         </View>
                         <View style={styles.detailContainer} >
                             <Icon name="information" size={20} style={{ color: colors.primary }} />
                             <Text style={styles.detailText}>{eventData.description}</Text>
                         </View>
-                        <View style={styles.detailContainer}>
-                            <Icon name="account-multiple-plus" size={20} style={{ color: colors.primary }} />
-                            <Text style={styles.detailText}>{eventData.participants}/{eventData.participantLimit} participants</Text>
-                        </View>
+                        <TouchableOpacity onPress={handleShowParticipants}>
+                            <Surface style={styles.detailContainer} elevation={5}>
+                                <Icon name="account-multiple-plus" size={20} style={{ color: colors.primary }} />
+                                <Text variant="labelMedium" style={styles.detailText}>{eventData.participants}/{eventData.participantLimit} participants</Text>
+                            </Surface>
+                        </TouchableOpacity>
+                        {!modalVisible &&
+                            isLoading ? (
+                            <LoadingIndicator />
+                        ) : (
+                            <Userlist users={participants} modalVisible={modalVisible} setModalVisible={setModalVisible} />
 
+                        )}
                     </Surface>
                     <View style={styles.buttons}>
                         {isCreator && (
@@ -310,22 +334,22 @@ const EventScreen = () => {
                         )}
                     </View>
                 </Surface>
-            
-                    <View style={styles.portal}>
-                        <Button title="Comment"
-                            icon="comment"
-                            mode="elevated" onPress={() => setDialogVisible(true)}>Add Comment</Button>
-                        <CommentsContainer comments={comments} eventId={initialEvent.id} show={show} setShow={setShow} setDialogVisible={setDialogVisible} currentUser={currentUser} />
-                        <CommentsDialog
-                            visible={dialogVisible}
-                            setDialogVisible={setDialogVisible}
-                            eventId={initialEvent.id}
-                            onDismiss={() => setDialogVisible(false)}
-                        />
-                    </View>
-             
+
+                <View style={styles.portal}>
+                    <Button title="Comment"
+                        icon="comment"
+                        mode="elevated" onPress={() => setDialogVisible(true)}>Add Comment</Button>
+                    <CommentsContainer comments={comments} eventId={initialEvent.id} show={show} setShow={setShow} setDialogVisible={setDialogVisible} currentUser={currentUser} />
+                    <CommentsDialog
+                        visible={dialogVisible}
+                        setDialogVisible={setDialogVisible}
+                        eventId={initialEvent.id}
+                        onDismiss={() => setDialogVisible(false)}
+                    />
+                </View>
+
             </ScrollView >
-        </Surface>
+        </Surface >
     );
 };
 

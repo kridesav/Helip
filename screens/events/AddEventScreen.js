@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground } from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { TextInput, Button, Text, useTheme, Surface } from "react-native-paper"
@@ -81,24 +81,23 @@ const AddEventScreen = () => {
         }
     };
 
-
-
     const styles = StyleSheet.create({
         backgroundImage: {
             flex: 1,
-            width: "100%",
-            height: "100%",
-            backgroundColor: colors.surfaceVariant,
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").height,
+            backgroundColor: colors.inversePrimary,
         },
         overlay: {
             flex: 1,
-            padding: 20,
             justifyContent: "center",
-            backgroundColor: colors.surfaceDisabled,
+            backgroundColor: "rgba(0,0,0,0.4)",
+
         },
         container: {
             alignItems: "center",
             justifyContent: "center",
+            padding: 10
         },
 
         textareaContainer: {
@@ -129,7 +128,7 @@ const AddEventScreen = () => {
         },
         control: {
             marginTop: 20,
-
+            borderColor: colors.primary
         },
         iconStyle: {
             marginRight: 5,
@@ -153,8 +152,8 @@ const AddEventScreen = () => {
             color: colors.error,
             fontSize: 16,
             padding: 2,
-            marginTop:0,
-            margin:5
+            marginTop: 0,
+            margin: 5
 
         },
         inputSurface: {
@@ -162,7 +161,7 @@ const AddEventScreen = () => {
             borderRadius: 10,
             padding: 5,
             marginBottom: 15,
-           
+
         }
 
     });
@@ -176,16 +175,17 @@ const AddEventScreen = () => {
             keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
             <View style={{ backgroundColor: colors.inversePrimary, padding: 10 }}>
-                <Text style={{ color: colors.primary, fontWeight: "bold", fontSize: 18}}>{selectedMapItem.properties.nimi_fi}</Text>
+                <Text style={{ color: colors.primary, fontWeight: "bold", fontSize: 18 }}>{selectedMapItem.properties.nimi_fi}</Text>
                 <View style={{ flexGrow: 1 }}>
                     <Text style={{ color: colors.primary, fontSize: 15 }}>{selectedMapItem.properties.katuosoite}</Text>
-                    <Text style={{ color: colors.primary,fontSize: 15}}>{selectedMapItem.properties.postitoimi}</Text>
+                    <Text style={{ color: colors.primary, fontSize: 15 }}>{selectedMapItem.properties.postitoimi}</Text>
                 </View>
             </View>
-            <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
-                <ScrollView contentContainerStyle={styles.flexGrow}>
 
-                    <Surface style={styles.overlay} elevation={5}>
+            <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+                <View style={styles.overlay}>
+                    <ScrollView contentContainerStyle={styles.flexGrow}>
+
                         <View style={styles.container}>
                             <Surface elevation={0}>
                                 <DateTimePicker setDate={setDate}
@@ -280,10 +280,12 @@ const AddEventScreen = () => {
                             </View>
 
                         </View>
-                    </Surface>
 
-                </ScrollView>
+
+                    </ScrollView>
+                </View>
             </ImageBackground>
+
         </KeyboardAvoidingView>
 
     );

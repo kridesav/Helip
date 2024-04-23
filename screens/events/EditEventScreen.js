@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground } from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { TextInput, Button, Text, useTheme, Surface } from "react-native-paper";
@@ -11,6 +11,7 @@ import formatDate from '../../utils/formatDate';
 import editEvent from "../../hooks/events/utils/editEvent";
 import deleteEvent from "../../hooks/events/utils/deleteEvent";
 import { parseTime, parseDate } from '../../utils/parse'
+import { color } from "react-native-elements/dist/helpers";
 
 
 const EditEventScreen = () => {
@@ -132,19 +133,20 @@ const EditEventScreen = () => {
     const styles = StyleSheet.create({
         backgroundImage: {
             flex: 1,
-            width: "100%",
-            height: "100%",
-            backgroundColor: colors.surfaceVariant,
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").height,
+            backgroundColor: colors.inversePrimary,
         },
         overlay: {
             flex: 1,
-            padding: 20,
             justifyContent: "center",
-            backgroundColor: colors.surfaceDisabled,
+            backgroundColor: "rgba(0,0,0,0.4)",
+
         },
         container: {
             alignItems: "center",
             justifyContent: "center",
+            padding: 10
         },
 
         textareaContainer: {
@@ -175,7 +177,7 @@ const EditEventScreen = () => {
         },
         control: {
             marginTop: 20,
-
+            borderColor: colors.primary
         },
         iconStyle: {
             marginRight: 5,
@@ -199,8 +201,8 @@ const EditEventScreen = () => {
             color: colors.error,
             fontSize: 16,
             padding: 2,
-            marginTop:0,
-            margin:5
+            marginTop: 0,
+            margin: 5
 
         },
         inputSurface: {
@@ -228,11 +230,10 @@ const EditEventScreen = () => {
                 </View>
             </View>
             <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
-                <ScrollView contentContainerStyle={styles.flexGrow}>
-
-                    <Surface style={styles.overlay} elevation={5}>
+                <View style={styles.overlay}>
+                    <ScrollView contentContainerStyle={styles.flexGrow}>
                         <View style={styles.container}>
-                            <Surface elevation={0}>
+                            <Surface elevation={5}>
                                 <DateTimePicker setDate={setDate}
                                     setStartTime={setStartTime}
                                     setEndTime={setEndTime}
@@ -240,7 +241,7 @@ const EditEventScreen = () => {
                                     EndTime={EndTime} />
                             </Surface>
                             <View style={styles.controls}>
-                                <Surface elevation={4} style={styles.inputSurface}>
+                                <Surface elevation={5} style={styles.inputSurface} >
                                     <View style={styles.textInputContainer}>
                                         <Icon name="format-title" size={20} style={styles.iconStyle}
                                             color={colors.primary} />
@@ -267,6 +268,7 @@ const EditEventScreen = () => {
                                             color={colors.primary} style={styles.iconStyle} />
                                         <TextInput
                                             style={styles.desc}
+                                            mode="outlined"
                                             label="Description"
                                             editable
                                             multiline
@@ -312,17 +314,18 @@ const EditEventScreen = () => {
 
                                     </View>
                                     {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
-                                    </Surface>
-                                    <View style={styles.buttons}>
-                                        <Button icon="check-circle" mode="elevated" title="Modify" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
-                                        <Button icon="delete" mode="elevated" title="Delete" style={styles.control} onPress={handleDelete} >Delete</Button>
-                                        <Button icon="close-circle" mode="elevated" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
-                                    </View>
+                                </Surface>
+                                <View style={styles.buttons}>
+                                    <Button icon="check-circle" mode="contained-tonal" title="Modify" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
+                                    <Button icon="delete" mode="contained-tonal" title="Delete" style={styles.control} onPress={handleDelete} >Delete</Button>
+                                    <Button icon="close-circle" mode="contained-tonal" title="Cancel" style={styles.control} onPress={() => navigation.goBack()}  >Cancel</Button>
+                                </View>
                             </View>
 
                         </View>
-                    </Surface>
-                </ScrollView>
+
+                    </ScrollView>
+                </View>
             </ImageBackground>
 
         </KeyboardAvoidingView >

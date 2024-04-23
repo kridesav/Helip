@@ -36,14 +36,12 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
     };
 
     
-    
-
     const styles = StyleSheet.create({
         DateContainer: {
             flexDirection: 'row',
             alignItems: 'center',
             padding: 10,
-            backgroundColor: colors.shadow
+            backgroundColor: colors.primary
         },
         iconStyle: {
             marginLeft: 5,
@@ -51,8 +49,6 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
         },
 
     });
-
-
 
     return (
         <View style={styles.DateContainer}>
@@ -62,7 +58,7 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
             {showDatePicker && (
                 <DateTimePicker
                     value={date}
-                    mode="date"
+                    mode="date"                    
                     display="default"
                     onChange={onChangeDate}
                     minimumDate={new Date()}
