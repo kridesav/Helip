@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, Alert, Pressable } from "react-native";
-import { useTheme, Text } from "react-native-paper";
+import { useTheme, Text, Surface, Button } from "react-native-paper";
 import { EventContext } from "../context/EventProvider";
 import { useNavigation } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
@@ -35,6 +35,7 @@ const MyEvents = () => {
     }, [eventIds, currentUser?.uid]);
         
     const toggleExpansion = (id) => {
+        console.log(id)
         setExpandedId(expandedId === id ? null : id);
     };
 
@@ -86,16 +87,12 @@ const MyEvents = () => {
     }; 
 
     return(
-        <View style={styles.container}>   
-                <ScrollView style={{ flex: 1, backgroundColor: colors.tertiary, paddingTop: 75 }}>
+        <Surface style={styles.container} elevation={1}>   
+                <ScrollView style={{ flex: 1, paddingTop: 75 }}>
                     <View style={styles.buttonContainer}>
-                        <Pressable style={[styles.button, showEvents[0] && { borderWidth: 2, borderRadius: 20, borderColor: 'black'}]} onPress={() => setShowEvents([!showEvents[0],false])}>
-                            <Text>Created Events</Text>
-                        </Pressable>
-                        <Pressable style={[styles.button, showEvents[1] && { borderWidth: 2, borderRadius: 20, borderColor: 'black'}]} onPress={() => setShowEvents([false,!showEvents[1]])}>
-                            <Text>Joined</Text>
-                        </Pressable>
-                        </View>
+                        <Button mode="outlined" compact style={[styles.button, showEvents[0] && { borderWidth: 2, }]} onPress={() => setShowEvents([!showEvents[0],false])}>Created</Button>
+                        <Button mode="outlined" compact style={[styles.button, showEvents[1] && { borderWidth: 2 }]} onPress={() => setShowEvents([false,!showEvents[1]])}>Joined</Button>
+                    </View>
                     {createdEventIds.length > 0 && showEvents[0] ? 
                     (
                         createdEventIds.map((event) => (
@@ -112,28 +109,26 @@ const MyEvents = () => {
                     }
                     <Text style={{marginBottom:50}}></Text>
                 </ScrollView>         
-        </View>
+        </Surface>
     )
 }
 
 const styles = StyleSheet.create({
     button : {
-        padding: 10,
-        marginVertical: 8,
-        marginHorizontal: 16,
-        borderWidth: 1,
-        borderRadius: 10,
-        backgroundColor: 'white',
-        height:45
-        
+        width: '45%',
+        marginBottom: 8,
+        height:45,
+        textAlign: 'center'
     },
     container: {
-        flex: 1,
-        backgroundColor: 'gray'
+        flex: 1
     },
     buttonContainer:{
         flex: 1,
         flexDirection: 'row',
+        width: '70%',
+        alignSelf: 'center',
+        justifyContent: 'space-around'
     }
   });
 

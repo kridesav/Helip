@@ -100,9 +100,8 @@ const BottomSheetComponent = ({ handleListItemPress, places, filteredLocations, 
             <View>
               <View style={{ width: '100%', flexDirection: 'row' }}>
                 <SearchBarComponent snapBottomSheet={handleMapItemDeselect} setFilteredLocations={setFilteredLocations} places={places} />
-                <IconButton onPress={() => setSettingsMode(!settingMode)} containerStyle={{ paddingTop: 5 }} icon={{ name: "settings" }} type="clear"></IconButton>
               </View>
-              {settingMode && <LocationTypeWheel onActiveIconChange={setActiveFilter} />}
+              <LocationTypeWheel onActiveIconChange={setActiveFilter} />
               <BottomSheetScrollView>
                 {
                   filteredAndSlicedLocations.map((item) => {
