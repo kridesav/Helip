@@ -187,8 +187,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 4,
     right: 4,
-    justifyContent: "center", // Centers the icon vertically
-    alignItems: "center", // Centers the icon horizontally
     backgroundColor: "green",
   },
 });
