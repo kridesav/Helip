@@ -26,6 +26,7 @@ import Profile from "./screens/profile";
 import EditProfileScreen from "./screens/profile/EditProfileScreen";
 import SettingsScreen from "./screens/profile/SettingsScreen";
 import { themeContext } from "./utils/themeContext";
+import MessageScreen from "./screens/profile/messageScreen";
 
 const Stack = createStackNavigator();
 
@@ -198,6 +199,7 @@ export default function App() {
               <Stack.Screen name="EditEventScreen" component={EditEventScreen} options={{ title: "Edit Event" }} />
               <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
               <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: "Settings" }} />
+              <Stack.Screen name="MessageScreen" component={MessageScreen} options={{ title: "My Comments" }} />
 
             </Stack.Navigator>
           </NavigationContainer>
