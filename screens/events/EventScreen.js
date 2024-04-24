@@ -206,7 +206,7 @@ const EventScreen = () => {
       padding: 10,
     },
     buttons: {
-      flexDirection: "row",
+      flexDirection: "column",
       justifyContent: "space-around",
     },
 
@@ -259,7 +259,7 @@ const EventScreen = () => {
             {isCreator && (
               <Button
                 icon="check-circle"
-                mode="elevated"
+                mode="contained-tonal"
                 title="Edit"
                 style={[styles.control, styles.editButton]}
                 onPress={() => navigation.navigate("EditEventScreen", { event })}

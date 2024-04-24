@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground, Dimensions } from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground, Dimensions, } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { TextInput, Button, Text, useTheme, Surface, HelperText } from "react-native-paper";
+import { TextInput, Button, Text, useTheme, Surface, HelperText, RadioButton } from "react-native-paper";
 import useAuth from "../../hooks/useAuth";
 import addEvent from "../../hooks/events/utils/addEvent";
 import DateTimePicker from "../../components/DateTimePicker";
@@ -19,6 +19,8 @@ const AddEventScreen = () => {
     description: "",
     participantLimit: "",
   });
+  const [isChecked, setIsChecked] = useState(false);
+
   const [errors, setErrors] = useState({});
   const [date, setDate] = useState(new Date());
   const [StartTime, setStartTime] = useState(new Date());
@@ -28,6 +30,11 @@ const AddEventScreen = () => {
   const { selectedMapItem } = route.params;
   const { currentUser } = useAuth();
   const userId = currentUser?.uid;
+
+  const handleToggleJoin = () => {
+    setIsChecked(!isChecked);
+  };
+
 
   const handleFormSubmit = () => {
     if (validateInput(value, setErrors)) {
@@ -62,8 +69,8 @@ const AddEventScreen = () => {
       locationId: selectedMapItem.properties.id,
       coordinates: selectedMapItem.geometry.coordinates,
       participantLimit: value.participantLimit,
-      participants: 0,
-      usersParticipating: [],
+      participants: isChecked ? 1 : 0,
+      usersParticipating: isChecked ? [userId] : [],
     };
 
     const success = await AddEvent(eventData, userId);
@@ -244,6 +251,17 @@ const AddEventScreen = () => {
                     />
                   </View>
                   {errors.participantLimit && <HelperText style={styles.errorText}>{errors.participantLimit}</HelperText>}
+
+                </Surface>
+                <Surface elevation={4} style={styles.inputSurface}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <RadioButton.Android 
+                      value="join"
+                      status={isChecked ? 'checked' : 'unchecked'}
+                      onPress={handleToggleJoin}                     
+                    />
+                    <HelperText variant="labelMedium">{isChecked ? "I am joining the event." : "I am not joining the event for now."}</HelperText>
+                  </View>
                 </Surface>
                 <View style={styles.buttons}>
                   <Button icon="check-circle" mode="elevated" title="Add" style={styles.control} onPress={handleFormSubmit}>
@@ -257,8 +275,8 @@ const AddEventScreen = () => {
             </View>
           </ScrollView>
         </View>
-      </ImageBackground>
-    </KeyboardAvoidingView>
+      </ImageBackground >
+    </KeyboardAvoidingView >
   );
 };
 
