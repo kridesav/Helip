@@ -28,6 +28,7 @@ export default function ProfileScreen() {
     const navigateToEditProfile = () => navigation.navigate("EditProfileScreen", { profile });
     const navigateToMyEvents = () => navigation.navigate("My Events");
     const navigateToSettings = () => navigation.navigate("SettingsScreen");
+    const navigateToMyMessages = () => navigation.navigate("MessageScreen", { uid: currentUser?.uid });
 
     return (
         <Surface style={styles.container} elevation={1}>
@@ -50,7 +51,7 @@ export default function ProfileScreen() {
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={3}>
                     <Button icon="calendar" compact contentStyle={styles.button2} onPress={navigateToMyEvents}>My Events </Button>
-                    <Button icon="message" compact contentStyle={styles.button2}>My Comments </Button>
+                    <Button icon="message" compact contentStyle={styles.button2}onPress={navigateToMyMessages}>My Comments</Button>
                 </Surface>
                 <Surface style={styles.bottomlist} elevation={2}>
                     <Button icon="account-settings" compact contentStyle={styles.button2} onPress={navigateToSettings}>Settings</Button>

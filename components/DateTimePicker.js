@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Platform, TouchableOpacity } from "react-native";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { useTheme } from 'react-native-paper';
+import { useTheme, Text, Button, Surface } from 'react-native-paper';
 
 export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date, StartTime, EndTime }) => {
     const { colors } = useTheme();
@@ -14,7 +14,9 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
         const currentDate = selectedDate || date;
         setDate(currentDate);
         if (Platform.OS === 'android') {
-            setShowDatePicker(false);
+            setTimeout(() => {
+                setShowDatePicker(false);
+            }, 50);
         }
     };
 
@@ -23,7 +25,9 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
         setStartTime(currentTime);
         setEndTime(currentTime);
         if (Platform.OS === 'android') {
-            setShowStartTimePicker(false);
+            setTimeout(() => {
+                setShowStartTimePicker(false);
+            }, 50);
         }
     };
 
@@ -31,32 +35,56 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
         const currentTime = selectedTime || EndTime;
         setEndTime(currentTime);
         if (Platform.OS === 'android') {
-            setShowEndTimePicker(false);
+            setTimeout(() => {
+                setShowEndTimePicker(false);
+            }, 50);
         }
     };
 
+    const formatDate = (date) => {
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        return date.toLocaleDateString('en-GB', options).replace(/ /g, '. ');
+    };
     
+    const formatTime = (time) => {
+        const options = { hour: '2-digit', minute: '2-digit', hour12: false };
+        return time.toLocaleTimeString('en-GB', options);
+    };
+
     const styles = StyleSheet.create({
         DateContainer: {
             flexDirection: 'row',
             alignItems: 'center',
             padding: 10,
-            backgroundColor: colors.primary
+            backgroundColor: colors.inversePrimary,
         },
         iconStyle: {
             marginLeft: 5,
+        },
 
+        text: {
+            fontSize: 13,
+        },
+        row: {
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
+        textBackground: {
+            marginLeft: 10,
+            padding: 7,
+            borderRadius: 10,
         },
 
     });
 
     return (
-        <View style={styles.DateContainer}>
-            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                <Icon name="calendar" size={20} color={colors.inversePrimary} />
+        <Surface style={styles.DateContainer}>
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.row}>
+                <Icon name="calendar" size={20} color={colors.primary} />
+                {Platform.OS === 'android' && <Surface elevation={4} style={styles.textBackground}><Text style={styles.text}>{formatDate(date)}</Text></Surface>}
             </TouchableOpacity>
             {showDatePicker && (
-                <DateTimePicker
+                <RNDateTimePicker
                     value={date}
                     mode="date"                    
                     display="default"
@@ -64,22 +92,23 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
                     minimumDate={new Date()}
                 />
             )}
-
-            <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
-                <Icon name="clock-start" size={20} color={colors.inversePrimary} style={styles.iconStyle} />
+    
+            <TouchableOpacity onPress={() => setShowStartTimePicker(true)} style={styles.row}>
+                <Icon name="clock-start" size={20} color={colors.primary} style={styles.iconStyle} />
+                {Platform.OS === 'android' && <Surface elevation={4} style={styles.textBackground}><Text style={styles.text}>{formatTime(StartTime)}</Text></Surface>}
             </TouchableOpacity>
             {showStartTimePicker && (
-                <DateTimePicker mode="time" is24Hour={true} value={StartTime} onChange={onChangeStartTime} />
+                <RNDateTimePicker mode="time" is24Hour={true} value={StartTime} onChange={onChangeStartTime} />
             )}
-
-            <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
-                <Icon name="clock-end" size={20} style={styles.iconStyle} color={colors.inversePrimary} />
+    
+            <TouchableOpacity onPress={() => setShowEndTimePicker(true)} style={styles.row}>
+                <Icon name="clock-end" size={20} style={styles.iconStyle} color={colors.primary} />
+                {Platform.OS === 'android' && <Surface elevation={4} style={styles.textBackground}><Text style={styles.text}>{formatTime(EndTime)}</Text></Surface>}
             </TouchableOpacity>
             {showEndTimePicker && (
-                <DateTimePicker mode="time" is24Hour={true} value={EndTime} onChange={onChangeEndTime} />
+                <RNDateTimePicker mode="time" is24Hour={true} value={EndTime} onChange={onChangeEndTime} />
             )}
-        </View>
-
-    )
+        </Surface>
+    );
 }
 

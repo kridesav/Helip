@@ -123,7 +123,7 @@ const AddEventScreen = () => {
 
         controls: {
             width: "100%",
-            marginTop: 10
+            marginTop: 25
 
         },
         control: {

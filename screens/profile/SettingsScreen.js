@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button, Surface, Text, Switch, Portal, Dialog, Icon, TextInput } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import { themeContext } from '../../utils/themeContext';
-import { darkTheme, lightTheme } from '../../theme';
 import changePassword from '../../hooks/changePassword';
 import deleteUserAccount from '../../hooks/deleteUser';
 import reauthenticateUser from '../../hooks/reauthenticateUser';
-import { set } from 'lodash';
-
 
 export default function SettingsScreen({ route }) {
     const { theme, setTheme, themeMode, setThemeMode } = React.useContext(themeContext);
@@ -95,6 +92,7 @@ export default function SettingsScreen({ route }) {
                             style={styles.input}
                             value={location}
                             onValueChange={onToggleLocation}
+                            disabled
                         />
                     </View>
                     <View style={styles.switchContainer}>
@@ -106,6 +104,7 @@ export default function SettingsScreen({ route }) {
                             style={styles.input}
                             value={notifications}
                             onValueChange={onToggleNotifications}
+                            disabled
                         />
                     </View>
                     <View style={styles.switchContainer}>
