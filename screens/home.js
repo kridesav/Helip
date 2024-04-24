@@ -136,7 +136,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, paddingTop: 75 }}>
+    <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, paddingTop: 75 }}>
       <SegmentedButtons
         value={sortType}
         onValueChange={setSortType}

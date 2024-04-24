@@ -109,7 +109,7 @@ const MyEvents = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={{ flex: 1, paddingTop: 75 }}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, paddingTop: 75 }}>
         <SegmentedButtons
           value={currentTab}
           onValueChange={setCurrentTab}

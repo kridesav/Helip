@@ -162,7 +162,7 @@ const AddEventScreen = () => {
         </View>
       </View>
       <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
-        <ScrollView contentContainerStyle={styles.flexGrow}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.flexGrow}>
           <Surface style={styles.overlay} elevation={5}>
             <View style={styles.container}>
               <Surface elevation={0}>
