@@ -9,6 +9,14 @@ const MessageScreen = ({ route }) => {
     const { comments } = useRealTimeUserComments(uid);
     const [sortOrder, setSortOrder] = useState('time');
 
+    if (comments.length === 0) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20 }}>No comments yet</Text>
+            </View>
+        );
+    }
+    
     const filteredComments = comments.filter(comment => comment.content !== "This comment was deleted.");
 
     const sortedComments = [...filteredComments].sort((a, b) => {

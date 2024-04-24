@@ -57,6 +57,7 @@ export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date
             alignItems: 'center',
             padding: 10,
             backgroundColor: colors.inversePrimary,
+            borderRadius: 10,
         },
         iconStyle: {
             marginLeft: 5,
