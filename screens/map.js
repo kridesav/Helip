@@ -39,6 +39,17 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
         return;
       }
 
+      let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      setRegion({
+        ...region,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      setIsLoading(false);
+      if (location.coords.latitude !== null && location.coords.longitude !== null) {
+        fetchPlaces(location.coords.latitude, location.coords.longitude);
+      }
+
       let locationWatcher = await Location.watchPositionAsync({
         accuracy: Location.Accuracy.High,
         distanceInterval: 5,
