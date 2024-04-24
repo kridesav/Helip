@@ -32,14 +32,24 @@ const Stack = createStackNavigator();
 
 //placeholder
 function ProfileScreen() {
-  return (
-    <Profile />
-  );
+  return <Profile />;
 }
 
-
-function MapScreen({ collapseBottomSheet, handleListItemPress, mapRef, handleMarkerPress, token, places, setPlaces, filteredLocations, setFilteredLocations, bottomSheetRef, handleMapItemDeselect, selectedMapItem }) {
-  const [activeFilter, setActiveFilter] = useState(null)
+function MapScreen({
+  collapseBottomSheet,
+  handleListItemPress,
+  mapRef,
+  handleMarkerPress,
+  token,
+  places,
+  setPlaces,
+  filteredLocations,
+  setFilteredLocations,
+  bottomSheetRef,
+  handleMapItemDeselect,
+  selectedMapItem,
+}) {
+  const [activeFilter, setActiveFilter] = useState(null);
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Maps
@@ -48,7 +58,8 @@ function MapScreen({ collapseBottomSheet, handleListItemPress, mapRef, handleMar
         setPlaces={setPlaces}
         handleMarkerPress={handleMarkerPress}
         mapRef={mapRef}
-        activeFilter={activeFilter} />
+        activeFilter={activeFilter}
+      />
 
       <BottomSheetComponent
         handleListItemPress={handleListItemPress}
@@ -74,13 +85,13 @@ export default function App() {
   const [filteredLocations, setFilteredLocations] = React.useState([]);
   const [places, setPlaces] = React.useState([]);
   const [token, setToken] = useState(null);
-  const [ themeMode, setThemeMode ] = useState('dark');
-  const [theme, setTheme] = useState(themeMode === 'dark' ? darkTheme : lightTheme);
+  const [themeMode, setThemeMode] = useState("dark");
+  const [theme, setTheme] = useState(themeMode === "dark" ? darkTheme : lightTheme);
 
   const mapRef = React.useRef(null);
 
   useEffect(() => {
-    setTheme(themeMode === 'dark' ? darkTheme : lightTheme);
+    setTheme(themeMode === "dark" ? darkTheme : lightTheme);
   }, [themeMode]);
 
   //BottomSheet manip
@@ -175,7 +186,8 @@ export default function App() {
                       }}
                     >
                       {(props) => (
-                        <MapScreen {...props}
+                        <MapScreen
+                          {...props}
                           token={token}
                           places={places}
                           setPlaces={setPlaces}
@@ -200,7 +212,6 @@ export default function App() {
               <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} options={{ title: "Edit Profile" }} />
               <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: "Settings" }} />
               <Stack.Screen name="MessageScreen" component={MessageScreen} options={{ title: "My Comments" }} />
-
             </Stack.Navigator>
           </NavigationContainer>
         </EventProvider>
