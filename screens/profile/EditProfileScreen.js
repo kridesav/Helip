@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextInput, Surface, Avatar } from 'react-native-paper';
+import { Button, TextInput, Surface, Avatar, HelperText } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import useAuth from '../../hooks/useAuth';
 import editUser from '../../hooks/events/utils/editUser';
@@ -13,7 +13,37 @@ export default function EditProfileScreen({ route }) {
     const [displayName, setDisplayName] = useState(profile?.displayName ?? '');
     const [avatar, setAvatar] = useState(profile?.profilePictureUrl ?? "");
     const [visible, setVisible] = useState(false);
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
+    const [displayNameError, setDisplayNameError] = useState('');
     const user = useAuth();
+
+    const handleFirstNameChange = (text) => {
+        setFirstName(text);
+        if (text.length < 2 || text.length > 16) {
+            setFirstNameError('First Name must be between 2 and 16 characters');
+        } else {
+            setFirstNameError('');
+        }
+    };
+    
+    const handleLastNameChange = (text) => {
+        setLastName(text);
+        if (text.length < 2 || text.length > 16) {
+            setLastNameError('Last Name must be between 2 and 16 characters');
+        } else {
+            setLastNameError('');
+        }
+    };
+    
+    const handleDisplayNameChange = (text) => {
+        setDisplayName(text);
+        if (text.length < 2 || text.length > 16) {
+            setDisplayNameError('Display Name must be between 2 and 16 characters');
+        } else {
+            setDisplayNameError('');
+        }
+    };
 
     const handleSave = async () => {
         const userData = {
@@ -51,20 +81,30 @@ export default function EditProfileScreen({ route }) {
                         style={styles.input}
                         label="First Name"
                         value={firstName}
-                        onChangeText={setFirstName}
+                        onChangeText={handleFirstNameChange}
                     />
+                    <HelperText type="error" visible={!!firstNameError}>
+                    {firstNameError}
+                    </HelperText>
                     <TextInput
                         style={styles.input}
                         label="Last Name"
                         value={lastName}
-                        onChangeText={setLastName}
+                        
+                        onChangeText={handleLastNameChange}
                     />
+                    <HelperText type="error" visible={!!lastNameError}>
+                    {lastNameError}
+                    </HelperText>
                     <TextInput
                         style={styles.input}
                         label="Display Name"
                         value={displayName}
-                        onChangeText={setDisplayName}
+                        onChangeText={handleDisplayNameChange}
                     />
+                    <HelperText type="error" visible={!!displayNameError}>
+                    {displayNameError}
+                    </HelperText>
                     {visible && (
                         <TextInput
                             style={styles.input}
@@ -78,7 +118,7 @@ export default function EditProfileScreen({ route }) {
                     <Button style={styles.button} icon="camera-image" mode="outlined" compact onPress={handleAvatar} >
                         Change Avatar
                     </Button>
-                    <Button style={styles.button} icon="content-save" mode="outlined" compact onPress={handleSave}>
+                    <Button style={styles.button} icon="content-save" mode="outlined" compact onPress={handleSave} disabled={!!firstNameError || !!lastNameError || !!displayNameError}>
                         Save
                     </Button>
                 </View>
