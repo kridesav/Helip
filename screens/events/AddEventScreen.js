@@ -226,6 +226,7 @@ const AddEventScreen = () => {
                                         <TextInput
                                             style={styles.desc}
                                             label="Description"
+                                            mode="outlined"
                                             editable
                                             multiline
                                             numberOfLines={10}
