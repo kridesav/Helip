@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ScrollView, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Button, Surface, useTheme, Text } from "react-native-paper"
+import { Button, Surface, useTheme, Text, HelperText } from "react-native-paper"
 import { useIsEventCreator } from '../../hooks/events/useIsEventCreator';
 import { useIfUserJoined } from "../../hooks/useIfUserJoined";
 import CancelJoinEvent from '../../hooks/events/utils/cancelJoinEvent'
@@ -15,11 +15,9 @@ import { useRealTimeEventComments } from "../../hooks/comments/useFetchCommentsR
 import { CommentsDialog, CommentsContainer } from "../../components/Comments";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Userlist from "../../components/Userlist";
-import fetchUserData from "../../hooks/fetchUsersByEventId";
-import LoadingIndicator from "../../components/Loading"
+import usefetchUserData from "../../hooks/usefetchUsersByEventId";
 
 const EventScreen = () => {
-
     const navigation = useNavigation();
     const { colors } = useTheme();
     const route = useRoute();
@@ -30,6 +28,7 @@ const EventScreen = () => {
 
     const userId = currentUser?.uid;
     const { eventData } = useRealTimeEvent(initialEvent.id, currentUser);
+
     const isCreator = useIsEventCreator(event.createdBy);
 
     const [hasJoined, setHasJoined] = useState(false);
@@ -41,9 +40,10 @@ const EventScreen = () => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [show, setShow] = useState(true);
 
-    const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [participants, setParticipants] = useState([]);
+    const { users, loading } = usefetchUserData(event.usersParticipating);
+
     const saveCommentsChacked = async () => {
         try {
             await AsyncStorage.setItem(
@@ -206,11 +206,12 @@ const EventScreen = () => {
             marginTop: 10,
             padding: 10,
             borderWidth: 1,
-            borderColor: colors.secondary,
+            borderColor: colors.primary,
             borderRadius: 10,
 
 
         },
+
         detailText: {
             marginLeft: 10,
             color: colors.secondary,
@@ -224,7 +225,6 @@ const EventScreen = () => {
             marginTop: 10,
             padding: 10,
             fontSize: 20,
-
         },
 
         portal: {
@@ -243,17 +243,9 @@ const EventScreen = () => {
 
     });
 
-    const handleShowParticipants = async () => {
-        setIsLoading(true);
-        try {
-            const userData = await fetchUserData(eventData.usersParticipating);
-            setParticipants(userData);
-            setModalVisible(true);
-        } catch (error) {
-            console.error("Failed to fetch participants:", error);
-        } finally {
-            setIsLoading(false);
-        }
+    const handleShowParticipants = () => {
+        setParticipants(users);
+        setModalVisible(true);
     };
 
     return (
@@ -278,19 +270,21 @@ const EventScreen = () => {
                             <Icon name="information" size={20} style={{ color: colors.primary }} />
                             <Text style={styles.detailText}>{eventData.description}</Text>
                         </View>
-                        <TouchableOpacity onPress={handleShowParticipants}>
-                            <Surface style={styles.detailContainer} elevation={5}>
-                                <Icon name="account-multiple-plus" size={20} style={{ color: colors.primary }} />
-                                <Text variant="labelMedium" style={styles.detailText}>{eventData.participants}/{eventData.participantLimit} participants</Text>
+                        <TouchableOpacity onPress={handleShowParticipants} disabled={loading} >
+                            <Surface style={[
+                                styles.detailContainer,
+                                { backgroundColor: loading ? colors.inversePrimary : colors.activeBackground } 
+                            ]}
+                                elevation={5}
+                            >
+                                <Icon name="account-multiple-plus" size={20} style={{ color: loading ? colors.inactiveIcon : colors.primary }} />
+                                <Text variant="labelMedium"style={[styles.detailText,style={ color: loading ? colors.secondary : colors.secondary  }]}>{eventData.participants}/{eventData.participantLimit} participants</Text>
                             </Surface>
                         </TouchableOpacity>
-                        {!modalVisible &&
-                            isLoading ? (
-                            <LoadingIndicator />
-                        ) : (
-                            <Userlist users={participants} modalVisible={modalVisible} setModalVisible={setModalVisible} />
 
-                        )}
+                        <Userlist users={participants} modalVisible={modalVisible} setModalVisible={setModalVisible} />
+
+
                     </Surface>
                     <View style={styles.buttons}>
                         {isCreator && (
@@ -316,10 +310,10 @@ const EventScreen = () => {
                                 >
                                     {isJoining ? <ActivityIndicator /> : "Cancel Join"}
                                 </Button>
-                                {eventData.isFull && <Text style={styles.fullEventText}>Event Full</Text>}
+                                {eventData.isFull && <HelperText style={styles.fullEventText}>Event Full</HelperText>}
                             </>
                         ) : eventData.isFull ? (
-                            <Text style={styles.fullEventText}>Event Full</Text>
+                            <HelperText style={styles.fullEventText}>Event Full</HelperText>
                         ) : (
                             <Button
                                 title="Join"

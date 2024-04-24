@@ -1,7 +1,6 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Card, Modal, Portal, Text, Button, useTheme, Avatar } from "react-native-paper";
-
 
 const Userlist = ({ users, modalVisible, setModalVisible }) => {
     const { colors } = useTheme();
@@ -56,29 +55,27 @@ const Userlist = ({ users, modalVisible, setModalVisible }) => {
 
         <Portal>
             <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modalContainer}>
-
-                {users?.map((user, index) => (
-                    <TouchableOpacity key={index} style={{ marginBottom: 10 }}>
-                        <Card>
-                            <View style={styles.cardLayout}>
-                                <View style={styles.imageContainer}>
-                                    <Avatar.Image source={{ uri: `https://api.multiavatar.com/${user.profilePictureUrl || user.displayName}.png` }} style={styles.cover} />
-
-                                </View>
-                                <Card.Content>
-                               
-                                 <Text style={styles.title}> {user?.displayName ? user.displayName : (user?.firstName ? user.firstName : "no name")}</Text>
-
-                                </Card.Content>
-
-                            </View>
-                        </Card>
-                    </TouchableOpacity>
-                ))}
-
-                <Button style={styles.button} mode="contained" onPress={() => setModalVisible(false)}>Close</Button>
+                        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                            {users?.map((user, index) => (
+                                <TouchableOpacity key={index} style={{ marginBottom: 10 }}>
+                                    <Card>
+                                        <View style={styles.cardLayout}>
+                                            <View style={styles.imageContainer}>
+                                                <Avatar.Image source={{ uri: `https://api.multiavatar.com/${user.profilePictureUrl || user.displayName}.png` }} style={styles.cover} />
+                                            </View>
+                                            <Card.Content>
+                                                <Text style={styles.title}>{user?.displayName ? user.displayName : (user?.firstName ? user.firstName : "no name")}</Text>
+                                            </Card.Content>
+                                        </View>
+                                    </Card>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                        <Button style={styles.button} mode="contained" onPress={() => setModalVisible(false)}>Close</Button>
             </Modal>
+
         </Portal>
+
     );
 };
 

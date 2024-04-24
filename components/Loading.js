@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row', 
         height: "100%", 
+        zIndex: 1000,
       },
       ball: {
         width: 30,

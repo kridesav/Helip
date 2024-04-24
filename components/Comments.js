@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { Button, Dialog, Portal, TextInput, Text, Card, Surface, useTheme } from 'react-native-paper';
+import { Button, Dialog, Portal, TextInput, Text, Card, Surface, useTheme, HelperText } from 'react-native-paper';
 import { useFetchCurrentUserProfile } from "../hooks/useFetchCurrentUserProfile";
 import { addComment } from '../hooks/comments/utils/addComment'
 import softDeleteComment from '../../Helip/hooks/comments/utils/deleteComment'
@@ -9,7 +9,6 @@ import { addReplyToComment } from '../hooks/comments/utils/addReplyToComment';
 import formatDateAndTime from '../../Helip/utils/formatDateAndTime';
 import { findQuoteForReply } from '../utils/findQuoteForReply';
 import useAuth from '../hooks/useAuth';
-import { color } from 'react-native-elements/dist/helpers';
 
 export const CommentsDialog = ({ visible, setDialogVisible, onDismiss, eventId }) => {
 
@@ -321,7 +320,7 @@ export const CommentsContainer = ({ comments, show, setShow, currentUser }) => {
     return (
         <View style={{ marginTop: 20, paddingBottom: 50, width: "100%"}} >
             {noComments ? (
-                <Text style={{ color: colors.inversePrimary, textAlign: "center", margin: 20, fontSize: 16}}>No comments yet</Text>
+                <HelperText style={{ color: colors.primary, textAlign: "center", margin: 20, fontSize: 16}}>No comments yet</HelperText>
             ) : (
                 <>
                     <Button title="Toggle Comments" icon={"comment-multiple"} mode="elevated" onPress={() => setShow(!show)}>Toggle Comments</Button>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView, Alert, ImageBackground, Dimensions } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { TextInput, Button, Text, useTheme, Surface } from "react-native-paper"
+import { TextInput, Button, Text, useTheme, Surface, HelperText} from "react-native-paper"
 import useAuth from '../../hooks/useAuth';
 import addEvent from '../../hooks/events/utils/addEvent'
 import DateTimePicker from '../../components/DateTimePicker';
@@ -217,7 +217,7 @@ const AddEventScreen = () => {
 
                                     </View>
 
-                                    {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
+                                    {errors.title && <HelperText style={styles.errorText}>{errors.title}</HelperText>}
                                 </Surface>
                                 <Surface elevation={4} style={styles.inputSurface}>
                                     <View style={styles.textareaContainer}>
@@ -245,7 +245,7 @@ const AddEventScreen = () => {
 
 
                                     </View>
-                                    {errors.description && <Text style={styles.errorText}>{errors.description}</Text>}
+                                    {errors.description && <HelperText style={styles.errorText}>{errors.description}</HelperText>}
                                 </Surface>
                                 <Surface elevation={4} style={styles.inputSurface}>
                                     <View style={styles.textInputContainer}>
@@ -272,7 +272,7 @@ const AddEventScreen = () => {
                                         />
 
                                     </View>
-                                    {errors.participantLimit && <Text style={styles.errorText}>{errors.participantLimit}</Text>}
+                                    {errors.participantLimit && <HelperText style={styles.errorText}>{errors.participantLimit}</HelperText>}
                                 </Surface>
                                 <View style={styles.buttons}>
                                     <Button icon="check-circle" mode="elevated" title="Add" style={styles.control} onPress={handleFormSubmit} >Confirm</Button>
