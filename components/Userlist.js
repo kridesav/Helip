@@ -66,8 +66,8 @@ const Userlist = ({ users, modalVisible, setModalVisible }) => {
 
                                 </View>
                                 <Card.Content>
-
-                                    <Text style={styles.title}>{user.displayName}</Text>
+                               
+                                 <Text style={styles.title}> {user?.displayName ? user.displayName : (user?.firstName ? user.firstName : "no name")}</Text>
 
                                 </Card.Content>
 
