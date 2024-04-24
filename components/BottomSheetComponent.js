@@ -138,7 +138,6 @@ const BottomSheetComponent = ({
               <BottomSheetScrollView>
                 {filteredAndSlicedLocations.map((item) => {
                   const icon = getSportIcon(item.properties.tyyppi_nim);
-                  console.log("item properties from bottom:", item.properties);
                   return (
                     <View key={item.properties.id}>
                       <NativeButton

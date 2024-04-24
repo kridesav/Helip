@@ -59,7 +59,6 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
-        setIsLoading(false);
         if (location.coords.latitude !== null && location.coords.longitude !== null) {
           fetchPlaces(location.coords.latitude, location.coords.longitude);
         }
