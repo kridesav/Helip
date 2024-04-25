@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Userlist from "../../components/Userlist";
 import usefetchUserData from "../../hooks/usefetchUsersByEventId";
 import usefetchCreatorData from "../../hooks/useFetchCreatorData";
+import LoadingIndicator from "../../components/Loading"
 
 const EventScreen = () => {
   const navigation = useNavigation();
@@ -44,8 +45,7 @@ const EventScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [participants, setParticipants] = useState([]);
   const { users, loading } = usefetchUserData(event.usersParticipating);
-  const userData  = usefetchCreatorData(event.createdBy);
-  console.log("creator", userData)
+  const { userData, loadingUserData } = usefetchCreatorData(event.createdBy);
 
   const saveCommentsChacked = async () => {
     try {
@@ -231,12 +231,22 @@ const EventScreen = () => {
       overflow: "hidden",
 
     },
+    loadingContainer: {
+      width: 200,
+      height: 84,
+      marginHorizontal: 75,
+      borderRadius: 100,
+      overflow: "hidden",
+
+    },
   });
 
   const handleShowParticipants = () => {
     setParticipants(users);
     setModalVisible(true);
   };
+
+
 
   return (
     <Surface style={{ backgroundColor: colors.inversePrimary }}>
@@ -249,15 +259,25 @@ const EventScreen = () => {
 
             <TouchableOpacity style={{ marginBottom: 10 }}>
               <Card style={{ marginTop: 10 }}>
-                <View style={styles.cardLayout}>
-                  <View style={styles.imageContainer}>
-                    {!loading}
-                    <Avatar.Image source={{ uri: `https://api.multiavatar.com/${userData?.profilePictureUrl || userData?.displayName}.png` }} style={styles.cover} />
+                {loadingUserData ? (
+                  <View style={styles.loadingContainer}>
+                    <LoadingIndicator />
                   </View>
-                  <Card.Content>
-                    <Text variant="bodyLarge" style={styles.creatorCardTitle}>Created by: {userData?.displayName ? userData.displayName : (userData?.firstName ? userData.firstName : "no name")}</Text>
-                  </Card.Content>
-                </View>
+                ) : (
+                  <View style={styles.cardLayout}>
+                    <View style={styles.imageContainer}>
+                      <Avatar.Image
+                        source={{ uri: `https://api.multiavatar.com/${userData?.profilePictureUrl || userData?.displayName}.png` }}
+                        style={styles.cover}
+                      />
+                    </View>
+                    <Card.Content>
+                      <Text variant="bodyLarge" style={styles.creatorCardTitle}>
+                        Created by: {userData?.displayName ? userData.displayName : (userData?.firstName ? userData.firstName : "no name")}
+                      </Text>
+                    </Card.Content>
+                  </View>
+                )}
               </Card>
             </TouchableOpacity>
           </Surface>

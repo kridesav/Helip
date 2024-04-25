@@ -4,10 +4,12 @@ import { doc, onSnapshot } from 'firebase/firestore';
 
 const useFetchCreatorData = (userId) => {
   const [userData, setUserData] = useState(null);
+  const [loadingUserData, setLoadingUserData] = useState(true);
 
   useEffect(() => {
     if (!userId) {
       setUserData(null);
+      setLoadingUserData(false)
       return;
     }
 
@@ -23,13 +25,16 @@ const useFetchCreatorData = (userId) => {
           displayName: data.displayName,
           ...data 
         });
+        setLoadingUserData(false)
       } else {
         console.error("No such user!");
         setUserData(null);
+        setLoadingUserData(false)
       }
     }, (error) => {
       console.error("Error listening to user changes:", error);
       setUserData(null);
+      setLoadingUserData(false)
     });
 
 
@@ -37,7 +42,7 @@ const useFetchCreatorData = (userId) => {
 
   }, [userId]); 
 
-  return userData; 
+  return {userData, loadingUserData}; 
 };
 
 export default useFetchCreatorData
