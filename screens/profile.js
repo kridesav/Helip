@@ -5,11 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useFetchCurrentUserProfile } from "../hooks/useFetchCurrentUserProfile";
 import { signOut } from "firebase/auth";
 import useAuth from "../hooks/useAuth";
+import LoadingIndicator from "../components/Loading";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const { currentUser, auth } = useAuth();
-  const { profile } = useFetchCurrentUserProfile(currentUser?.uid);
+  const { profile, loading } = useFetchCurrentUserProfile(currentUser?.uid);
 
   const { displayName, firstName, lastName, email, eventsCreated, eventsParticipating, commentsSent, profilePictureUrl } = profile || {};
 
@@ -24,6 +25,10 @@ export default function ProfileScreen() {
         console.error("Logout Error:", error);
       });
   };
+
+  if (loading) {
+    return <LoadingIndicator />;
+  }
 
   const navigateToEditProfile = () => navigation.navigate("EditProfileScreen", { profile });
   const navigateToMyEvents = () => navigation.navigate("My Events");
