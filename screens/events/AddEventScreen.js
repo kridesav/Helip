@@ -150,7 +150,7 @@ const AddEventScreen = () => {
     inputSurface: {
       backgroundColor: colors.inversePrimary,
       borderRadius: 10,
-      padding: 5,
+      paddingLeft: 5,
       marginBottom: 15,
     },
   });

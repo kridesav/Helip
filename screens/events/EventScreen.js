@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ScrollView, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Button, Surface, useTheme, Text, HelperText } from "react-native-paper";
+import { Button, Surface, useTheme, Text, HelperText, Avatar, Card } from "react-native-paper";
 import { useIsEventCreator } from "../../hooks/events/useIsEventCreator";
 import { useIfUserJoined } from "../../hooks/useIfUserJoined";
 import CancelJoinEvent from "../../hooks/events/utils/cancelJoinEvent";
@@ -16,6 +16,7 @@ import { CommentsDialog, CommentsContainer } from "../../components/Comments";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Userlist from "../../components/Userlist";
 import usefetchUserData from "../../hooks/usefetchUsersByEventId";
+import usefetchCreatorData from "../../hooks/useFetchCreatorData";
 
 const EventScreen = () => {
   const navigation = useNavigation();
@@ -43,6 +44,8 @@ const EventScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [participants, setParticipants] = useState([]);
   const { users, loading } = usefetchUserData(event.usersParticipating);
+  const userData  = usefetchCreatorData(event.createdBy);
+  console.log("creator", userData)
 
   const saveCommentsChacked = async () => {
     try {
@@ -172,7 +175,10 @@ const EventScreen = () => {
       color: colors.primary,
       fontWeight: "bold",
     },
+    creatorCardTitle: {
+      color: colors.primary,
 
+    },
     container: {
       alignItems: "center",
       padding: 5,
@@ -213,6 +219,18 @@ const EventScreen = () => {
     control: {
       margin: 10,
     },
+    cardLayout: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    imageContainer: {
+      width: 64,
+      height: 64,
+      marginHorizontal: 10,
+      borderRadius: 100,
+      overflow: "hidden",
+
+    },
   });
 
   const handleShowParticipants = () => {
@@ -223,11 +241,27 @@ const EventScreen = () => {
   return (
     <Surface style={{ backgroundColor: colors.inversePrimary }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Surface style={styles.bottomlist} elevation={5}>
-          <Text style={styles.title}>
-            {eventData.title} at {eventData.locationName}
-          </Text>
-          <Surface style={styles.bottomlist} elevation={1}>
+        <Surface style={styles.bottomlist} elevation={1}>
+          <Surface elevation={2} style={{ borderRadius: 10, padding: 10 }}>
+            <Text style={styles.title}>
+              {eventData.title} at {eventData.locationName}
+            </Text>
+
+            <TouchableOpacity style={{ marginBottom: 10 }}>
+              <Card style={{ marginTop: 10 }}>
+                <View style={styles.cardLayout}>
+                  <View style={styles.imageContainer}>
+                    {!loading}
+                    <Avatar.Image source={{ uri: `https://api.multiavatar.com/${userData?.profilePictureUrl || userData?.displayName}.png` }} style={styles.cover} />
+                  </View>
+                  <Card.Content>
+                    <Text variant="bodyLarge" style={styles.creatorCardTitle}>Created by: {userData?.displayName ? userData.displayName : (userData?.firstName ? userData.firstName : "no name")}</Text>
+                  </Card.Content>
+                </View>
+              </Card>
+            </TouchableOpacity>
+          </Surface>
+          <Surface style={styles.bottomlist} elevation={2}>
             <View style={styles.detailContainer}>
               <Icon name="calendar" size={20} style={{ color: colors.primary }} />
               <Text style={styles.detailText}>{eventData.date}</Text>
