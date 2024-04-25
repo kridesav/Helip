@@ -3,7 +3,8 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
-  StatusBar
+  StatusBar,
+  Platform
 } from 'react-native';
 import MapView from 'react-native-maps';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -39,7 +40,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      let location = await Location.getCurrentPositionAsync({ accuracy: Platform.OS === 'android' ? Location.Accuracy.Low : Location.Accuracy.Lowest, }) ;
       setRegion({
         ...region,
         latitude: location.coords.latitude,
