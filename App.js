@@ -1,13 +1,12 @@
 import * as React from "react";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import Maps from "./screens/map";
-import { Text, View, Button, TouchableOpacity, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
 import BottomSheetComponent from "./components/BottomSheetComponent";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AuthStack from "./screens/login/authStack";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./config/firebaseConfig";
 import { createStackNavigator } from "@react-navigation/stack";
 import AddEventScreen from "./screens/events/AddEventScreen";
@@ -18,9 +17,7 @@ import MyEventsScreen from "./screens/MyEvents";
 import { PaperProvider } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTheme } from "react-native-paper";
-import { useFetchCurrentUserProfile } from "./hooks/useFetchCurrentUserProfile";
-import { EventProvider, EventContext } from "./context/EventProvider";
-import { useNavigation } from "@react-navigation/native";
+import { EventProvider } from "./context/EventProvider";
 import { darkTheme, lightTheme } from "./theme";
 import Profile from "./screens/profile";
 import EditProfileScreen from "./screens/profile/EditProfileScreen";
@@ -87,6 +84,7 @@ export default function App() {
   const [token, setToken] = useState(null);
   const [themeMode, setThemeMode] = useState("dark");
   const [theme, setTheme] = useState(themeMode === "dark" ? darkTheme : lightTheme);
+
 
   const mapRef = React.useRef(null);
 
@@ -221,16 +219,3 @@ export default function App() {
     <AuthStack />
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderRadius: 10,
-    backgroundColor: "white",
-  },
-});

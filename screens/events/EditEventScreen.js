@@ -199,7 +199,7 @@ const EditEventScreen = () => {
           <Text style={{ color: colors.primary, fontSize: 15 }}>{event.location}</Text>
         </View>
       </View>
-      <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+      <ImageBackground source={require("../../assets/helip_bg.avif")} resizeMode="cover" style={styles.backgroundImage}>
         <View style={styles.overlay}>
           <ScrollView contentContainerStyle={styles.flexGrow}>
             <View style={styles.container}>
