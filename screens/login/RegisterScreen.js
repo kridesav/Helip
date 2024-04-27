@@ -44,10 +44,10 @@ const RegisterScreen = ({ navigation }) => {
   }
 
   return (
-    <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+    <ImageBackground source={require("../../assets/helip_bg.avif")} resizeMode="cover" style={styles.backgroundImage}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.flex}>
         <View style={styles.overlay}>
-          <ScrollView contentContainerStyle={styles.flexGrow}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.flexGrow}>
             <View style={styles.registerContainer}>
               <TouchableOpacity style={styles.backButtonContainer} onPress={() => navigation.goBack()}>
                 <Button icon="arrow-left">Back</Button>

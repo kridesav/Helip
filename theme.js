@@ -1,5 +1,5 @@
 // theme.js
-import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
+import { MD3DarkTheme, MD3LightTheme } from "react-native-paper";
 
 const darkTheme = {
   ...MD3DarkTheme,
@@ -26,7 +26,7 @@ const darkTheme = {
     onError: "rgb(105, 0, 5)",
     errorContainer: "rgb(147, 0, 10)",
     onErrorContainer: "rgb(255, 180, 171)",
-    outline: "rgb(150, 142, 152)"
+    outline: "rgb(150, 142, 152)",
   },
 };
 
@@ -55,7 +55,7 @@ const lightTheme = {
     onError: "rgb(255, 255, 255)",
     errorContainer: "rgb(255, 218, 214)",
     onErrorContainer: "rgb(65, 0, 2)",
-    outline: "rgb(124, 117, 126)"
+    outline: "rgb(124, 117, 126)",
   },
 };
 

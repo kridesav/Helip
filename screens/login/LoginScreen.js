@@ -10,6 +10,11 @@ const dummyCredentials = {
   password: "dummy123",
 };
 
+const dummierCredentials = {
+  email: "dummier@dummy.fi",
+  password: "dummy123",
+};
+
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
@@ -39,11 +44,17 @@ const LoginScreen = () => {
     setError("");
   }
 
+  function fillDummierData() {
+    setEmail(dummierCredentials.email);
+    setPassword(dummierCredentials.password);
+    setError("");
+  }
+
   return (
-    <ImageBackground source={require("../../assets/helip_bg.png")} resizeMode="cover" style={styles.backgroundImage}>
+    <ImageBackground source={require("../../assets/helip_bg.avif")} resizeMode="cover" style={styles.backgroundImage}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.flex}>
         <View style={styles.overlay}>
-          <ScrollView contentContainerStyle={styles.flexGrow}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.flexGrow}>
             <View style={styles.signinContainer}>
               <Text variant="headlineLarge" style={styles.title}>
                 Welcome!
@@ -59,6 +70,9 @@ const LoginScreen = () => {
               </TouchableOpacity>
               <Button mode="text" onPress={fillDummyData} style={styles.button}>
                 Fill with Dummy Data
+              </Button>
+              <Button mode="text" onPress={fillDummierData} style={styles.button}>
+                Fill with Dummier Data
               </Button>
             </View>
           </ScrollView>
