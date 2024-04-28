@@ -18,6 +18,7 @@ import Userlist from "../../components/Userlist";
 import usefetchUserData from "../../hooks/usefetchUsersByEventId";
 import usefetchCreatorData from "../../hooks/useFetchCreatorData";
 import LoadingIndicator from "../../components/Loading"
+import ProfileModal from "../../components/UserProfileModal";
 
 const EventScreen = () => {
   const navigation = useNavigation();
@@ -43,6 +44,7 @@ const EventScreen = () => {
   const [show, setShow] = useState(true);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [subModalVisible, setSubModalVisible] = useState(false)
   const [participants, setParticipants] = useState([]);
   const { users, loading } = usefetchUserData(event.usersParticipating);
   const { userData, loadingUserData } = usefetchCreatorData(event.createdBy);
@@ -246,18 +248,20 @@ const EventScreen = () => {
     setModalVisible(true);
   };
 
-
+  const handleShowProfile = () => {
+    setSubModalVisible(true);
+};
 
   return (
     <Surface style={{ backgroundColor: colors.inversePrimary }}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}  showsVerticalScrollIndicator={false}>
         <Surface style={styles.bottomlist} elevation={1}>
           <Surface elevation={2} style={{ borderRadius: 10, padding: 10 }}>
             <Text style={styles.title}>
               {eventData.title} at {eventData.locationName}
             </Text>
 
-            <TouchableOpacity style={{ marginBottom: 10 }}>
+            <TouchableOpacity style={{ marginBottom: 10 }} onPress={handleShowProfile}>
               <Card style={{ marginTop: 10 }}>
                 {loadingUserData ? (
                   <View style={styles.loadingContainer}>
@@ -280,6 +284,7 @@ const EventScreen = () => {
                 )}
               </Card>
             </TouchableOpacity>
+            <ProfileModal selectedUser={userData} setSubModalVisible={setSubModalVisible} subModalVisible={subModalVisible} />
           </Surface>
           <Surface style={styles.bottomlist} elevation={2}>
             <View style={styles.detailContainer}>
