@@ -12,6 +12,7 @@ const RegisterScreen = ({ navigation }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
+  const [description, setDescription] = useState("");
 
   async function signUp() {
     if (email === "" || password === "" || displayName === "" || firstName === "" || lastName === "") {
@@ -27,6 +28,7 @@ const RegisterScreen = ({ navigation }) => {
         displayName,
         firstName,
         lastName,
+        description,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         profilePictureUrl: "",
