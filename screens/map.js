@@ -7,7 +7,7 @@ import {
   Platform
 } from 'react-native';
 import MapView from 'react-native-maps';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Location from 'expo-location';
 import LoadingIndicator from '../components/Loading'
 import mapStyle from '../mapStyle.json'
@@ -15,7 +15,7 @@ import useLipasFetch from '../components/lipasfetch';
 import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { debounce } from 'lodash';
 import { getSportIcon } from '../components/getIcons';
-
+import { EventContext } from "../context/EventProvider";
 
 export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token, collapseBottomSheet, activeFilter }) {
   const [region, setRegion] = useState({
@@ -26,6 +26,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
   });
   const [isLoading, setIsLoading] = useState(true);
   const { places, fetchPlaces } = useLipasFetch(token);
+  const eventLocationIds = useContext(EventContext).map(event => event.locationId);
 
   useEffect(() => {
     setPlaces(places)
@@ -108,6 +109,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
                 if (icon === null || (activeFilter && icon !== activeFilter.uri2)) {
                   return null;
                 }
+                const locationHasEvent = eventLocationIds.includes(item.properties.id)
                 return (
                   <Marker
                     key={index}
@@ -118,6 +120,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
                     title={item.properties.nimi_fi}
                     onPress={() => handleMarkerPress(item)}
                     image={icon}
+                    opacity={locationHasEvent ? 1.0 : 0.5}
                   />
                 );
               })}

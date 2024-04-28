@@ -28,6 +28,7 @@ const BottomSheetComponent = ({
   const { colors } = useTheme();
   const navigation = useNavigation();
 
+
   //Hakee locationId:n mukaan eventit
   const [locationId, setLocationId] = useState(null);
   useEffect(() => {
