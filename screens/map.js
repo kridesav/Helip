@@ -52,9 +52,9 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
       }
 
       let locationWatcher = await Location.watchPositionAsync({
-        accuracy: Location.Accuracy.High,
-        distanceInterval: 5,
-      }, debounce((location) => {
+        accuracy: Location.Accuracy.Low,
+        distanceInterval: 50, // Increase this value as needed
+      }, (location) => {
         setRegion({
           ...region,
           latitude: location.coords.latitude,
@@ -63,8 +63,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
         if (location.coords.latitude !== null && location.coords.longitude !== null) {
           fetchPlaces(location.coords.latitude, location.coords.longitude);
         }
-      }, 10000)
-      );
+      });
 
       return () => {
         if (locationWatcher) {
