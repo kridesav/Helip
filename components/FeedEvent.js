@@ -28,7 +28,6 @@ const FeedEvent = ({
     let newComments = 0;
     comments.map(function (comment) {
       comment.updatedAt.seconds > lastChecked + 2 ? newComments++ : "";
-      console.log(comment.updatedAt.seconds, lastChecked);
       comment.replies.map((reply) => (reply.updatedAt.seconds > lastChecked ? newComments++ : ""));
     });
 

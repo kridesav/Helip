@@ -26,7 +26,7 @@ const SearchBarComponent = ({setFilteredLocations, places, snapBottomSheet}) => 
   };
 
   return (
-    <View style={{ width: '85%' }}>
+    <View style={{ width: '100%' }}>
       <BottomSheetTextInput style={styles.textInput} 
         onPressOut={snapBottomSheet}
         placeholder="Search..."

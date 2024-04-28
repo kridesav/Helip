@@ -8,7 +8,6 @@ import LocationTypeWheel from "./LocationTypeWheel";
 import { useNavigation } from "@react-navigation/native";
 import { useFetchEventsByLocationId } from "../hooks/events/useFetchEventsByLocationId";
 import { useTheme } from "react-native-paper";
-import { Button as IconButton } from "react-native-elements";
 import theme from "../theme";
 import { getSportIcon } from "./getIcons";
 
@@ -60,7 +59,7 @@ const BottomSheetComponent = ({
     return (
       <Pressable style={styles.button} onPress={props.onPress}>
         <Image source={props.icon} style={styles.icon} />
-        <Text style={styles.text}>{props.title}</Text>
+        <Text style={styles.listText}>{props.title}</Text>
       </Pressable>
     );
   };
@@ -80,10 +79,12 @@ const BottomSheetComponent = ({
       android_keyboardInputMode="adjustResize"
       keyboardBlurBehavior="restore"
     >
+      <Button onPress={() => handleMapItemDeselect()} icon="close" style={styles.backButton} title="Back">
+      </Button>
       <View style={styles.contentContainer}>
         {selectedMapItem ? (
           <View style={styles.dataContainer}>
-            <Text>{selectedMapItem.properties.nimi_fi}</Text>
+            <Text style={styles.title}>{selectedMapItem.properties.nimi_fi}</Text>
             <Text>{selectedMapItem.properties.www}</Text>
             <Text>{selectedMapItem.properties.katuosoite}</Text>
             <View style={styles.buttonContainer}>
@@ -96,12 +97,10 @@ const BottomSheetComponent = ({
               >
                 Add Event
               </Button>
-              <Button onPress={() => handleMapItemDeselect()} icon="arrow-left-circle" mode="elevated" style={styles.control} title="Back">
-                Back
-              </Button>
             </View>
             <BottomSheetScrollView>
               <View style={styles.dataContainer}>
+              <Text style={styles.title}>Events:</Text>
                 {events.length > 0 ? (
                   events.map((event) => (
                     <View key={event.id} style={{ marginBottom: 10 }}>
@@ -127,14 +126,8 @@ const BottomSheetComponent = ({
             <View>
               <View style={{ width: "100%", flexDirection: "row" }}>
                 <SearchBarComponent snapBottomSheet={handleMapItemDeselect} setFilteredLocations={setFilteredLocations} places={places} />
-                <IconButton
-                  onPress={() => setSettingsMode(!settingMode)}
-                  containerStyle={{ paddingTop: 5 }}
-                  icon={{ name: "settings" }}
-                  type="clear"
-                ></IconButton>
               </View>
-              {settingMode && <LocationTypeWheel onActiveIconChange={setActiveFilter} />}
+              <LocationTypeWheel onActiveIconChange={setActiveFilter} />
               <BottomSheetScrollView>
                 {filteredAndSlicedLocations.map((item) => {
                   const icon = getSportIcon(item.properties.tyyppi_nim);
@@ -160,12 +153,11 @@ const BottomSheetComponent = ({
 const styles = StyleSheet.create({
   buttonContainer: {
     padding: 10,
-    marginTop: 10,
   },
   dataContainer: {
     padding: 10,
     marginTop: 10,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   contentContainer: {
     flex: 1,
@@ -185,13 +177,27 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
   },
-  text: {
+  backButton: {
+    position: "absolute",
+    top: 4,
+    right: 25,
+    margin: 0,
+    padding: 0
+  },
+  listText: {
     fontSize: 12,
     lineHeight: 21,
     fontWeight: "bold",
     letterSpacing: 0.25,
     color: "black",
     flexShrink: 1,
+  },
+  title: {
+    fontWeight: "bold",
+    paddingRight: 50
+  },
+  locationSelectedText:{
+    padding: 2
   },
   fullText: {
     fontSize: 16,
