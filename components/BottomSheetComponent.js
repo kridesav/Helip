@@ -104,15 +104,22 @@ const BottomSheetComponent = ({
               <Text style={styles.title}>Events:</Text>
                 {events.length > 0 ? (
                   events.map((event) => (
-                    <View key={event.id} style={{ marginBottom: 10 }}>
+                    <View key={event.id}>
                       <TouchableOpacity
                         onPress={() => navigation.navigate("EventScreen", { event, isFull: event.participants >= event.participantLimit })}
-                        style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}
+                        style={[styles.eventButton, event.isFull ? dynamicStyles.fullButton : {}]}
                       >
-                        <Text style={styles.buttonText}>
-                          {event.title} - ({event.date})
-                        </Text>
-                        {event.isFull && <Text style={styles.fullText}>Event Full</Text>}
+                        <View style={styles.eventContainer}>
+                          <Text style={styles.eventName}>
+                            {event.title}
+                          </Text>
+                          <Text style={styles.buttonText}>
+                            {event.date}
+                          </Text>
+                          {event.isFull ? 
+                          <Text style={styles.fullText}>Event Full</Text>:
+                          <Text>participants:{event.participants}/{event.participantLimit}</Text>}
+                        </View>
                       </TouchableOpacity>
                     </View>
                   ))
@@ -178,6 +185,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
   },
+  eventButton: {
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: "white",
+    flexDirection: "row",
+  },
   backButton: {
     position: "absolute",
     top: 4,
@@ -199,6 +216,17 @@ const styles = StyleSheet.create({
   },
   locationSelectedText:{
     padding: 2
+  },
+  eventContainer: {
+
+  },
+  eventName: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "black",
+    marginBottom: 4
   },
   fullText: {
     fontSize: 16,
