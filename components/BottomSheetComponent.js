@@ -106,7 +106,7 @@ const BottomSheetComponent = ({
                     <View key={event.id}>
                       <TouchableOpacity
                         onPress={() => navigation.navigate("EventScreen", { event, isFull: event.participants >= event.participantLimit })}
-                        style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}
+                        style={[styles.eventButton, event.isFull ? dynamicStyles.fullButton : {}]}
                       >
                         <View style={styles.eventContainer}>
                           <Text style={styles.eventName}>
@@ -174,6 +174,17 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: 10,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: "white",
+    flexDirection: "row",
+  },
+  eventButton: {
     alignItems: "flex-start",
     justifyContent: "flex-start",
     padding: 10,
