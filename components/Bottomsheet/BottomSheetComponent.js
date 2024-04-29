@@ -1,15 +1,15 @@
 import React from "react";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useMemo, useState, useEffect, useContext } from "react";
-import { StyleSheet, View, Text, Pressable, TouchableOpacity, Image } from "react-native";
-import { Button } from "react-native-paper";
+import { StyleSheet, View, Pressable, TouchableOpacity, Image } from "react-native";
+import { Text, Avatar, Button, Surface } from "react-native-paper";
 import SearchBarComponent from "./SearchBarComponent";
 import LocationTypeWheel from "./LocationTypeWheel";
 import { useNavigation } from "@react-navigation/native";
-import { useFetchEventsByLocationId } from "../hooks/events/useFetchEventsByLocationId";
+import { useFetchEventsByLocationId } from "../../hooks/events/useFetchEventsByLocationId";
 import { useTheme } from "react-native-paper";
-import theme from "../theme";
-import { getSportIcon } from "./getIcons";
+import Handle from "./Handle";
+import { getSportIcon } from "../getIcons";
 
 const BottomSheetComponent = ({
   handleListItemPress,
@@ -73,22 +73,35 @@ const BottomSheetComponent = ({
 
   return (
     <BottomSheet
+      /* handleComponent={Handle} */
       index={1}
       snapPoints={snapPoints}
       ref={bottomSheetRef}
       keyboardBehavior="interactive"
       android_keyboardInputMode="adjustResize"
       keyboardBlurBehavior="restore"
+      backgroundComponent={() => (
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: colors.background,
+            borderTopLeftRadius: 14,
+            borderTopRightRadius: 14,
+          }}
+        />
+      )}
     >
-      <Button onPress={() => handleMapItemDeselect()} icon="close" style={styles.backButton} title="Back">
-      </Button>
-      <View style={styles.contentContainer}>
+      <Surface elevation={0} style={styles.contentContainer}>
         {selectedMapItem ? (
-          <View style={styles.dataContainer}>
-            <Text style={styles.title}>{selectedMapItem.properties.nimi_fi}</Text>
+          <Surface style={styles.dataContainer}>
+            <Surface elevation={0} style={styles.titleBackContainer}>
+              <Text style={styles.title}>{selectedMapItem.properties.nimi_fi}</Text>
+              <Button onPress={() => handleMapItemDeselect()} icon="close" style={styles.backButton} title="Back">
+            </Button>
+            </Surface>
             <Text>{selectedMapItem.properties.www}</Text>
             <Text>{selectedMapItem.properties.katuosoite}</Text>
-            <View style={styles.buttonContainer}>
+            <Surface elevation={0} style={styles.buttonContainer}>
               <Button
                 icon="plus-circle"
                 mode="elevated"
@@ -98,18 +111,18 @@ const BottomSheetComponent = ({
               >
                 Add Event
               </Button>
-            </View>
+            </Surface>
             <BottomSheetScrollView>
-              <View style={styles.dataContainer}>
+              <Surface elevation={0} style={styles.dataContainer}>
               <Text style={styles.title}>Events:</Text>
                 {events.length > 0 ? (
                   events.map((event) => (
-                    <View key={event.id}>
+                    <Surface elevation={0} key={event.id}>
                       <TouchableOpacity
                         onPress={() => navigation.navigate("EventScreen", { event, isFull: event.participants >= event.participantLimit })}
                         style={[styles.eventButton, event.isFull ? dynamicStyles.fullButton : {}]}
                       >
-                        <View style={styles.eventContainer}>
+                        <Surface elevation={1} style={styles.eventContainer}>
                           <Text style={styles.eventName}>
                             {event.title}
                           </Text>
@@ -119,41 +132,41 @@ const BottomSheetComponent = ({
                           {event.isFull ? 
                           <Text style={styles.fullText}>Event Full</Text>:
                           <Text>participants:{event.participants}/{event.participantLimit}</Text>}
-                        </View>
+                        </Surface>
                       </TouchableOpacity>
-                    </View>
+                    </Surface>
                   ))
                 ) : (
                   <Text>No events for this location.</Text>
                 )}
-              </View>
+              </Surface>
             </BottomSheetScrollView>
-          </View>
+          </Surface>
         ) : (
           <>
-            <View>
-              <View style={{ width: "100%", flexDirection: "row" }}>
+            <Surface>
+              <Surface style={{ width: "100%", flexDirection: "row" }}>
                 <SearchBarComponent snapBottomSheet={handleMapItemDeselect} setFilteredLocations={setFilteredLocations} places={places} />
-              </View>
+              </Surface>
               <LocationTypeWheel onActiveIconChange={setActiveFilter} />
               <BottomSheetScrollView>
                 {filteredAndSlicedLocations.map((item) => {
                   const icon = getSportIcon(item.properties.tyyppi_nim);
                   return (
-                    <View key={item.properties.id}>
+                    <Surface key={item.properties.id}>
                       <NativeButton
                         onPress={() => handleListItemPress(item)}
                         icon={icon}
                         title={`${item.properties.nimi_fi} - ${item.distance.toFixed(2)} km`}
                       />
-                    </View>
+                    </Surface>
                   );
                 }) || []}
               </BottomSheetScrollView>
-            </View>
+            </Surface>
           </>
         )}
-      </View>
+      </Surface>
     </BottomSheet>
   );
 };
@@ -173,6 +186,11 @@ const styles = StyleSheet.create({
   },
   control: {
     marginTop: 20,
+  },
+  titleBackContainer:{
+    display: 'flex',
+    flexDirection: 'row',
+    width: '80%',
   },
   button: {
     alignItems: "flex-start",
@@ -196,11 +214,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   backButton: {
-    position: "absolute",
-    top: 4,
-    right: 25,
-    margin: 0,
-    padding: 0
   },
   listText: {
     fontSize: 12,

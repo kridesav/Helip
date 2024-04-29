@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Maps from "./screens/map";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
-import BottomSheetComponent from "./components/BottomSheetComponent";
+import BottomSheetComponent from "./components/Bottomsheet/BottomSheetComponent";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AuthStack from "./screens/login/authStack";
 import { onAuthStateChanged } from "firebase/auth";

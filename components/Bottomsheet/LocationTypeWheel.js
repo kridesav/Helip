@@ -1,6 +1,6 @@
 import { ScrollView } from 'react-native-gesture-handler';
 import { Image, TouchableOpacity, SafeAreaView } from 'react-native';
-import { getAllSportsIcons } from './getIcons';
+import { getAllSportsIcons } from '../getIcons';
 import React, { useEffect, useState } from 'react';
 
 const icons = getAllSportsIcons()
