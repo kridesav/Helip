@@ -23,7 +23,6 @@ const BottomSheetComponent = ({
 }) => {
   const snapPoints = useMemo(() => ["3.5%", "15%", "40%", "80%"], []);
   const [pageNumber, setPageNumber] = useState(0);
-  const [settingMode, setSettingsMode] = useState(false);
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -39,21 +38,6 @@ const BottomSheetComponent = ({
   }, [selectedMapItem]);
 
   const { events } = useFetchEventsByLocationId(locationId);
-
-  const dynamicStyles = {
-    fullButton: {
-      backgroundColor: colors.danger,
-    },
-    fullButtonText: {
-      color: colors.tertiary,
-    },
-  };
-
-  useEffect(() => {
-    if (!settingMode) {
-      setActiveFilter(null);
-    }
-  }, [settingMode]);
 
   const NativeButton = (props) => {
     return (
@@ -83,55 +67,55 @@ const BottomSheetComponent = ({
         <View
           style={{
             ...StyleSheet.absoluteFillObject,
-            backgroundColor: colors.background,
+            backgroundColor: colors.surface,
             borderTopLeftRadius: 14,
             borderTopRightRadius: 14,
           }}
         />
       )}
     >
-      <Surface elevation={0} style={styles.contentContainer}>
+      <View style={styles.contentContainer}>
         {selectedMapItem ? (
-          <Surface style={styles.dataContainer}>
-            <Surface elevation={0} style={styles.titleBackContainer}>
-              <Text style={styles.title}>{selectedMapItem.properties.nimi_fi}</Text>
-              <Button onPress={() => handleMapItemDeselect()} icon="close" style={styles.backButton} title="Back">
-            </Button>
-            </Surface>
-            <Text>{selectedMapItem.properties.www}</Text>
-            <Text>{selectedMapItem.properties.katuosoite}</Text>
-            <Surface elevation={0} style={styles.buttonContainer}>
-              <Button
-                icon="plus-circle"
-                mode="elevated"
-                style={styles.control}
-                title="Add Event"
-                onPress={() => navigation.navigate("AddEventScreen", { selectedMapItem })}
-              >
-                Add Event
-              </Button>
-            </Surface>
+          <View style={styles.dataContainer}>
+            <View style={styles.topContainer}>
+              <View elevation={0} style={styles.titleBackContainer}>
+                <Text style={styles.title}>{selectedMapItem.properties.nimi_fi}</Text>
+                <Button onPress={() => handleMapItemDeselect()} icon="close" style={styles.backButton} title="Back">
+                </Button>
+              </View>
+              <Text>{selectedMapItem.properties.www}</Text>
+              <Text>{selectedMapItem.properties.katuosoite}</Text>
+              <View style={styles.buttonContainer}>
+                <Button
+                  icon="plus-circle"
+                  mode="elevated"
+                  style={styles.control}
+                  title="Add Event"
+                  onPress={() => navigation.navigate("AddEventScreen", { selectedMapItem })}
+                >
+                  Add Event
+                </Button>
+              </View>
+            </View>
             <BottomSheetScrollView>
               <Surface elevation={0} style={styles.dataContainer}>
               <Text style={styles.title}>Events:</Text>
                 {events.length > 0 ? (
                   events.map((event) => (
-                    <Surface elevation={0} key={event.id}>
+                    <Surface elevation={3} key={event.id} style={styles.eventContainer}>
                       <TouchableOpacity
                         onPress={() => navigation.navigate("EventScreen", { event, isFull: event.participants >= event.participantLimit })}
-                        style={[styles.eventButton, event.isFull ? dynamicStyles.fullButton : {}]}
+                        style={styles.eventButton}
                       >
-                        <Surface elevation={1} style={styles.eventContainer}>
+                        <View>
                           <Text style={styles.eventName}>
                             {event.title}
                           </Text>
                           <Text style={styles.buttonText}>
                             {event.date}
                           </Text>
-                          {event.isFull ? 
-                          <Text style={styles.fullText}>Event Full</Text>:
-                          <Text>participants:{event.participants}/{event.participantLimit}</Text>}
-                        </Surface>
+                          <Text>participants:{event.participants}/{event.participantLimit}</Text>
+                        </View>
                       </TouchableOpacity>
                     </Surface>
                   ))
@@ -140,32 +124,32 @@ const BottomSheetComponent = ({
                 )}
               </Surface>
             </BottomSheetScrollView>
-          </Surface>
+          </View>
         ) : (
           <>
-            <Surface>
-              <Surface style={{ width: "100%", flexDirection: "row" }}>
+            <View>
+              <View style={{ width: "100%", flexDirection: "row" }}>
                 <SearchBarComponent snapBottomSheet={handleMapItemDeselect} setFilteredLocations={setFilteredLocations} places={places} />
-              </Surface>
+              </View>
               <LocationTypeWheel onActiveIconChange={setActiveFilter} />
               <BottomSheetScrollView>
                 {filteredAndSlicedLocations.map((item) => {
                   const icon = getSportIcon(item.properties.tyyppi_nim);
                   return (
-                    <Surface key={item.properties.id}>
+                    <View key={item.properties.id}>
                       <NativeButton
                         onPress={() => handleListItemPress(item)}
                         icon={icon}
                         title={`${item.properties.nimi_fi} - ${item.distance.toFixed(2)} km`}
                       />
-                    </Surface>
+                    </View>
                   );
                 }) || []}
               </BottomSheetScrollView>
-            </Surface>
+            </View>
           </>
         )}
-      </Surface>
+      </View>
     </BottomSheet>
   );
 };
@@ -182,14 +166,19 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignItems: "center",
+    width: '100%'
   },
   control: {
     marginTop: 20,
   },
+  topContainer: {
+    width: '80%'
+  },
   titleBackContainer:{
     display: 'flex',
     flexDirection: 'row',
-    width: '80%',
+    width: '100%',
+    alignContent: 'space-between'
   },
   button: {
     alignItems: "flex-start",
@@ -199,20 +188,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderWidth: 1,
     borderRadius: 10,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     flexDirection: "row",
   },
   eventButton: {
     alignItems: "flex-start",
     justifyContent: "flex-start",
     padding: 10,
-    marginVertical: 5,
-    borderWidth: 1,
     borderRadius: 10,
-    backgroundColor: "white",
     flexDirection: "row",
   },
   backButton: {
+    width:'1%',
   },
   listText: {
     fontSize: 12,
@@ -224,20 +211,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
-    paddingRight: 50
+    width: '90%'
   },
   locationSelectedText:{
     padding: 2
   },
   eventContainer: {
-
+    marginVertical: 5,
+    borderRadius: 10,
+    padding:5
   },
   eventName: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: "bold",
     letterSpacing: 0.25,
-    color: "black",
     marginBottom: 4
   },
   fullText: {
