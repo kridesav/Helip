@@ -200,6 +200,7 @@ const EventScreen = () => {
       marginLeft: 10,
       color: colors.secondary,
       fontSize: 15,
+      marginRight: 10
     },
     fullEventText: {
       color: colors.error,
@@ -214,7 +215,7 @@ const EventScreen = () => {
       padding: 10,
     },
     buttons: {
-      flexDirection: "column",
+      flexDirection: "row",
       justifyContent: "space-around",
     },
 
@@ -250,19 +251,19 @@ const EventScreen = () => {
 
   const handleShowProfile = () => {
     setSubModalVisible(true);
-};
+  };
 
   return (
     <Surface style={{ backgroundColor: colors.inversePrimary }}>
-      <ScrollView contentContainerStyle={styles.container}  showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <Surface style={styles.bottomlist} elevation={1}>
           <Surface elevation={2} style={{ borderRadius: 10, padding: 10 }}>
             <Text style={styles.title}>
               {eventData.title} at {eventData.locationName}
             </Text>
 
-            <TouchableOpacity style={{ marginBottom: 10 }} onPress={handleShowProfile}>
-              <Card style={{ marginTop: 10 }}>
+            <TouchableOpacity style={{ marginBottom: 10, }} onPress={handleShowProfile}>
+              <Card style={{ marginTop: 10, backgroundColor: colors.background }}>
                 {loadingUserData ? (
                   <View style={styles.loadingContainer}>
                     <LoadingIndicator />
@@ -293,26 +294,30 @@ const EventScreen = () => {
             </View>
             <View style={styles.detailContainer}>
               <Icon name="clock-start" size={20} style={{ color: colors.primary }} />
-              <Text style={styles.detailText}>{eventData.StartTime}</Text>
-            </View>
-            <View style={styles.detailContainer}>
-              <Icon name="clock-end" size={20} style={{ color: colors.primary }} />
+              <Text style={styles.detailText}>{eventData.StartTime}      —</Text>
               <Text style={styles.detailText}>{eventData.EndTime}</Text>
+              <Icon name="clock-end" size={20} style={{ color: colors.primary }} />
             </View>
+            <TouchableOpacity style={[styles.detailContainer, style = { backgroundColor: colors.background }]}>
+              <Icon name="map" size={20} style={{ color: colors.primary }} />
+              <Text style={styles.detailText}>{eventData.locationAddress}, {eventData.location}</Text>
+            </TouchableOpacity>
             <View style={styles.detailContainer}>
               <Icon name="information" size={20} style={{ color: colors.primary }} />
               <Text style={styles.detailText}>{eventData.description}</Text>
             </View>
             <TouchableOpacity onPress={handleShowParticipants} disabled={loading}>
-              <Surface style={[styles.detailContainer, { backgroundColor: loading ? colors.inversePrimary : colors.activeBackground }]} elevation={5}>
+              <Surface style={[styles.detailContainer, { backgroundColor: loading ? colors.inversePrimary : colors.background }]} elevation={5}>
                 <Icon name="account-multiple-plus" size={20} style={{ color: loading ? colors.inactiveIcon : colors.primary }} />
                 <Text variant="labelMedium" style={[styles.detailText, (style = { color: loading ? colors.secondary : colors.secondary })]}>
                   {eventData.participants}/{eventData.participantLimit} participants
                 </Text>
               </Surface>
             </TouchableOpacity>
-
             <Userlist users={participants} modalVisible={modalVisible} setModalVisible={setModalVisible} />
+              { eventData.isFull && <HelperText style={styles.fullEventText}>Event Full</HelperText> }
+      
+              
           </Surface>
           <View style={styles.buttons}>
             {isCreator && (
@@ -338,10 +343,7 @@ const EventScreen = () => {
                 >
                   {isJoining ? <ActivityIndicator /> : "Cancel Join"}
                 </Button>
-                {eventData.isFull && <HelperText style={styles.fullEventText}>Event Full</HelperText>}
               </>
-            ) : eventData.isFull ? (
-              <HelperText style={styles.fullEventText}>Event Full</HelperText>
             ) : (
               <Button
                 title="Join"
