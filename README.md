@@ -9,12 +9,14 @@ The application is designed to facilitate users' exercise in the nearby area by 
 Current in-development screenshots:
 
 <p float="left">
-  <img src="assets/images/profile.png" width="250" />
-  <img src="assets/images/map.png" width="250" /> 
-  <img src="assets/images/settings.png" width="250" />
-  <img src="assets/images/mapevent.png" width="250" /> 
-  <img src="assets/images/myevents.png" width="250" />
-  <img src="assets/images/event.png" width="250" />
+  <img src="assets/images/login.png" width="200" />
+  <img src="assets/images/profile.png" width="200" />
+  <img src="assets/images/map.png" width="200" /> 
+  <img src="assets/images/settings.png" width="200" />
+  <img src="assets/images/mapevent.png" width="200" /> 
+  <img src="assets/images/myevents.png" width="200" />
+  <img src="assets/images/event.png" width="200" />
+  <img src="assets/images/comments.png" width="200" />
 </p>
 
 ## Installation
@@ -49,7 +51,7 @@ and scan then QR-code from the terminal in your phones Expo app.
 - Lipas.fi data integration: We are using always up-to-date data from Jyväskylä University's public project that lists every existing sports venue/area.
 - User-friendly interface: Helip is designed to be user-friendly and intuitive, so users can easily navigate and find the information they need.
 - React + React Native: The application is developed using React and React Native, enabling an efficient and high-performance mobile experience.
-- Developped with both Android and IOS in mind.
+- Developed with both Android and IOS in mind.
 
 Helip makes finding sports facilities in Finland effortless and gives users the opportunity to enjoy a diverse range of sports offerings in the country.
 
