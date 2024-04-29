@@ -9,11 +9,12 @@ The application is designed to facilitate users' exercise in the nearby area by 
 Current in-development screenshots:
 
 <p float="left">
-  <img src="assets/images/profile.png" width="200" />
-  <img src="assets/images/map.png" width="200" /> 
-  <img src="assets/images/settings.png" width="200" />
-  <img src="assets/images/mapevent.png" width="200" /> 
-  <img src="assets/images/myevents.png" width="200" />
+  <img src="assets/images/profile.png" width="250" />
+  <img src="assets/images/map.png" width="250" /> 
+  <img src="assets/images/settings.png" width="250" />
+  <img src="assets/images/mapevent.png" width="250" /> 
+  <img src="assets/images/myevents.png" width="250" />
+  <img src="assets/images/event.png" width="250" />
 </p>
 
 ## Installation
@@ -100,7 +101,3 @@ Korostik Makar - [Github](https://github.com/makarkorostik)
 [Backlog](https://github.com/users/kridesav/projects/1/views/2) 
  
 [Backend](https://github.com/kridesav/Helip_backend)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
