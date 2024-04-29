@@ -8,7 +8,6 @@ import LocationTypeWheel from "./LocationTypeWheel";
 import { useNavigation } from "@react-navigation/native";
 import { useFetchEventsByLocationId } from "../../hooks/events/useFetchEventsByLocationId";
 import { useTheme } from "react-native-paper";
-import Handle from "./Handle";
 import { getSportIcon } from "../getIcons";
 
 const BottomSheetComponent = ({
