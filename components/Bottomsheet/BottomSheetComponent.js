@@ -1,7 +1,7 @@
 import React from "react";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useMemo, useState, useEffect, useContext } from "react";
-import { StyleSheet, View, Pressable, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, Pressable, TouchableOpacity, Image, Linking } from "react-native";
 import { Text, Avatar, Button, Surface } from "react-native-paper";
 import SearchBarComponent from "./SearchBarComponent";
 import LocationTypeWheel from "./LocationTypeWheel";
@@ -98,7 +98,9 @@ const BottomSheetComponent = ({
               <Button onPress={() => handleMapItemDeselect()} icon="close" style={styles.backButton} title="Back">
             </Button>
             </Surface>
-            <Text>{selectedMapItem.properties.www}</Text>
+            <TouchableOpacity onPress={() => Linking.openURL(selectedMapItem.properties.www)}>
+              <Text style={{color: 'blue'}}>{selectedMapItem.properties.www}</Text>
+            </TouchableOpacity>
             <Text>{selectedMapItem.properties.katuosoite}</Text>
             <Surface elevation={0} style={styles.buttonContainer}>
               <Button
