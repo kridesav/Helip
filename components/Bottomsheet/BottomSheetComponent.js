@@ -76,29 +76,6 @@ const BottomSheetComponent = ({
     >
       <View style={styles.contentContainer}>
         {selectedMapItem ? (
-<<<<<<< HEAD
-          <Surface style={styles.dataContainer}>
-            <Surface elevation={0} style={styles.titleBackContainer}>
-              <Text style={styles.title}>{selectedMapItem.properties.nimi_fi}</Text>
-              <Button onPress={() => handleMapItemDeselect()} icon="close" style={styles.backButton} title="Back">
-            </Button>
-            </Surface>
-            <TouchableOpacity onPress={() => Linking.openURL(selectedMapItem.properties.www)}>
-              <Text style={{color: 'blue'}}>{selectedMapItem.properties.www}</Text>
-            </TouchableOpacity>
-            <Text>{selectedMapItem.properties.katuosoite}</Text>
-            <Surface elevation={0} style={styles.buttonContainer}>
-              <Button
-                icon="plus-circle"
-                mode="elevated"
-                style={styles.control}
-                title="Add Event"
-                onPress={() => navigation.navigate("AddEventScreen", { selectedMapItem })}
-              >
-                Add Event
-              </Button>
-            </Surface>
-=======
           <View style={styles.dataContainer}>
             <View style={styles.topContainer}>
               <View elevation={0} style={styles.titleBackContainer}>
@@ -120,7 +97,6 @@ const BottomSheetComponent = ({
                 </Button>
               </View>
             </View>
->>>>>>> feature/myevents
             <BottomSheetScrollView>
               <Surface elevation={0} style={styles.dataContainer}>
               <Text style={styles.title}>Events:</Text>

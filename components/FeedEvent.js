@@ -18,6 +18,7 @@ const FeedEvent = ({
   calculateDistance,
   handleJoinEvent,
   toggleExpansion,
+  joined
 }) => {
   const [newCommentCount, setNewCommentCount] = useState(0);
   const { comments } = userId ? useRealTimeEventComments(event.id, userId) : "";
@@ -137,9 +138,12 @@ const FeedEvent = ({
             >
               Details
             </Button>
-            <Button mode="contained" onPress={() => handleJoinEvent(event.id)} disabled={event.userJoined || isJoining || isFull}>
-              {event.userJoined ? "Joined" : "Join"}
-            </Button>
+            {joined ? '' :
+              <Button mode="contained" onPress={() => handleJoinEvent(event.id)} disabled={event.userJoined || isJoining || isFull}>
+                {event.userJoined ? "Joined" : "Join"}
+              </Button>
+            }
+            
           </Card.Actions>
         </>
       )}

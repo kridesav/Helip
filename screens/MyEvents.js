@@ -152,6 +152,7 @@ const MyEvents = () => {
                 toggleExpansion={toggleExpansion}
                 calculateDistance={calculateDistance}
                 handleJoinEvent={handleJoinEvent}
+                joined={"true"}
               />
             ))
           : ""}
