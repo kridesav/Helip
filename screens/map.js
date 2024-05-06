@@ -4,9 +4,11 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   StatusBar,
-  Platform
+  Platform,
+  Alert,
+  BackHandler
 } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView from 'react-native-map-clustering';
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Location from 'expo-location';
 import LoadingIndicator from '../components/Loading'
@@ -34,11 +36,11 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
 
   useEffect(() => {
     (async () => {
+      try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        console.error('Location permission not granted');
-        setIsLoading(false);
-        return;
+        Alert.alert('Location permission needed', 'Please enable location services in your device settings to use the app.', [{ text: 'OK', onPress: () => BackHandler.exitApp() }]
+        );
       }
 
       let location = await Location.getCurrentPositionAsync({ accuracy: Platform.OS === 'android' ? Location.Accuracy.Low : Location.Accuracy.Lowest, }) ;
@@ -54,7 +56,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
 
       let locationWatcher = await Location.watchPositionAsync({
         accuracy: Location.Accuracy.Low,
-        distanceInterval: 50, // Increase this value as needed
+        distanceInterval: 50,
       }, (location) => {
         setRegion({
           ...region,
@@ -71,13 +73,17 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
           locationWatcher.remove();
         }
       };
+
+      } catch (error) {
+        console.log(error)
+      }
     })();
   }, []);
 
   const handleMapPress = () => {
     Keyboard.dismiss()
     collapseBottomSheet()
-  } 
+  }
 
   if (isLoading) {
     return <LoadingIndicator />;
@@ -102,6 +108,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
               showsIndoors={false}
               scrollEnabled={true}
               mapPadding={{ top: 0, right: 0, left: 0, bottom: 25 }}
+              radius={10}
             >
               {places && places.map((item, index) => {
                 const icon = getSportIcon(item.properties.tyyppi_nim, 'map');
