@@ -27,7 +27,23 @@ Clone the repository and install the dependencies.
 git clone https://github.com/kridesav/Helip.git
 cd Helip
 npm install
+```
 
+### Enviroment files
+
+You will also need to create your own .env.local file into the root of the project.
+
+Environment file template:
+
+```bash
+GOOGLE_API_KEY=
+FIREBASE_API_KEY=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_DATABASE_URL=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKETt=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_APP_ID=
 ```
 
 ## Using the application
@@ -43,7 +59,7 @@ or alternatively using expo app on your phone:
 npx expo start --tunnel
 ```
 
-and scan then QR-code from the terminal in your phones Expo app.
+and scan QR-code from the terminal in your phones Expo app.
 
 ## Key Features
 - Comprehensive sports facility information: Helip shows users all sports facilities in Finland, including gyms, sports fields, swimming pools, and other similar places.
