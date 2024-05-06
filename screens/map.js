@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-
   inner: {
     flex: 1,
     justifyContent: 'space-around',
