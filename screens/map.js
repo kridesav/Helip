@@ -115,10 +115,10 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
               scrollEnabled={true}
               mapPadding={{ top: 0, right: 0, left: 0, bottom: 25 }}
               radius={zoomLevel > 10 ? 20 : zoomLevel > 5 ? 10 : 1}
-              extent={300}
+              extent={350}
               nodeSize={64}
               onRegionChangeComplete={onRegionChangeComplete}
-              minPoints={3}
+              minPoints={2}
             >
               {places && places.map((item, index) => {
                 const icon = getSportIcon(item.properties.tyyppi_nim, 'map');

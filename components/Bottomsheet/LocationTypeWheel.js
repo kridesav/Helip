@@ -2,11 +2,13 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import { getAllSportsIcons } from '../getIcons';
 import React, { useEffect, useState } from 'react';
+import { useTheme } from 'react-native-paper';
 
 const icons = getAllSportsIcons()
 
 export default function LocationTypeWheel({ onActiveIconChange }) {
   const [activeIcon, setActiveIcon] = useState(null)
+  const { colors } = useTheme()
 
   useEffect(() => {
     onActiveIconChange(activeIcon)
@@ -29,7 +31,7 @@ export default function LocationTypeWheel({ onActiveIconChange }) {
                 source={item.uri}
                 style={[
                   { width: 35, height: 35, marginHorizontal: 2 },
-                  activeIcon === item && { borderWidth: 2, borderRadius: 20, borderColor: 'black'}
+                  activeIcon === item && { borderWidth: 2, borderRadius: 20, borderColor: colors.primary}
                 ]}
                 />
             </TouchableOpacity> 
