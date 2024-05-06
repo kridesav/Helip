@@ -26,7 +26,7 @@ const EventScreen = () => {
   const route = useRoute();
   const { event: initialEvent } = route.params;
   const [event, setEvent] = useState(initialEvent);
-
+  const eventDate = new Date(event.eventDate);
   const { currentUser } = useAuth();
 
   const userId = currentUser?.uid;

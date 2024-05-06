@@ -133,7 +133,7 @@ const FeedEvent = ({
           <Card.Actions style={{ justifyContent: "space-between", paddingTop: 10 }}>
             <Button
               mode="outlined"
-              onPress={() => navigation.navigate("EventScreen", { event })}
+              onPress={() => navigation.navigate("EventScreen", { event: {...event, eventDate: event.eventDate.toISOString()} })}
               style={[styles.button, event.isFull ? dynamicStyles.fullButton : {}]}
             >
               Details
