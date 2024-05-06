@@ -18,7 +18,8 @@ const FeedEvent = ({
   calculateDistance,
   handleJoinEvent,
   toggleExpansion,
-  joined
+  joined,
+  handleCancelJoinEvent
 }) => {
   const [newCommentCount, setNewCommentCount] = useState(0);
   const { comments } = userId ? useRealTimeEventComments(event.id, userId) : "";
@@ -96,10 +97,13 @@ const FeedEvent = ({
       <Badge visible={newCommentCount > 0 ? true : false} style={styles.badge} size={20}>
         {newCommentCount}
       </Badge>
+      {!joined ?
       <Badge visible={event.userJoined} style={styles.badgeJoined}>
         <Icon mode="text" source="check" />
         <Text variant="labelMedium">Joined </Text>
       </Badge>
+      :''
+      }
       <View style={styles.cardLayout}>
         <View style={styles.imageContainer}>
           <Card.Cover source={getSportIcon(event.typeName)} style={styles.cover} />
@@ -138,9 +142,13 @@ const FeedEvent = ({
             >
               Details
             </Button>
-            {joined ? '' :
-              <Button mode="contained" onPress={() => handleJoinEvent(event.id)} disabled={event.userJoined || isJoining || isFull}>
-                {event.userJoined ? "Joined" : "Join"}
+            {event.userJoined ?
+              <Button mode="contained" onPress={() => handleCancelJoinEvent(event.id)} >
+                Leave
+              </Button>
+              :
+              <Button mode="contained" onPress={() => handleJoinEvent(event.id)}>
+                Join
               </Button>
             }
             

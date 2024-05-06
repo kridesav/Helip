@@ -5,6 +5,7 @@ import { EventContext } from "../context/EventProvider";
 import { useNavigation } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 import joinEvent from "../hooks/events/utils/joinEvent";
+import CancelJoinEvent from "../hooks/events/utils/cancelJoinEvent"
 import * as Location from "expo-location";
 import FeedEvent from "../components/FeedEvent";
 import { LayoutAnimation, UIManager, Platform } from "react-native";
@@ -135,6 +136,23 @@ const HomeScreen = () => {
     }
   };
 
+  const handleCancelJoinEvent = async (eventId) => {
+    setIsJoining(true);
+    try {
+      const success = await CancelJoinEvent(eventId, currentUser.uid);
+      if (success) {
+        Alert.alert("Left event", "You have successfully left the event.");
+      } else {
+        Alert.alert("Error", "Could not leave the event.");
+      }
+    } catch (error) {
+      console.error("Leave event error:", error);
+      Alert.alert("Error", "An error occurred while trying to leave the event.");
+    } finally {
+      setIsJoining(false);
+    }
+  };
+  
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, paddingTop: 75 }}>
       <SegmentedButtons
@@ -160,6 +178,7 @@ const HomeScreen = () => {
             toggleExpansion={toggleExpansion}
             calculateDistance={calculateDistance}
             handleJoinEvent={handleJoinEvent}
+            handleCancelJoinEvent={handleCancelJoinEvent}
             isFull={event.participants >= event.participantLimit}
           />
         ))
