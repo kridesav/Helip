@@ -9,13 +9,12 @@ import {
   BackHandler
 } from 'react-native';
 import MapView from 'react-native-map-clustering';
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import * as Location from 'expo-location';
 import LoadingIndicator from '../components/Loading'
 import mapStyle from '../mapStyle.json'
 import useLipasFetch from '../components/lipasfetch';
 import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { debounce } from 'lodash';
 import { getSportIcon } from '../components/getIcons';
 import { EventContext } from "../context/EventProvider";
 

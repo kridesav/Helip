@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Surface, Text, Switch, Portal, Dialog, Icon, TextInput } from "react-native-paper";
 import { View, StyleSheet } from "react-native";
 import { themeContext } from "../../utils/themeContext";
@@ -7,7 +7,7 @@ import deleteUserAccount from "../../hooks/deleteUser";
 import reauthenticateUser from "../../hooks/reauthenticateUser";
 
 export default function SettingsScreen({ route }) {
-  const { theme, setTheme, themeMode, setThemeMode } = React.useContext(themeContext);
+  const { themeMode, setThemeMode } = React.useContext(themeContext);
   const [notifications, setNotifications] = useState(true);
   const [location, setLocation] = useState(true);
   const [deleteDialog, setDeleteDialog] = useState(false);

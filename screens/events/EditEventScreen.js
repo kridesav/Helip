@@ -11,7 +11,6 @@ import formatDate from "../../utils/formatDate";
 import editEvent from "../../hooks/events/utils/editEvent";
 import deleteEvent from "../../hooks/events/utils/deleteEvent";
 import { parseTime, parseDate } from "../../utils/parse";
-import { color } from "react-native-elements/dist/helpers";
 
 const EditEventScreen = () => {
   const { colors } = useTheme();

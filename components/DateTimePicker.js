@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
+import { StyleSheet, Platform, TouchableOpacity } from "react-native";
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { useTheme, Text, Button, Surface } from 'react-native-paper';
+import { useTheme, Text, Surface } from 'react-native-paper';
 
 export default CustomDateTimePicker = ({ setDate, setStartTime, setEndTime, date, StartTime, EndTime }) => {
     const { colors } = useTheme();

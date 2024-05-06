@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Button, Surface, Text, Switch, Portal, Dialog, Icon, TextInput } from "react-native-paper";
-import { View, StyleSheet } from "react-native";
-import { CommentsContainer, CommentsView } from "../../components/Comments";
+import React, { useState } from "react";
+import { Button, Surface, Text } from "react-native-paper";
+import { View } from "react-native";
+import { CommentsView } from "../../components/Comments";
 import { useRealTimeUserComments } from "../../hooks/comments/useFetchCommentsbyUser";
 
 const MessageScreen = ({ route }) => {
