@@ -29,6 +29,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
   const [isLoading, setIsLoading] = useState(true);
   const { places, fetchPlaces } = useLipasFetch(token);
   const eventLocationIds = useContext(EventContext).map(event => event.locationId);
+  const [zoomLevel, setZoomLevel] = useState(0);
 
   useEffect(() => {
     setPlaces(places)
@@ -37,42 +38,42 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
   useEffect(() => {
     (async () => {
       try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Location permission needed', 'Please enable location services in your device settings to use the app.', [{ text: 'OK', onPress: () => BackHandler.exitApp() }]
-        );
-      }
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Location permission needed', 'Please enable location services in your device settings to use the app.', [{ text: 'OK', onPress: () => BackHandler.exitApp() }]
+          );
+        }
 
-      let location = await Location.getCurrentPositionAsync({ accuracy: Platform.OS === 'android' ? Location.Accuracy.Low : Location.Accuracy.Lowest, }) ;
-      setRegion({
-        ...region,
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-      setIsLoading(false);
-      if (location.coords.latitude !== null && location.coords.longitude !== null) {
-        fetchPlaces(location.coords.latitude, location.coords.longitude);
-      }
-
-      let locationWatcher = await Location.watchPositionAsync({
-        accuracy: Location.Accuracy.Low,
-        distanceInterval: 50,
-      }, (location) => {
+        let location = await Location.getCurrentPositionAsync({ accuracy: Platform.OS === 'android' ? Location.Accuracy.Low : Location.Accuracy.Lowest, });
         setRegion({
           ...region,
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
+        setIsLoading(false);
         if (location.coords.latitude !== null && location.coords.longitude !== null) {
           fetchPlaces(location.coords.latitude, location.coords.longitude);
         }
-      });
 
-      return () => {
-        if (locationWatcher) {
-          locationWatcher.remove();
-        }
-      };
+        let locationWatcher = await Location.watchPositionAsync({
+          accuracy: Location.Accuracy.Low,
+          distanceInterval: 50,
+        }, (location) => {
+          setRegion({
+            ...region,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          });
+          if (location.coords.latitude !== null && location.coords.longitude !== null) {
+            fetchPlaces(location.coords.latitude, location.coords.longitude);
+          }
+        });
+
+        return () => {
+          if (locationWatcher) {
+            locationWatcher.remove();
+          }
+        };
 
       } catch (error) {
         console.log(error)
@@ -88,6 +89,12 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
   if (isLoading) {
     return <LoadingIndicator />;
   }
+
+  const onRegionChangeComplete = (region) => {
+    const longitudeDelta = region.longitudeDelta;
+    const zoomLevel = Math.round(Math.log(360 / longitudeDelta) / Math.LN2);
+    setZoomLevel(zoomLevel);
+  };
 
   return (
     <View style={styles.container}>
@@ -108,7 +115,10 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
               showsIndoors={false}
               scrollEnabled={true}
               mapPadding={{ top: 0, right: 0, left: 0, bottom: 25 }}
-              radius={10}
+              radius={zoomLevel > 5 ? 10 : 1}
+              extent={100}
+              nodeSize={64}
+              onRegionChangeComplete={onRegionChangeComplete}
             >
               {places && places.map((item, index) => {
                 const icon = getSportIcon(item.properties.tyyppi_nim, 'map');
@@ -126,7 +136,7 @@ export default function MapScreen({ handleMarkerPress, setPlaces, mapRef, token,
                     title={item.properties.nimi_fi}
                     onPress={() => handleMarkerPress(item)}
                     image={icon}
-                    opacity={locationHasEvent ? 1.0 : 0.5}
+                    opacity={locationHasEvent ? 1.0 : 0.7}
                   />
                 );
               })}
