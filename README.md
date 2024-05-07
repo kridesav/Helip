@@ -111,8 +111,6 @@ Virkki Perttu - [Github](https://github.com/perttuvirkki)
 
 Teijo Virta - [Github](https://github.com/aksiooma)
 
-Korostik Makar - [Github](https://github.com/makarkorostik)
-
 ## Links
 [Project table](https://github.com/users/kridesav/projects/1)
 
